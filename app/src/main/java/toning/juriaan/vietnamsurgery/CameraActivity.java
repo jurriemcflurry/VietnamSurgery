@@ -53,7 +53,7 @@ public class CameraActivity extends AppCompatActivity {
         });
     }
 
-    //het resultaat van de camera (vermoedelijk een foto) wordt hier in een nieuwe ImageView gestopt
+    //het resultaat van de camera (een foto) wordt hier in een nieuwe ImageView gestopt
     //de imageview wordt toegevoegd aan een gridlayout
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
