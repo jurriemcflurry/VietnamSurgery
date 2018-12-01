@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -29,6 +30,7 @@ public class CameraActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private Bitmap mImageBitmap;
     private GridLayout gridLayout1;
+    private List<Bitmap> images;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,7 +53,7 @@ public class CameraActivity extends AppCompatActivity {
         });
     }
 
-    //het resultaat van de camera (vermoedelijk een foto) wordt hier in een nieuwe ImageView gestopt
+    //het resultaat van de camera (een foto) wordt hier in een nieuwe ImageView gestopt
     //de imageview wordt toegevoegd aan een gridlayout
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -64,13 +66,19 @@ public class CameraActivity extends AppCompatActivity {
             imageView.getLayoutParams().height = (getDisplayMetrics().heightPixels)/2;
             imageView.getLayoutParams().width = (getDisplayMetrics().widthPixels)/2;
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+            saveImage(mImageBitmap);
         }
     }
 
     //ophalen van de schermafmetingen
-    public DisplayMetrics getDisplayMetrics(){
+    private DisplayMetrics getDisplayMetrics(){
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         return displayMetrics;
+    }
+
+    //opslaan van de foto in een lijst van foto's
+    private void saveImage(Bitmap mImageBitmap){
+        images.add(mImageBitmap);
     }
 }
