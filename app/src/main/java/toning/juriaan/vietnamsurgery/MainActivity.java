@@ -57,6 +57,15 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(toCamera);
             }
         });
+
+        Button toFormActivityButton = findViewById(R.id.toFormActivity);
+        toFormActivityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent toFormActivityIntent = new Intent(MainActivity.this, FormActivity.class);
+                startActivity(toFormActivityIntent);
+            }
+        });
     }
 
     @Override
