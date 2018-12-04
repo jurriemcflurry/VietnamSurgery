@@ -1,23 +1,45 @@
 package toning.juriaan.vietnamsurgery;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Environment;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.STDataValidationErrorStyleImpl;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
+    private static final String TAG = "MyActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
         setupNavigation();
 
-        Button OpenCamera = (Button) findViewById(R.id.ToCamera);
+        Button OpenCamera = findViewById(R.id.ToCamera);
         OpenCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -43,6 +65,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent toFormActivityIntent = new Intent(MainActivity.this, FormActivity.class);
                 startActivity(toFormActivityIntent);
+            }
+        });
+
+        Button readExcel = findViewById(R.id.toReadExcel);
+        readExcel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                readExcelFile();
             }
         });
     }
@@ -109,5 +139,89 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     }
                 });
+    }
+
+    private void readExcelFile() {
+        File root = Environment.getExternalStorageDirectory();
+        File file = new File(root, "Screening.xlsx");
+
+        try {
+            // Check if we can read/write to the storage. If so, continue; if not; prompt the user
+            verifyStoragePermissions(this);
+
+            // Open the file
+            FileInputStream fileInputStream = new FileInputStream(file);
+
+            // Create a workbook object
+            Workbook workbook = new XSSFWorkbook(file);
+
+            XSSFSheet sheet = ((XSSFWorkbook) workbook).getSheetAt(0);
+
+            int rowsCount = sheet.getPhysicalNumberOfRows();
+            int firstRowNum = sheet.getFirstRowNum();
+            int lastRowNum = sheet.getLastRowNum();
+
+            List<List<String>> ret = new ArrayList<>();
+
+            for(int i=firstRowNum+1; i<lastRowNum+1; i++)
+            {
+                Row row = sheet.getRow(i);
+
+                int firstCellNum = row.getFirstCellNum();
+                int lastCellNum = row.getLastCellNum();
+
+                List<String> rowDataList = new ArrayList<>();
+                for(int j = firstCellNum; j < lastCellNum; j++)
+                {
+                    String cellValue = row.getCell(j).getStringCellValue();
+                    rowDataList.add(cellValue);
+                }
+
+                ret.add(rowDataList);
+            }
+
+            List<String> te = ret.get(1);
+
+            for (int i = 0; i < te.size(); i++) {
+                if(!te.get(i).isEmpty()) {
+                    Log.i("TESTT",te.get(i) + " --- " + Integer.toString(i));
+                }
+            }
+
+            List<String> tete = ret.get(2);
+
+            for (int i = 0; i < tete.size(); i++) {
+                if(!tete.get(i).isEmpty()) {
+                    Log.i("TESTT",tete.get(i) + " --- " + Integer.toString(i));
+                }
+            }
+
+
+            Toast.makeText(getApplicationContext(), "Finished", Toast.LENGTH_SHORT).show();
+
+        } catch (Exception ex) {
+            Log.e("CHECKKK", ex.getMessage() + " -- " + ex.getCause());
+        }
+    }
+
+    // Storage Permissions
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
+    public static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                activity,
+                PERMISSIONS_STORAGE,
+                REQUEST_EXTERNAL_STORAGE
+            );
+        }
     }
 }
