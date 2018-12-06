@@ -1,37 +1,51 @@
-package toning.juriaan.vietnamsurgery;
+package Activities;
 
-import android.content.res.Resources;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.content.Intent;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class LoginActivity extends AppCompatActivity {
+import toning.juriaan.vietnamsurgery.R;
+
+public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
-    private TextView userNameTextView;
-    private EditText userNameEditText;
-    private TextView passwordTextView;
-    private EditText passwordEditText;
-    private Button loginButton;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
+        //thema moet altijd worden gezet naar AppTheme, zodat de Launcher van het splashscreen niet bij elke actie wordt getoond
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login_activity);
-        setupLayoutControls();
+        setContentView(R.layout.activity_main);
+
         setupNavigation();
+
+        Button OpenCamera = (Button) findViewById(R.id.ToCamera);
+        OpenCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent toCamera = new Intent(MainActivity.this, CameraActivity.class);
+                startActivity(toCamera);
+            }
+        });
+
+        Button toFormActivityButton = findViewById(R.id.toFormActivity);
+        toFormActivityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent toFormActivityIntent = new Intent(MainActivity.this, FormActivity.class);
+                startActivity(toFormActivityIntent);
+            }
+        });
     }
 
     @Override
@@ -45,17 +59,27 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setupNavigation(){
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.login_drawer_layout);
-        NavigationView navigationView = findViewById(R.id.login_nav_view);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         View headerView = navigationView.getHeaderView(0);
         LinearLayout header = (LinearLayout) headerView.findViewById(R.id.headerlayout);
         final TextView login = (TextView) header.findViewById(R.id.Logintext);
         final TextView loggedInUser = (TextView) header.findViewById(R.id.LoggedinUser);
-        Toolbar toolbar = findViewById(R.id.login_toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
+
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // ga naar pagina om in te loggen
+                Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(loginIntent);
+
+            }
+        });
 
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
@@ -85,43 +109,4 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
     }
-
-    private void setupLayoutControls(){
-        userNameEditText = (EditText) findViewById(R.id.userNameEditText);
-        userNameTextView = (TextView) findViewById(R.id.userNameTextView);
-        passwordEditText = (EditText) findViewById(R.id.passwordEditText);
-        passwordTextView = (TextView) findViewById(R.id.passwordTextView);
-        loginButton = (Button) findViewById(R.id.login_button);
-
-        userNameEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                userNameTextView.setVisibility(View.VISIBLE);
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                lp.setMargins(0, dpToPx(20), 0,0 );
-                userNameEditText.setLayoutParams(lp);
-            }
-        });
-
-        passwordEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                passwordTextView.setVisibility(View.VISIBLE);
-            }
-        });
-
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //call om in te loggen
-
-                //set header texts goed (login -> logout, ingelogde gebruiker)
-            }
-        });
-    }
-
-    public static int dpToPx(int dp){
-        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
-    }
 }
-
