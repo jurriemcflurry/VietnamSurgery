@@ -1,5 +1,6 @@
 package Activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -8,8 +9,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import toning.juriaan.vietnamsurgery.R;
 
@@ -17,6 +24,8 @@ public class CameraActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private Bitmap mImageBitmap;
     private GridLayout gridLayout1;
+    private Button saveImagesButton;
+    private ArrayList<Bitmap> mImages = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -24,6 +33,7 @@ public class CameraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.camera_activity);
         gridLayout1 = (GridLayout) findViewById(R.id.gridLayout1);
+        saveImagesButton = (Button) findViewById(R.id.save_images);
 
         //onClick opent de native camera van de telefoon
         FloatingActionButton photoButton = (FloatingActionButton) this.findViewById(R.id.fab_camera);
@@ -35,6 +45,13 @@ public class CameraActivity extends AppCompatActivity {
                 if (cameraIntent.resolveActivity(getPackageManager()) != null) {
                     startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
                 }
+            }
+        });
+
+        saveImagesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveImages();
             }
         });
     }
@@ -52,6 +69,7 @@ public class CameraActivity extends AppCompatActivity {
             imageView.getLayoutParams().height = (getDisplayMetrics().heightPixels)/2;
             imageView.getLayoutParams().width = (getDisplayMetrics().widthPixels)/2;
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+            mImages.add(mImageBitmap);
         }
     }
 
@@ -60,5 +78,32 @@ public class CameraActivity extends AppCompatActivity {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         return displayMetrics;
+    }
+
+    private boolean saveImages(){
+        if(mImages.size() <= 0){
+            return false;
+        }
+
+        String filename = "imageNumber";
+        FileOutputStream outputStream;
+        int i = 0;
+
+        for(Bitmap image : mImages){
+            try {
+                filename += String.valueOf(i);
+                FileOutputStream fos = this.openFileOutput(filename, Context.MODE_PRIVATE);
+
+                image.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                fos.close();
+                i++;
+            }
+            catch(Exception e){
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        return true;
     }
 }

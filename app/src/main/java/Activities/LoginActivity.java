@@ -16,9 +16,16 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import ResponseModels.LoginResponse;
+import WebInterfaces.UserWebInterface;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import toning.juriaan.vietnamsurgery.R;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements Callback<LoginResponse> {
 
     private DrawerLayout mDrawerLayout;
     private TextView userNameTextView;
@@ -26,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView passwordTextView;
     private EditText passwordEditText;
     private Button loginButton;
+    private UserWebInterface userWebInterface;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,6 +42,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.login_activity);
         setupLayoutControls();
         setupNavigation();
+        setupRetrofit();
     }
 
     @Override
@@ -116,14 +125,44 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //call om in te loggen
-
-                //set header texts goed (login -> logout, ingelogde gebruiker)
+                login();
             }
         });
     }
 
+    private void setupRetrofit(){
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://localhost:53025/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        userWebInterface = retrofit.create(UserWebInterface.class);
+    }
+
+    private void login(){
+        if(userNameEditText == null || passwordEditText == null){
+            return;
+        }
+
+        String username = userNameEditText.toString();
+        String password = passwordEditText.toString();
+
+        userWebInterface.login(username, password).enqueue(this);
+    }
+
     public static int dpToPx(int dp){
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+    }
+
+    @Override
+    public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+        //set headertexts goed
+        //sla token op
+    }
+
+    @Override
+    public void onFailure(Call<LoginResponse> call, Throwable t) {
+        //feedback over failure
     }
 }
 
