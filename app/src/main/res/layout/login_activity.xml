@@ -33,7 +33,7 @@
                 android:id="@+id/userNameTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Username"
+                android:text="@string/username"
                 android:visibility="invisible"/>
 
             <EditText
@@ -41,14 +41,14 @@
                 android:layout_width="150dp"
                 android:layout_height="20dp"
                 android:background="@null"
-                android:hint="Username" />
+                android:hint="@string/username" />
 
             <TextView
                 android:id="@+id/passwordTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:text="Password"
+                android:text="@string/password"
                 android:visibility="invisible"/>
 
             <EditText
@@ -58,7 +58,14 @@
                 android:layout_marginTop="20dp"
                 android:background="@null"
                 android:inputType="textPassword"
-                android:hint="Password"/>
+                android:hint="@string/password"/>
+
+            <Button
+                android:id="@+id/login_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/login"/>
         </LinearLayout>
     </FrameLayout>
 

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">VietnamSurgery</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="not_logged_in">Not logged in</string>
 </resources>

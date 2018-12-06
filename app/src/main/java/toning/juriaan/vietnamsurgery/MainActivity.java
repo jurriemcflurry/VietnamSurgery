@@ -77,8 +77,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(loginIntent);
 
-                loggedInUser.setText("Ingelogde Gebruiker"); //set text to logged in username
-                login.setText("Log out"); //change text when logging in/out
             }
         });
 

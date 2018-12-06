@@ -3,6 +3,7 @@ package toning.juriaan.vietnamsurgery;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -30,7 +31,6 @@ public class CameraActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private Bitmap mImageBitmap;
     private GridLayout gridLayout1;
-    private List<Bitmap> images;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,7 +66,6 @@ public class CameraActivity extends AppCompatActivity {
             imageView.getLayoutParams().height = (getDisplayMetrics().heightPixels)/2;
             imageView.getLayoutParams().width = (getDisplayMetrics().widthPixels)/2;
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-            saveImage(mImageBitmap);
         }
     }
 
@@ -75,10 +74,5 @@ public class CameraActivity extends AppCompatActivity {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         return displayMetrics;
-    }
-
-    //opslaan van de foto in een lijst van foto's
-    private void saveImage(Bitmap mImageBitmap){
-        images.add(mImageBitmap);
     }
 }

@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,6 +23,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText userNameEditText;
     private TextView passwordTextView;
     private EditText passwordEditText;
+    private Button loginButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,16 +56,6 @@ public class LoginActivity extends AppCompatActivity {
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
-
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // ga naar pagina om in te loggen
-
-                loggedInUser.setText("Ingelogde Gebruiker"); //set text to logged in username
-                login.setText("Log out"); //change text when logging in/out
-            }
-        });
 
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
@@ -99,6 +91,7 @@ public class LoginActivity extends AppCompatActivity {
         userNameTextView = (TextView) findViewById(R.id.userNameTextView);
         passwordEditText = (EditText) findViewById(R.id.passwordEditText);
         passwordTextView = (TextView) findViewById(R.id.passwordTextView);
+        loginButton = (Button) findViewById(R.id.login_button);
 
         userNameEditText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,6 +107,15 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 passwordTextView.setVisibility(View.VISIBLE);
+            }
+        });
+
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //call om in te loggen
+
+                //set header texts goed (login -> logout, ingelogde gebruiker)
             }
         });
     }
