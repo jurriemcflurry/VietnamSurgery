@@ -44,40 +44,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent toFormActivityIntent = new Intent(MainActivity.this, FormActivity.class);
-
-                int index = 0;
-                toFormActivityIntent.putExtra(FormActivity.INDEX, index);
-                Form form = getDummyForm();
-                Helper.log("\n\n" + form.toString() + "\n\n");
-
+                toFormActivityIntent.putExtra(FormActivity.INDEX, 0);
                 startActivity(toFormActivityIntent);
             }
         });
-    }
-
-    private Form getDummyForm() {
-        ArrayList<Field> fields = new ArrayList<>();
-        for (int i = 1; i <= 3; i++) {
-            fields.add(new TextField("TextFieldName " + i));
-        }
-
-        fields.add(new NumberField("NumberFieldName 1"));
-        ArrayList<String> options = new ArrayList<>();
-        for (int i = 1; i <= 3; i++) {
-            options.add("Option " + 1);
-        }
-        fields.add(new DropDownField("DropDownFieldName 1", options));
-
-        Field[] fieldArray = fields.toArray(new Field[0]);
-
-        ArrayList<Section> sections = new ArrayList<>();
-        for (int i = 1; i <= 3; i++) {
-            sections.add(new Section("SectionName " + i, fieldArray));
-        }
-
-        Section[] sectionArray = sections.toArray(new Section[0]);
-
-        return new Form("DummyForm 1", sectionArray);
     }
 
     @Override

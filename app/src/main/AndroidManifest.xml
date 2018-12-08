@@ -16,9 +16,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CameraActivity"></activity>
-        <activity android:name=".FormActivity"></activity>
-        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".CameraActivity"/>
+        <activity android:name=".FormActivity"/>
+        <activity android:name=".LoginActivity"/>
     </application>
 
 
@@ -28,4 +28,9 @@
     <uses-feature
         android:name="android.hardware.camera.autofocus"
         android:required="false" />
+
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+
 </manifest>
