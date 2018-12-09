@@ -8,7 +8,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.Launcher">
+        android:theme="@style/AppTheme.Launcher"
+        android:usesCleartextTraffic="true">
         <activity android:name="Activities.MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -16,7 +17,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<<<<<<< HEAD
         <activity android:name="Activities.CameraActivity">
             <intent-filter>
                 <action android:name="android.media.action.IMAGE_CAPTURE"></action>
@@ -24,11 +24,6 @@
         </activity>
         <activity android:name="Activities.FormActivity"></activity>
         <activity android:name="Activities.LoginActivity"></activity>
-=======
-        <activity android:name=".CameraActivity"/>
-        <activity android:name=".FormActivity"/>
-        <activity android:name=".LoginActivity"/>
->>>>>>> fbfe798074762763baae5b803887789cbcc1d765
     </application>
 
 
@@ -43,4 +38,5 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 
+    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>

@@ -1,5 +1,6 @@
 package Activities;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -23,6 +24,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import toning.juriaan.vietnamsurgery.LoginObject;
 import toning.juriaan.vietnamsurgery.R;
 
 public class LoginActivity extends AppCompatActivity implements Callback<LoginResponse> {
@@ -42,7 +44,13 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
         setContentView(R.layout.login_activity);
         setupLayoutControls();
         setupNavigation();
-        setupRetrofit();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://localhost:52053/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        userWebInterface = retrofit.create(UserWebInterface.class);
     }
 
     @Override
@@ -58,10 +66,6 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
     private void setupNavigation(){
         mDrawerLayout = (DrawerLayout) findViewById(R.id.login_drawer_layout);
         NavigationView navigationView = findViewById(R.id.login_nav_view);
-        View headerView = navigationView.getHeaderView(0);
-        LinearLayout header = (LinearLayout) headerView.findViewById(R.id.headerlayout);
-        final TextView login = (TextView) header.findViewById(R.id.Logintext);
-        final TextView loggedInUser = (TextView) header.findViewById(R.id.LoggedinUser);
         Toolbar toolbar = findViewById(R.id.login_toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionbar = getSupportActionBar();
@@ -130,15 +134,6 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
         });
     }
 
-    private void setupRetrofit(){
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://localhost:53025/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        userWebInterface = retrofit.create(UserWebInterface.class);
-    }
-
     private void login(){
         if(userNameEditText == null || passwordEditText == null){
             return;
@@ -146,8 +141,9 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
 
         String username = userNameEditText.toString();
         String password = passwordEditText.toString();
+        LoginObject loginObject = new LoginObject(username, password);
 
-        userWebInterface.login(username, password).enqueue(this);
+        userWebInterface.login(loginObject).enqueue(this);
     }
 
     public static int dpToPx(int dp){
@@ -158,11 +154,17 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
     public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
         //set headertexts goed
         //sla token op
+
+        TextView loginText = (TextView) findViewById(R.id.Logintext);
+        TextView loggedInUser = (TextView) findViewById(R.id.LoggedinUser);
+        loginText.setText("Ingelogd");
+        Intent backToHome = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(backToHome);
     }
 
     @Override
     public void onFailure(Call<LoginResponse> call, Throwable t) {
-        //feedback over failure
+        t.printStackTrace();
     }
 }
 
