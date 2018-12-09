@@ -16,6 +16,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+<<<<<<< HEAD
         <activity android:name="Activities.CameraActivity">
             <intent-filter>
                 <action android:name="android.media.action.IMAGE_CAPTURE"></action>
@@ -23,6 +24,11 @@
         </activity>
         <activity android:name="Activities.FormActivity"></activity>
         <activity android:name="Activities.LoginActivity"></activity>
+=======
+        <activity android:name=".CameraActivity"/>
+        <activity android:name=".FormActivity"/>
+        <activity android:name=".LoginActivity"/>
+>>>>>>> fbfe798074762763baae5b803887789cbcc1d765
     </application>
 
 
@@ -32,4 +38,9 @@
     <uses-feature
         android:name="android.hardware.camera.autofocus"
         android:required="false" />
+
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+
 </manifest>

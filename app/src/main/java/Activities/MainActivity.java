@@ -14,7 +14,11 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+<<<<<<< HEAD:app/src/main/java/Activities/MainActivity.java
 import toning.juriaan.vietnamsurgery.R;
+=======
+import java.util.ArrayList;
+>>>>>>> fbfe798074762763baae5b803887789cbcc1d765:app/src/main/java/toning/juriaan/vietnamsurgery/MainActivity.java
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,11 +42,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button toFormActivityButton = findViewById(R.id.toFormActivity);
+        final Button toFormActivityButton = findViewById(R.id.toFormActivity);
         toFormActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent toFormActivityIntent = new Intent(MainActivity.this, FormActivity.class);
+                toFormActivityIntent.putExtra(FormActivity.INDEX, 0);
                 startActivity(toFormActivityIntent);
             }
         });
