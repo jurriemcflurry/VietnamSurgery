@@ -1,51 +1,49 @@
 package Activities;
 
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import ResponseModels.UsersResponse;
+import WebInterfaces.UserWebInterface;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import toning.juriaan.vietnamsurgery.AccessToken;
 import toning.juriaan.vietnamsurgery.R;
 
-public class MainActivity extends AppCompatActivity {
-
+public class UsersActivity extends AppCompatActivity implements Callback<UsersResponse> {
     private DrawerLayout mDrawerLayout;
+    private UserWebInterface userWebInterface;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         //thema moet altijd worden gezet naar AppTheme, zodat de Launcher van het splashscreen niet bij elke actie wordt getoond
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_users);
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(getString(R.string.baseURL))
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        userWebInterface = retrofit.create(UserWebInterface.class);
 
         setupNavigation();
-
-        Button OpenCamera = (Button) findViewById(R.id.ToCamera);
-        OpenCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent toCamera = new Intent(MainActivity.this, CameraActivity.class);
-                startActivity(toCamera);
-            }
-        });
-
-        Button toFormActivityButton = findViewById(R.id.toFormActivity);
-        toFormActivityButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent toFormActivityIntent = new Intent(MainActivity.this, FormActivity.class);
-                startActivity(toFormActivityIntent);
-            }
-        });
+        getUsers();
     }
 
     @Override
@@ -56,6 +54,14 @@ public class MainActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void getUsers(){
+        if(AccessToken.access_token == null){
+            return;
+        }
+
+        userWebInterface.getUsers(AccessToken.access_token).enqueue(this);
     }
 
     private void setupNavigation(){
@@ -75,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // ga naar pagina om in te loggen
-                Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+                Intent loginIntent = new Intent(UsersActivity.this, LoginActivity.class);
                 startActivity(loginIntent);
 
             }
@@ -95,12 +101,10 @@ public class MainActivity extends AppCompatActivity {
 
                         switch(menuItem.getItemId()){
                             case R.id.nav_1: //Bovenste Item
-                                Intent naarForms = new Intent(MainActivity.this, FormActivity.class);
+                                Intent naarForms = new Intent(UsersActivity.this, FormActivity.class);
                                 startActivity(naarForms);
                                 break;
                             case R.id.nav_2: //2e item
-                                Intent naarUsers = new Intent(MainActivity.this, UsersActivity.class);
-                                startActivity(naarUsers);
                                 break;
                             case R.id.nav_3: //3e item
                                 break;
@@ -112,5 +116,17 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     }
                 });
+    }
+
+    @Override
+    public void onResponse(Call<UsersResponse> call, Response<UsersResponse> response) {
+        if(response.isSuccessful() && response.body() != null){
+            //fill labels with userinformation
+        }
+    }
+
+    @Override
+    public void onFailure(Call<UsersResponse> call, Throwable t) {
+        t.printStackTrace();
     }
 }

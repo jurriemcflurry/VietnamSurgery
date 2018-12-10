@@ -24,6 +24,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import toning.juriaan.vietnamsurgery.AccessToken;
 import toning.juriaan.vietnamsurgery.LoginObject;
 import toning.juriaan.vietnamsurgery.R;
 
@@ -152,14 +153,20 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
 
     @Override
     public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-        //set headertexts goed
         //sla token op
+        //set headertexts goed
+        //terug naar home
 
-        TextView loginText = (TextView) findViewById(R.id.Logintext);
-        TextView loggedInUser = (TextView) findViewById(R.id.LoggedinUser);
-        loginText.setText("Ingelogd");
-        Intent backToHome = new Intent(LoginActivity.this, MainActivity.class);
-        startActivity(backToHome);
+        if(response.isSuccessful() && response.body() != null){
+            AccessToken.access_token = response.body().access_token;
+            AccessToken.userName = response.body().userName;
+            TextView loginText = (TextView) findViewById(R.id.Logintext);
+            TextView loggedInUser = (TextView) findViewById(R.id.LoggedinUser);
+            loginText.setText("@string/logout");
+            loggedInUser.setText(AccessToken.userName);
+            Intent backToHome = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(backToHome);
+        }
     }
 
     @Override
