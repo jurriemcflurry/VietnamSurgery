@@ -24,6 +24,7 @@
         </activity>
         <activity android:name="Activities.FormActivity"></activity>
         <activity android:name="Activities.LoginActivity"></activity>
+        <activity android:name="Activities.UsersActivity"></activity>
     </application>
 
 
