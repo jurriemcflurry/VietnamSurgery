@@ -1,17 +1,28 @@
 package toning.juriaan.vietnamsurgery;
 
+import com.google.gson.annotations.SerializedName;
+
 public class RegisterObject {
 
-    public String registerUsername;
-    public String registerPassword;
-    public String confirmpassword;
+    @SerializedName("UserName")
+    public String username;
+
+    @SerializedName("Password")
+    public String password;
+
+    @SerializedName("ConfirmPassword")
+    public String confirmPassword;
+
+    @SerializedName("UserRole")
     public String userrole;
+
+    @SerializedName("Email")
     public String email;
 
-    public RegisterObject(String registerUsername, String registerPassword, String confirmpassword, String userrole, String email){
-        this.registerUsername = registerUsername;
-        this.registerPassword = registerPassword;
-        this.confirmpassword = confirmpassword;
+    public RegisterObject(String username, String password, String confirmPassword, String userrole, String email){
+        this.username = username;
+        this.password = password;
+        this.confirmPassword = confirmPassword;
         this.userrole = userrole;
         this.email = email;
     }

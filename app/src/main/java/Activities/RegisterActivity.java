@@ -30,22 +30,20 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
     private Spinner userrole;
     private EditText email;
     private Button register;
-    private RegisterObject registerObject;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        setupLayout();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://localhost:52053/")
+                .baseUrl(getString(R.string.baseURL))
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         userWebInterface = retrofit.create(UserWebInterface.class);
-
-        setupLayout();
     }
 
     private void setupLayout(){
@@ -76,21 +74,21 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
     }
 
     public void registerNewUser(){
-        String registerUsername = username.toString();
-        String registerPassword = password.toString();
-        String registerConfirmPassword = confirmPassword.toString();
-        String registerEmail = email.toString();
+        String registerUsername = username.getText().toString();
+        String registerPassword = password.getText().toString();
+        String registerConfirmPassword = confirmPassword.getText().toString();
+        String registerEmail = email.getText().toString();
         String registerUserRole = userrole.getSelectedItem().toString();
 
         if(registerUsername == null || registerPassword == null || registerConfirmPassword == null || registerEmail == null || registerUserRole == null){
             return;
         }
 
-        if(registerPassword != registerConfirmPassword){
+        if(!registerPassword.equals(registerConfirmPassword)){
             return;
         }
 
-        registerObject = new RegisterObject(registerUsername, registerPassword, registerConfirmPassword, registerUserRole, registerEmail);
+        RegisterObject registerObject = new RegisterObject(registerUsername, registerPassword, registerConfirmPassword, registerUserRole, registerEmail);
 
         userWebInterface.register(registerObject).enqueue(this);
     }
@@ -108,8 +106,10 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
 
     @Override
     public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
+        System.out.println("success1");
         if(response.isSuccessful() && response.body() != null){
             //success
+            System.out.println("success2");
         }
     }
 
