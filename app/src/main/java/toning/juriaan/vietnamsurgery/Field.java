@@ -1,30 +1,36 @@
 package toning.juriaan.vietnamsurgery;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+
 import android.support.annotation.Nullable;
 
-public abstract class Field {
-
-    public static final String DROP_DOWN = DropDownField.class.getName();
-    public static final String TEXT = TextField.class.getName();
-    public static final String NUMBER = NumberField.class.getName();
-
+public class Field {
     private String fieldName;
-
-    private Boolean required;
-
     private String fieldValue;
+    private Boolean required;
+    private String type;
 
-    public Field(String fieldName) {
+    private String[] options;
+
+    public Field() { }
+
+    public Field(String fieldName, String type) {
         this.fieldName = fieldName;
-        this.fieldValue = "niets";
+        this.fieldValue = "Niets";
         this.required = false;
     }
 
-    public Field(String fieldName, Boolean required) {
-        this.fieldName = fieldName;
-        this.required = required;
+    public String[] getOptions() throws Exception {
+        if (!type.equals(FieldType.DROP_DOWN.toString())) {
+            throw new Exception("This is not a dropdown field.");
+        }
+        return options;
+    }
+
+    public void setOptions(String[] options) throws Exception {
+        if (!type.equals(FieldType.DROP_DOWN.toString())) {
+            throw new Exception("This is not a dropdown field.");
+        }
+        this.options = options;
     }
 
     public String getFieldName() {
@@ -51,16 +57,31 @@ public abstract class Field {
         this.required = required;
     }
 
-    public abstract String getType();
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     @Override
     public String toString() {
-        String s = getType() + "\n";
-        s += getFieldName() + "\n";
+        String s = getFieldName() + "\n";
         s += getFieldValue() + "\n";
-        s += isRequired() + "\n";
+        s += getType() + "\n";
+
+        try {
+            for (String option : getOptions()) {
+                s += option + ", ";
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        s += "\n";
 
         return s;
     }
 }
-

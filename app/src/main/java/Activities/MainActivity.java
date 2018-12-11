@@ -1,5 +1,6 @@
 package Activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,11 +15,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-<<<<<<< HEAD:app/src/main/java/Activities/MainActivity.java
+import toning.juriaan.vietnamsurgery.Form;
 import toning.juriaan.vietnamsurgery.R;
-=======
-import java.util.ArrayList;
->>>>>>> fbfe798074762763baae5b803887789cbcc1d765:app/src/main/java/toning/juriaan/vietnamsurgery/MainActivity.java
+import toning.juriaan.vietnamsurgery.Storage;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,8 +45,12 @@ public class MainActivity extends AppCompatActivity {
         toFormActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Form form = Form.getDummyForm();
+                form.setFormName("MainActivity form");
+                Storage.saveFormTemplate(form, MainActivity.this);
+
                 Intent toFormActivityIntent = new Intent(MainActivity.this, FormActivity.class);
-                toFormActivityIntent.putExtra(FormActivity.INDEX, 0);
+                toFormActivityIntent.putExtra(FormActivity.FORM, form.getFormattedFormName());
                 startActivity(toFormActivityIntent);
             }
         });
