@@ -8,6 +8,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,7 +17,12 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import ResponseModels.UsersResponse;
+import WebInterfaces.DetailClickListener;
 import WebInterfaces.UserWebInterface;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -25,10 +32,16 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import toning.juriaan.vietnamsurgery.AccessToken;
 import toning.juriaan.vietnamsurgery.R;
 import toning.juriaan.vietnamsurgery.RegisterObject;
+import toning.juriaan.vietnamsurgery.User;
+import toning.juriaan.vietnamsurgery.UserAdapter;
 
 public class UsersActivity extends AppCompatActivity implements Callback<UsersResponse> {
     private DrawerLayout mDrawerLayout;
     private UserWebInterface userWebInterface;
+    private List<User> mContent;
+    private RecyclerView list;
+    private UserAdapter mListAdapter;
+    private LinearLayoutManager mLinearLayoutManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,9 +55,23 @@ public class UsersActivity extends AppCompatActivity implements Callback<UsersRe
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-       // userWebInterface = retrofit.create(UserWebInterface.class);
+        userWebInterface = retrofit.create(UserWebInterface.class);
 
         setupNavigation();
+
+        list = (RecyclerView) findViewById(R.id.users_list);
+        mLinearLayoutManager = new LinearLayoutManager(this);
+        list.setLayoutManager(mLinearLayoutManager);
+        mContent = new ArrayList<>();
+        mListAdapter = new UserAdapter(mContent, this, new DetailClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                //naar detailpagina
+            }
+        });
+        list.setAdapter(mListAdapter);
+
+
         getUsers();
         Button register = (Button) findViewById(R.id.register_user);
 
@@ -72,7 +99,9 @@ public class UsersActivity extends AppCompatActivity implements Callback<UsersRe
             return;
         }
 
-        userWebInterface.getUsers(AccessToken.access_token).enqueue(this);
+        String authRequest = "Bearer " + AccessToken.access_token;
+        System.out.println("token is goed");
+        userWebInterface.getUsers(authRequest).enqueue(this);
     }
 
     private void setupNavigation(){
@@ -88,13 +117,31 @@ public class UsersActivity extends AppCompatActivity implements Callback<UsersRe
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
+        if(AccessToken.access_token != null){
+            login.setText(getString(R.string.logout));
+            loggedInUser.setText(AccessToken.userName);
+        }
+        else{
+            login.setText(getString(R.string.login));
+            loggedInUser.setText(getString(R.string.not_logged_in));
+        }
+
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // ga naar pagina om in te loggen
-                Intent loginIntent = new Intent(UsersActivity.this, LoginActivity.class);
-                startActivity(loginIntent);
 
+                if(login.getText().equals(getString(R.string.logout))){
+                    AccessToken.access_token = null;
+                    AccessToken.userName = null;
+                    login.setText(getString(R.string.login));
+                    loggedInUser.setText(getString(R.string.not_logged_in));
+                    mDrawerLayout.closeDrawers();
+                }
+                else{
+                    // ga naar pagina om in te loggen
+                    Intent loginIntent = new Intent(UsersActivity.this, LoginActivity.class);
+                    startActivity(loginIntent);
+                }
             }
         });
 
@@ -131,8 +178,17 @@ public class UsersActivity extends AppCompatActivity implements Callback<UsersRe
 
     @Override
     public void onResponse(Call<UsersResponse> call, Response<UsersResponse> response) {
+        System.out.println("success1");
+        try {
+            System.out.println(response.errorBody().string());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if(response.isSuccessful() && response.body() != null){
             //fill labels with userinformation
+            System.out.println("success2");
+            mContent.addAll(response.body().userlist);
+            mListAdapter.notifyDataSetChanged();
         }
     }
 

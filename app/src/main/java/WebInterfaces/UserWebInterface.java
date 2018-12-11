@@ -22,5 +22,5 @@ public interface UserWebInterface {
     Call<LoginResponse> login(@Field("UserName") String username, @Field("Password") String password, @Field("grant_type") String grant_type);
 
     @GET("/api/Account")
-    Call<UsersResponse> getUsers(@Header("access_token") String access_token);
+    Call<UsersResponse> getUsers(@Header("Authorization") String access_token);
 }

@@ -52,6 +52,7 @@ public class CameraActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 saveImages();
+               // mImages.clear();
             }
         });
     }
@@ -67,7 +68,7 @@ public class CameraActivity extends AppCompatActivity {
             imageView.setImageBitmap(mImageBitmap);
             gridLayout1.addView(imageView);
             imageView.getLayoutParams().height = (getDisplayMetrics().heightPixels)/2;
-            imageView.getLayoutParams().width = (getDisplayMetrics().widthPixels)/2;
+            imageView.getLayoutParams().width = (getDisplayMetrics().heightPixels)/2;
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
             mImages.add(mImageBitmap);
         }
