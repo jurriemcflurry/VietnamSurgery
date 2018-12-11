@@ -15,7 +15,7 @@ public class FormActivity extends AppCompatActivity {
 
     public final static String FORM = "FormActivity.form1";
 
-    private int sectionIndex;
+    private int sectionIndex = 0;
     private Form form;
 
     @Override
