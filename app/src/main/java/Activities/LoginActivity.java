@@ -47,7 +47,7 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
         setupNavigation();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://localhost:52053/")
+                .baseUrl(getString(R.string.baseURL))
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

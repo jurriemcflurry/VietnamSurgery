@@ -86,7 +86,6 @@ public class CameraActivity extends AppCompatActivity {
         }
 
         String filename = "imageNumber";
-        FileOutputStream outputStream;
         int i = 0;
 
         for(Bitmap image : mImages){

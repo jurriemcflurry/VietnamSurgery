@@ -13,12 +13,12 @@ import toning.juriaan.vietnamsurgery.RegisterObject;
 
 public interface UserWebInterface {
 
-    @POST("api/Account")
+    @POST("/api/Account")
     Call<RegisterResponse> register(@Body RegisterObject registerObject);
 
-    @POST("token")
+    @POST("/token")
     Call<LoginResponse> login(@Body LoginObject loginObject);
 
-    @GET("api/Account")
+    @GET("/api/Account")
     Call<UsersResponse> getUsers(@Header("access_token") String access_token);
 }

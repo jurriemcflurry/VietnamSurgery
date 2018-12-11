@@ -8,7 +8,7 @@
     <string name="forms">Forms</string>
     <string name="users">Users</string>
     <string name="camera_title">Pictures</string>
-    <string name="baseURL">http://localhost:52053/</string>
+    <string name="baseURL">http://vietnamcloudapi.azurewebsites.net</string>
     <string name="register">Register new user</string>
     <string name="confirmpassword">Confirm password</string>
     <string name="email">Email</string>

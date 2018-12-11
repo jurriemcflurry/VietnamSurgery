@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -23,6 +24,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import toning.juriaan.vietnamsurgery.AccessToken;
 import toning.juriaan.vietnamsurgery.R;
+import toning.juriaan.vietnamsurgery.RegisterObject;
 
 public class UsersActivity extends AppCompatActivity implements Callback<UsersResponse> {
     private DrawerLayout mDrawerLayout;
@@ -40,10 +42,19 @@ public class UsersActivity extends AppCompatActivity implements Callback<UsersRe
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        userWebInterface = retrofit.create(UserWebInterface.class);
+       // userWebInterface = retrofit.create(UserWebInterface.class);
 
         setupNavigation();
         getUsers();
+        Button register = (Button) findViewById(R.id.register_user);
+
+        register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent toRegister = new Intent(UsersActivity.this, RegisterActivity.class);
+                startActivity(toRegister);
+            }
+        });
     }
 
     @Override

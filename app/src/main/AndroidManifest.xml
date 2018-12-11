@@ -25,6 +25,7 @@
         <activity android:name="Activities.FormActivity"></activity>
         <activity android:name="Activities.LoginActivity"></activity>
         <activity android:name="Activities.UsersActivity"></activity>
+        <activity android:name="Activities.RegisterActivity"></activity>
     </application>
 
 
@@ -35,4 +36,5 @@
         android:name="android.hardware.camera.autofocus"
         android:required="false" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 </manifest>
