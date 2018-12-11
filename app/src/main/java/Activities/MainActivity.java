@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import toning.juriaan.vietnamsurgery.AccessToken;
 import toning.juriaan.vietnamsurgery.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -71,13 +72,31 @@ public class MainActivity extends AppCompatActivity {
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
+        if(AccessToken.access_token != null){
+            login.setText(getString(R.string.logout));
+            loggedInUser.setText(AccessToken.userName);
+        }
+        else{
+            login.setText(getString(R.string.login));
+            loggedInUser.setText(getString(R.string.not_logged_in));
+        }
+
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // ga naar pagina om in te loggen
-                Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(loginIntent);
 
+                if(login.getText().equals(getString(R.string.logout))){
+                    AccessToken.access_token = null;
+                    AccessToken.userName = null;
+                    login.setText(getString(R.string.login));
+                    loggedInUser.setText(getString(R.string.not_logged_in));
+                    mDrawerLayout.closeDrawers();
+                }
+                else{
+                    // ga naar pagina om in te loggen
+                    Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(loginIntent);
+                }
             }
         });
 
