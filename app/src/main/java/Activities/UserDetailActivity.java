@@ -6,13 +6,17 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
+import java.util.List;
+
 import toning.juriaan.vietnamsurgery.R;
+import toning.juriaan.vietnamsurgery.Roles;
 import toning.juriaan.vietnamsurgery.User;
 
 public class UserDetailActivity extends AppCompatActivity {
 
     public TextView username;
     public TextView email;
+    public TextView role;
     private User user;
 
     @Override
@@ -30,5 +34,13 @@ public class UserDetailActivity extends AppCompatActivity {
 
         email = (TextView) findViewById(R.id.detailpage_email);
         email.setText(user.email);
+
+        String userId = user.roles.get(0).getUserId();
+        String roleId = user.roles.get(0).getRoleId();
+
+        role = (TextView) findViewById(R.id.detailpage_role);
+        if(roleId.equals("1")){
+            role.setText(getString(R.string.admin));
+        }
     }
 }

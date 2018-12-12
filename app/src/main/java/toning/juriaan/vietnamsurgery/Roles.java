@@ -1,8 +1,11 @@
 package toning.juriaan.vietnamsurgery;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
-public class Roles {
+public class Roles implements Parcelable {
 
     @SerializedName("UserId")
     public String userId;
@@ -10,8 +13,39 @@ public class Roles {
     @SerializedName("RoleId")
     public String roleId;
 
-    public Roles(String userId, String roleId){
-        this.userId = userId;
-        this.roleId = roleId;
+    protected Roles(Parcel in){
+        userId = in.readString();
+        roleId = in.readString();
+    }
+
+    public static final Creator<Roles> CREATOR = new Creator<Roles>() {
+        @Override
+        public Roles createFromParcel(Parcel source) {
+            return new Roles(source);
+        }
+
+        @Override
+        public Roles[] newArray(int size) {
+            return new Roles[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(userId);
+        dest.writeString(roleId);
+    }
+
+    public String getUserId(){
+        return this.userId;
+    }
+
+    public String getRoleId(){
+        return this.roleId;
     }
 }

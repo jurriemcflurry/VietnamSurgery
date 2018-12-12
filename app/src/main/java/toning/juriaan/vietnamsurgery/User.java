@@ -5,13 +5,16 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class User implements Parcelable {
 
     @SerializedName("Email")
     public String email;
 
     @SerializedName("Roles")
-    public Roles[] roles;
+    public List<Roles> roles;
 
     @SerializedName("Id")
     public String id;
@@ -23,6 +26,14 @@ public class User implements Parcelable {
         email = in.readString();
         id = in.readString();
         username = in.readString();
+
+        if(in.readByte() == 0x01){
+            roles = new ArrayList<Roles>();
+            in.readList(roles, Roles.class.getClassLoader());
+        }
+        else{
+            roles = null;
+        }
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -47,6 +58,13 @@ public class User implements Parcelable {
         dest.writeString(email);
         dest.writeString(id);
         dest.writeString(username);
+
+        if(roles == null){
+            dest.writeByte((byte) (0x00));
+        }else{
+            dest.writeByte((byte) (0x01));
+            dest.writeList(roles);
+        }
     }
 
     public String getId(){
