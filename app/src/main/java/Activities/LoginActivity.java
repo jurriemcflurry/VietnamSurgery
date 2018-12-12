@@ -166,7 +166,7 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
         //terug naar home
 
         if(response.isSuccessful() && response.body() != null){
-            AccessToken.access_token = response.body().accesstoken;
+            AccessToken.access_token = "Bearer " + response.body().accesstoken;
             AccessToken.userName = response.body().userName;
             TextView loginText = (TextView) findViewById(R.id.Logintext);
             TextView loggedInUser = (TextView) findViewById(R.id.LoggedinUser);

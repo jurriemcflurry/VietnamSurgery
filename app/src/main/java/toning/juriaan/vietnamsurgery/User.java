@@ -45,7 +45,6 @@ public class User implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(email);
-        dest.writeArray(roles);
         dest.writeString(id);
         dest.writeString(username);
     }

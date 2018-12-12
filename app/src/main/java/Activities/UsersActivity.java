@@ -17,11 +17,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ResponseModels.UsersResponse;
 import WebInterfaces.DetailClickListener;
 import WebInterfaces.UserWebInterface;
 import retrofit2.Call;
@@ -31,17 +29,17 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import toning.juriaan.vietnamsurgery.AccessToken;
 import toning.juriaan.vietnamsurgery.R;
-import toning.juriaan.vietnamsurgery.RegisterObject;
 import toning.juriaan.vietnamsurgery.User;
 import toning.juriaan.vietnamsurgery.UserAdapter;
 
-public class UsersActivity extends AppCompatActivity implements Callback<UsersResponse> {
+public class UsersActivity extends AppCompatActivity implements Callback<List<User>> {
     private DrawerLayout mDrawerLayout;
     private UserWebInterface userWebInterface;
     private List<User> mContent;
     private RecyclerView list;
     private UserAdapter mListAdapter;
     private LinearLayoutManager mLinearLayoutManager;
+    public static final String detailpage = String.valueOf(R.string.toUserDetail);
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,7 +64,10 @@ public class UsersActivity extends AppCompatActivity implements Callback<UsersRe
         mListAdapter = new UserAdapter(mContent, this, new DetailClickListener() {
             @Override
             public void onItemClick(int position) {
-                //naar detailpagina
+                User user = mListAdapter.getItem(position);
+                Intent toUserDetail = new Intent(UsersActivity.this, UserDetailActivity.class);
+                toUserDetail.putExtra(detailpage, user);
+                startActivity(toUserDetail);
             }
         });
         list.setAdapter(mListAdapter);
@@ -99,9 +100,7 @@ public class UsersActivity extends AppCompatActivity implements Callback<UsersRe
             return;
         }
 
-        String authRequest = "Bearer " + AccessToken.access_token;
-        System.out.println("token is goed");
-        userWebInterface.getUsers(authRequest).enqueue(this);
+        userWebInterface.getUsers(AccessToken.access_token).enqueue(this);
     }
 
     private void setupNavigation(){
@@ -177,23 +176,16 @@ public class UsersActivity extends AppCompatActivity implements Callback<UsersRe
     }
 
     @Override
-    public void onResponse(Call<UsersResponse> call, Response<UsersResponse> response) {
-        System.out.println("success1");
-        try {
-            System.out.println(response.errorBody().string());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void onResponse(Call<List<User>> call, Response<List<User>> response) {
         if(response.isSuccessful() && response.body() != null){
             //fill labels with userinformation
-            System.out.println("success2");
-            mContent.addAll(response.body().userlist);
+            mContent.addAll(response.body());
             mListAdapter.notifyDataSetChanged();
         }
     }
 
     @Override
-    public void onFailure(Call<UsersResponse> call, Throwable t) {
+    public void onFailure(Call<List<User>> call, Throwable t) {
         t.printStackTrace();
     }
 }
