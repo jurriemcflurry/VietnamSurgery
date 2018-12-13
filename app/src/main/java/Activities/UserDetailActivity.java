@@ -42,5 +42,8 @@ public class UserDetailActivity extends AppCompatActivity {
         if(roleId.equals("1")){
             role.setText(getString(R.string.admin));
         }
+        else{
+            role.setText(roleId);
+        }
     }
 }

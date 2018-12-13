@@ -1,14 +1,18 @@
 package Activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.Spinner;
 
 import ResponseModels.RegisterResponse;
@@ -30,6 +34,7 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
     private Spinner userrole;
     private EditText email;
     private Button register;
+    private FrameLayout frameLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,6 +52,7 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
     }
 
     private void setupLayout(){
+        frameLayout = (FrameLayout) findViewById(R.id.register_frame_layout);
         //get the spinner from the xml.
         userrole = findViewById(R.id.spinner1);
         //create a list of items for the spinner.
@@ -106,10 +112,10 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
 
     @Override
     public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
-        System.out.println("success1");
+        System.out.println(response.message());
         if(response.isSuccessful() && response.body() != null){
-            //success
-            System.out.println("success2");
+            Intent backHome = new Intent(RegisterActivity.this, MainActivity.class);
+            startActivity(backHome);
         }
     }
 
