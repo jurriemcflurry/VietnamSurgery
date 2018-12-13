@@ -15,7 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import toning.juriaan.Models.Form;
-import toning.juriaan.Models.FormTemplate;
 import toning.juriaan.Models.R;
 import toning.juriaan.Models.Storage;
 
@@ -47,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Form form = Form.getDummyForm();
                 form.setFormName("MainActivity form");
-                Storage.saveFormTemplate(form, MainActivity.this);
+                Storage.saveForm(form, MainActivity.this);
 
                 Intent toFormActivityIntent = new Intent(MainActivity.this, FormActivity.class);
                 toFormActivityIntent.putExtra(FormActivity.FORM, form.getFormattedFormName());

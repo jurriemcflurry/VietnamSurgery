@@ -6,9 +6,9 @@ public class FieldContent {
 
     public FieldContent() { }
 
-    public FieldContent(String name, String value) {
+    public FieldContent(String name) {
         this.name = name;
-        this.value = value;
+        this.value = "";
     }
 
     public String getName() {

@@ -11,7 +11,8 @@ public class Form {
     private FormTemplate formTemplate;
     private FormContent formContent;
 
-    public Form() { }
+    public Form() {
+    }
 
     public Form(String formName, String region, FormTemplate formTemplate, FormContent formContent) {
         this.formName = formName;
@@ -71,8 +72,7 @@ public class Form {
     }
 
     public String toJson() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
+        return new Gson().toJson(this);
     }
 
     public static Form getDummyForm() {
@@ -83,14 +83,10 @@ public class Form {
     }
 
     private static FormContent getDummyFormContent(FormTemplate formTemplate) {
-        int counter = 1;
         ArrayList<FieldContent> contents = new ArrayList<>();
-        for(Section section : formTemplate.getSections()) {
-            for (Field field : section.getFields()) {
-                contents.add(new FieldContent(field.getFieldName(), "value " + counter));
-                counter++;
-            }
-        }
+        for (Section section : formTemplate.getSections())
+            for (Field field : section.getFields())
+                contents.add(new FieldContent(field.getFieldName()));
 
         return new FormContent(contents.toArray(new FieldContent[0]));
     }
@@ -114,13 +110,10 @@ public class Form {
         Field[] fieldArray = fields.toArray(new Field[0]);
 
         ArrayList<Section> sections = new ArrayList<>();
-        for (int i = 1; i <= 3; i++) {
-            sections.add(new Section("SectionName " + i, fieldArray));
-        }
+        sections.add(new Section("SectionName", fieldArray));
 
         Section[] sectionArray = sections.toArray(new Section[0]);
 
         return new FormTemplate(sectionArray);
     }
-
 }

@@ -6,29 +6,30 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import java.nio.charset.Charset;
+
+import Activities.FormActivity;
 
 public class SectionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int TEXT = 0;
     private static final int DROP_DOWN = 1;
 
-    private Context context;
+    private FormActivity context;
     private Field[] fields;
 
-    public SectionAdapter(Context context) {
+    public SectionAdapter(FormActivity context) {
         this.context = context;
     }
 
     public void setFields(Field[] fields) {
         this.fields = fields;
-        Helper.log("in adapter");
-        for (Field f : this.fields) {
-            Helper.log(f.getType());
-        }
-
         notifyDataSetChanged();
     }
 
@@ -70,11 +71,23 @@ public class SectionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private void onBindViewHolder(@NonNull TextFieldViewHolder textFieldViewHolder, int i) {
         Field field = fields[i];
         textFieldViewHolder.fieldLabel.setText(field.getFieldName());
+        textFieldViewHolder.fieldValue.setId(i);
     }
 
     private void onBindViewHolder(@NonNull DropDownFieldViewHolder dropDownFieldViewHolder, int i) {
         Field field = fields[i];
-        dropDownFieldViewHolder.fieldLabel.setText(field.getFieldName());
+        if (field.getType().equals(FieldType.choice.toString())) {
+            dropDownFieldViewHolder.fieldLabel.setText(field.getFieldName());
+            dropDownFieldViewHolder.optionsDropDown.setId(i);
+            Helper.log("spinner id set to: " + i);
+            try {
+                ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(context, android.R.layout.simple_spinner_dropdown_item, field.getOptions());
+                dropDownFieldViewHolder.optionsDropDown.setAdapter(adapter);
+                dropDownFieldViewHolder.optionsDropDown.setOnItemSelectedListener(context);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override

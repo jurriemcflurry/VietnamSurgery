@@ -1,5 +1,7 @@
 package toning.juriaan.Models;
 
+import com.google.gson.Gson;
+
 public class FormContent {
     private FieldContent[] fields;
 
@@ -15,5 +17,9 @@ public class FormContent {
 
     public void setFields(FieldContent[] fields) {
         this.fields = fields;
+    }
+
+    public String toJson() {
+        return new Gson().toJson(this);
     }
 }

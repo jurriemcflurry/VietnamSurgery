@@ -21,5 +21,9 @@ public class FormTemplate {
     public void setSections(Section[] sections) {
         this.sections = sections;
     }
+
+    public String toJson() {
+        return new Gson().toJson(this);
+    }
 }
 
