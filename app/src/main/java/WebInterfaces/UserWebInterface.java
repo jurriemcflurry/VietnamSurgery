@@ -12,7 +12,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import toning.juriaan.Models.User;
-import toning.juriaan.vietnamsurgery.RegisterObject;
+import toning.juriaan.Models.RegisterObject;
 
 
 public interface UserWebInterface {

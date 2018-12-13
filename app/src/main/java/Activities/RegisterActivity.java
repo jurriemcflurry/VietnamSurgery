@@ -21,7 +21,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import toning.juriaan.Models.R;
-import toning.juriaan.vietnamsurgery.RegisterObject;
+import toning.juriaan.Models.RegisterObject;
 
 public class RegisterActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, Callback<RegisterResponse> {
 

@@ -13,8 +13,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import toning.juriaan.vietnamsurgery.AccessToken;
+
+import WebInterfaces.FormWebInterface;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import toning.juriaan.Models.AccessToken;
 import toning.juriaan.Models.Form;
+import toning.juriaan.Models.FormTemplateObject;
+import toning.juriaan.Models.Helper;
 import toning.juriaan.Models.R;
 import toning.juriaan.Models.Storage;
 
@@ -22,6 +31,7 @@ import toning.juriaan.Models.Storage;
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
+    private Form form;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        form = Form.getDummyForm();
+        form.setFormName("MainActivity form");
 
         setupNavigation();
 
@@ -41,17 +53,46 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final Button toFormActivityButton = findViewById(R.id.toFormActivity);
+        Button toFormActivityButton = findViewById(R.id.toFormActivity);
         toFormActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Form form = Form.getDummyForm();
-                form.setFormName("MainActivity form");
                 Storage.saveForm(form, MainActivity.this);
 
                 Intent toFormActivityIntent = new Intent(MainActivity.this, FormActivity.class);
                 toFormActivityIntent.putExtra(FormActivity.FORM, form.getFormattedFormName());
                 startActivity(toFormActivityIntent);
+            }
+        });
+
+        final Button postForm = findViewById(R.id.postForm);
+        postForm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                postForm();
+            }
+        });
+    }
+
+    private void postForm() {
+        Retrofit.Builder builder = new Retrofit.Builder()
+                .baseUrl(getString(R.string.baseURL))
+                .addConverterFactory(GsonConverterFactory.create());
+
+        Retrofit retrofit = builder.build();
+        FormWebInterface client = retrofit.create(FormWebInterface.class);
+        Call<FormTemplateObject> call = client.postFormTemplate(new FormTemplateObject(form.getFormTemplate()));
+
+        call.enqueue(new Callback<FormTemplateObject>() {
+            @Override
+            public void onResponse(Call<FormTemplateObject> call, Response<FormTemplateObject> response) {
+                Helper.log("onResponse() " + response.code());
+            }
+
+            @Override
+            public void onFailure(Call<FormTemplateObject> call, Throwable t) {
+                Helper.log("onFailure()");
+                Helper.log(t.getMessage());
             }
         });
     }

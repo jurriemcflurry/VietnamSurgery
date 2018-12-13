@@ -1,6 +1,7 @@
 package toning.juriaan.Models;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
@@ -25,5 +26,6 @@ public class FormTemplate {
     public String toJson() {
         return new Gson().toJson(this);
     }
+
 }
 

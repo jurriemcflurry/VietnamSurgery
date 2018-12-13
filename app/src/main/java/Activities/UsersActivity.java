@@ -30,7 +30,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import toning.juriaan.Models.R;
 import toning.juriaan.Models.User;
 import toning.juriaan.Models.UserAdapter;
-import toning.juriaan.vietnamsurgery.AccessToken;
+import toning.juriaan.Models.AccessToken;
 
 public class UsersActivity extends AppCompatActivity implements Callback<List<User>> {
     private DrawerLayout mDrawerLayout;

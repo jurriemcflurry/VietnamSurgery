@@ -14,7 +14,7 @@ public class User implements Parcelable {
     public String email;
 
     @SerializedName("Roles")
-    public List<toning.juriaan.vietnamsurgery.Roles> roles;
+    public List<toning.juriaan.Models.Roles> roles;
 
     @SerializedName("Id")
     public String id;
@@ -28,8 +28,8 @@ public class User implements Parcelable {
         username = in.readString();
 
         if(in.readByte() == 0x01){
-            roles = new ArrayList<toning.juriaan.vietnamsurgery.Roles>();
-            in.readList(roles, toning.juriaan.vietnamsurgery.Roles.class.getClassLoader());
+            roles = new ArrayList<>();
+            in.readList(roles, toning.juriaan.Models.Roles.class.getClassLoader());
         }
         else{
             roles = null;

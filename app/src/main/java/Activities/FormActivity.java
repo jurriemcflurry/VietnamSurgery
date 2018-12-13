@@ -51,6 +51,7 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
 
         Intent intent = getIntent();
         form = Storage.getFormTemplate(intent.getStringExtra(FORM), this);
+        dropDownValues = new ArrayList<>();
 
         toolbar = findViewById(R.id.form_toolbar);
         setSupportActionBar(toolbar);
@@ -139,6 +140,7 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         int fieldId = parent.getId();
         String fieldValue = (String) parent.getItemAtPosition(position);
+        addDropDownPair(fieldId, fieldValue);
     }
 
     public void addDropDownPair(int first, String second) {
