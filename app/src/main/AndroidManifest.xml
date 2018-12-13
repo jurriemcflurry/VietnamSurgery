@@ -42,9 +42,9 @@
 
 
     <uses-permission android:name="android.permission.INTERNET" />
-<<<<<<< HEAD
-</manifest>
-=======
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 </manifest>
->>>>>>> Juriaan-takje
+
+
+
+
