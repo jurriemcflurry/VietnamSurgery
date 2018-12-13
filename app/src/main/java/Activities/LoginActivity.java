@@ -24,8 +24,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import toning.juriaan.Models.LoginObject;
+import toning.juriaan.vietnamsurgery.AccessToken;
 import toning.juriaan.Models.R;
+
 
 public class LoginActivity extends AppCompatActivity implements Callback<LoginResponse> {
 
@@ -46,7 +47,7 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
         setupNavigation();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://localhost:52053/")
+                .baseUrl(getString(R.string.baseURL))
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -66,11 +67,20 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
     private void setupNavigation(){
         mDrawerLayout = (DrawerLayout) findViewById(R.id.login_drawer_layout);
         NavigationView navigationView = findViewById(R.id.login_nav_view);
+        View headerView = navigationView.getHeaderView(0);
+        LinearLayout header = (LinearLayout) headerView.findViewById(R.id.headerlayout);
+        final TextView login = (TextView) header.findViewById(R.id.Logintext);
+        final TextView loggedInUser = (TextView) header.findViewById(R.id.LoggedinUser);
         Toolbar toolbar = findViewById(R.id.login_toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
+
+        if(AccessToken.access_token != null){
+            login.setText(getString(R.string.logout));
+            loggedInUser.setText(AccessToken.userName);
+        }
 
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
@@ -135,15 +145,15 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
     }
 
     private void login(){
-        if(userNameEditText == null || passwordEditText == null){
+        if(userNameEditText.getText() == null || passwordEditText.getText() == null){
             return;
         }
 
-        String username = userNameEditText.toString();
-        String password = passwordEditText.toString();
-        LoginObject loginObject = new LoginObject(username, password);
+        String username = userNameEditText.getText().toString();
+        String password = passwordEditText.getText().toString();
+        String granttype = getString(R.string.password2);
 
-        userWebInterface.login(loginObject).enqueue(this);
+        userWebInterface.login(username, password, granttype).enqueue(this);
     }
 
     public static int dpToPx(int dp){
@@ -152,14 +162,20 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
 
     @Override
     public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-        //set headertexts goed
         //sla token op
+        //set headertexts goed
+        //terug naar home
 
-        TextView loginText = (TextView) findViewById(R.id.Logintext);
-        TextView loggedInUser = (TextView) findViewById(R.id.LoggedinUser);
-        loginText.setText("Ingelogd");
-        Intent backToHome = new Intent(LoginActivity.this, MainActivity.class);
-        startActivity(backToHome);
+        if(response.isSuccessful() && response.body() != null){
+            AccessToken.access_token = "Bearer " + response.body().accesstoken;
+            AccessToken.userName = response.body().userName;
+            TextView loginText = (TextView) findViewById(R.id.Logintext);
+            TextView loggedInUser = (TextView) findViewById(R.id.LoggedinUser);
+            loginText.setText(getString(R.string.logout));
+            loggedInUser.setText(AccessToken.userName);
+            Intent backToHome = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(backToHome);
+        }
     }
 
     @Override

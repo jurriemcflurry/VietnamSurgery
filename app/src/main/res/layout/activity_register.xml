@@ -5,10 +5,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/login_drawer_layout">
+    android:id="@+id/register_drawer_layout">
 
     <FrameLayout
-        android:id="@+id/login_frame_layout"
+        android:id="@+id/register_frame_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -18,41 +18,26 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:title="@string/login"
+            app:title="@string/register"
             >
         </android.support.v7.widget.Toolbar>
 
         <LinearLayout
-            android:id="@+id/login_linear_layout"
+            android:id="@+id/register_linear_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="?attr/actionBarSize"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/userNameTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/username"
-                android:visibility="invisible"/>
-
             <EditText
-                android:id="@+id/userNameEditText"
+                android:id="@+id/registeruserNameEditText"
                 android:layout_width="150dp"
                 android:layout_height="20dp"
                 android:background="@null"
                 android:hint="@string/username" />
 
-            <TextView
-                android:id="@+id/passwordTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="@string/password"
-                android:visibility="invisible"/>
-
             <EditText
-                android:id="@+id/passwordEditText"
+                android:id="@+id/registerpasswordEditText"
                 android:layout_width="150dp"
                 android:layout_height="20dp"
                 android:layout_marginTop="20dp"
@@ -60,17 +45,41 @@
                 android:inputType="textPassword"
                 android:hint="@string/password"/>
 
+            <EditText
+                android:id="@+id/registerconfirmpasswordEditText"
+                android:layout_width="150dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="20dp"
+                android:background="@null"
+                android:inputType="textPassword"
+                android:hint="@string/confirmpassword"/>
+
+            <Spinner
+            android:id="@+id/spinner1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/btn_dropdown"
+            android:spinnerMode="dropdown"/>
+
+            <EditText
+                android:id="@+id/registeremailEditText"
+                android:layout_width="150dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="20dp"
+                android:background="@null"
+                android:hint="@string/email"/>
+
             <Button
-                android:id="@+id/login_button"
+                android:id="@+id/register_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:text="@string/login"/>
+                android:text="@string/register"/>
         </LinearLayout>
     </FrameLayout>
 
     <android.support.design.widget.NavigationView
-        android:id="@+id/login_nav_view"
+        android:id="@+id/register_nav_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"

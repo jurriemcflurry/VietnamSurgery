@@ -21,12 +21,13 @@ import java.util.ArrayList;
 import toning.juriaan.Models.Field;
 import toning.juriaan.Models.FieldContent;
 import toning.juriaan.Models.FieldType;
+import toning.juriaan.Models.R;
 import toning.juriaan.Models.Form;
 import toning.juriaan.Models.Helper;
-import toning.juriaan.Models.R;
 import toning.juriaan.Models.Section;
 import toning.juriaan.Models.SectionAdapter;
 import toning.juriaan.Models.Storage;
+
 
 @SuppressLint("Registered")
 public class FormActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {

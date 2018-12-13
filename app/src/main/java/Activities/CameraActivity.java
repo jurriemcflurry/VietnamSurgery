@@ -50,6 +50,7 @@ public class CameraActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 saveImages();
+               // mImages.clear();
             }
         });
     }
@@ -84,7 +85,6 @@ public class CameraActivity extends AppCompatActivity {
         }
 
         String filename = "imageNumber";
-        FileOutputStream outputStream;
         int i = 0;
 
         for(Bitmap image : mImages){
@@ -101,7 +101,8 @@ public class CameraActivity extends AppCompatActivity {
                 return false;
             }
         }
-
+        mImages.clear();
+        gridLayout1.removeAllViews();
         return true;
     }
 }

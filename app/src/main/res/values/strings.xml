@@ -2,10 +2,19 @@
     <string name="app_name">VietnamSurgery</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
+    <string name="password2">password</string>
     <string name="login">Login</string>
     <string name="not_logged_in">Not logged in</string>
+    <string name="logout">Log out</string>
     <string name="forms">Forms</string>
     <string name="users">Users</string>
     <string name="camera_title">Pictures</string>
     <string name="next">next</string>
+    <string name="baseURL">http://vietnamcloudapi.azurewebsites.net</string>
+    <string name="register">Register new user</string>
+    <string name="confirmpassword">Confirm password</string>
+    <string name="email">Email</string>
+    <string name="toUserDetail">User to Userdetailpage</string>\
+    <string name="role">Role</string>
+    <string name="admin">Admin</string>
 </resources>
