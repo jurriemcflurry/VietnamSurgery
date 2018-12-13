@@ -6,18 +6,14 @@ import ResponseModels.LoginResponse;
 import ResponseModels.RegisterResponse;
 import retrofit2.Call;
 import retrofit2.http.Body;
-<<<<<<< HEAD
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import toning.juriaan.Models.User;
 import toning.juriaan.vietnamsurgery.RegisterObject;
-import toning.juriaan.vietnamsurgery.User;
-=======
-import retrofit2.http.POST;
-import toning.juriaan.Models.LoginObject;
->>>>>>> d292cce00a9d0afd67167644e9811149684d3977
+
 
 public interface UserWebInterface {
 

@@ -1,11 +1,9 @@
 package Activities;
 
-import android.app.Activity;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,7 +20,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import toning.juriaan.vietnamsurgery.R;
+import toning.juriaan.Models.R;
 import toning.juriaan.vietnamsurgery.RegisterObject;
 
 public class RegisterActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, Callback<RegisterResponse> {

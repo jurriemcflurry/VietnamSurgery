@@ -1,4 +1,4 @@
-package toning.juriaan.vietnamsurgery;
+package toning.juriaan.Models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -14,7 +14,7 @@ public class User implements Parcelable {
     public String email;
 
     @SerializedName("Roles")
-    public List<Roles> roles;
+    public List<toning.juriaan.vietnamsurgery.Roles> roles;
 
     @SerializedName("Id")
     public String id;
@@ -28,8 +28,8 @@ public class User implements Parcelable {
         username = in.readString();
 
         if(in.readByte() == 0x01){
-            roles = new ArrayList<Roles>();
-            in.readList(roles, Roles.class.getClassLoader());
+            roles = new ArrayList<toning.juriaan.vietnamsurgery.Roles>();
+            in.readList(roles, toning.juriaan.vietnamsurgery.Roles.class.getClassLoader());
         }
         else{
             roles = null;

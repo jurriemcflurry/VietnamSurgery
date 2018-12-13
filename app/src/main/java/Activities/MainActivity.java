@@ -13,17 +13,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-<<<<<<< HEAD
 import toning.juriaan.vietnamsurgery.AccessToken;
-import toning.juriaan.vietnamsurgery.R;
-import java.util.ArrayList;
-=======
-
 import toning.juriaan.Models.Form;
-import toning.juriaan.Models.FormTemplate;
 import toning.juriaan.Models.R;
 import toning.juriaan.Models.Storage;
->>>>>>> d292cce00a9d0afd67167644e9811149684d3977
+
 
 public class MainActivity extends AppCompatActivity {
 

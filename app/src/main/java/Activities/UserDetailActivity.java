@@ -6,11 +6,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
-import java.util.List;
-
-import toning.juriaan.vietnamsurgery.R;
-import toning.juriaan.vietnamsurgery.Roles;
-import toning.juriaan.vietnamsurgery.User;
+import toning.juriaan.Models.R;
+import toning.juriaan.Models.User;
 
 public class UserDetailActivity extends AppCompatActivity {
 

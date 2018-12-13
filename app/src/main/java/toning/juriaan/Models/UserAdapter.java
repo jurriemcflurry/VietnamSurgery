@@ -1,4 +1,4 @@
-package toning.juriaan.vietnamsurgery;
+package toning.juriaan.Models;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

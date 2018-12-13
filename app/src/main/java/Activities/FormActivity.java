@@ -9,20 +9,13 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
-<<<<<<< HEAD
-import toning.juriaan.vietnamsurgery.Form;
-import toning.juriaan.vietnamsurgery.Helper;
-import toning.juriaan.vietnamsurgery.R;
-import toning.juriaan.vietnamsurgery.Storage;
-=======
-import toning.juriaan.Models.Form;
-import toning.juriaan.Models.FormTemplate;
-import toning.juriaan.Models.Helper;
 import toning.juriaan.Models.R;
+import toning.juriaan.Models.Form;
+import toning.juriaan.Models.Helper;
 import toning.juriaan.Models.Section;
 import toning.juriaan.Models.SectionAdapter;
 import toning.juriaan.Models.Storage;
->>>>>>> d292cce00a9d0afd67167644e9811149684d3977
+
 
 @SuppressLint("Registered")
 public class FormActivity extends AppCompatActivity {
