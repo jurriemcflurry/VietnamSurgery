@@ -13,9 +13,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+<<<<<<< HEAD
 import toning.juriaan.vietnamsurgery.AccessToken;
 import toning.juriaan.vietnamsurgery.R;
 import java.util.ArrayList;
+=======
+
+import toning.juriaan.Models.Form;
+import toning.juriaan.Models.FormTemplate;
+import toning.juriaan.Models.R;
+import toning.juriaan.Models.Storage;
+>>>>>>> d292cce00a9d0afd67167644e9811149684d3977
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,8 +51,12 @@ public class MainActivity extends AppCompatActivity {
         toFormActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Form form = Form.getDummyForm();
+                form.setFormName("MainActivity form");
+                Storage.saveFormTemplate(form, MainActivity.this);
+
                 Intent toFormActivityIntent = new Intent(MainActivity.this, FormActivity.class);
-                toFormActivityIntent.putExtra(FormActivity.INDEX, 0);
+                toFormActivityIntent.putExtra(FormActivity.FORM, form.getFormattedFormName());
                 startActivity(toFormActivityIntent);
             }
         });

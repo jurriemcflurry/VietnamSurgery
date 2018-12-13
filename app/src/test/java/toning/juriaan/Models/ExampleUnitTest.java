@@ -1,4 +1,4 @@
-package toning.juriaan.vietnamsurgery;
+package toning.juriaan.Models;
 
 import org.junit.Test;
 

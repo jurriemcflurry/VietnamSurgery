@@ -13,12 +13,10 @@ import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.List;
 
-import toning.juriaan.vietnamsurgery.R;
+import toning.juriaan.Models.R;
 
 public class CameraActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
