@@ -36,6 +36,15 @@
     <uses-feature
         android:name="android.hardware.camera.autofocus"
         android:required="false" />
+
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+
     <uses-permission android:name="android.permission.INTERNET" />
+<<<<<<< HEAD
+</manifest>
+=======
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 </manifest>
+>>>>>>> Juriaan-takje
