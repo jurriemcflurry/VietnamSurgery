@@ -4,9 +4,8 @@ import ResponseModels.LoginResponse;
 import ResponseModels.RegisterResponse;
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.GET;
 import retrofit2.http.POST;
-import toning.juriaan.vietnamsurgery.LoginObject;
+import toning.juriaan.Models.LoginObject;
 
 public interface UserWebInterface {
 

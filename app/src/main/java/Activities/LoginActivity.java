@@ -24,8 +24,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import toning.juriaan.vietnamsurgery.LoginObject;
-import toning.juriaan.vietnamsurgery.R;
+import toning.juriaan.Models.LoginObject;
+import toning.juriaan.Models.R;
 
 public class LoginActivity extends AppCompatActivity implements Callback<LoginResponse> {
 

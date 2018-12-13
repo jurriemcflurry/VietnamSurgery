@@ -1,4 +1,4 @@
-package toning.juriaan.vietnamsurgery;
+package toning.juriaan.Models;
 
 import android.content.Context;
 
@@ -41,7 +41,6 @@ public class Storage {
             writer.write(formJson);
             writer.flush();
             writer.close();
-            Helper.log(file.getAbsolutePath());
             success = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -52,7 +51,6 @@ public class Storage {
 
     private static File getFormTemplateFile(String formattedFormName, Context context) throws Exception {
         File file = new File(getFormTemplateDirPath(context), formattedFormName + ".json");
-        Helper.log("Filename: " + file.getAbsolutePath());
         if (!checkFile(file)) {
             throw new Exception("Something went wrong with finding/creating a file for path: " + file.getAbsolutePath());
         }

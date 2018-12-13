@@ -1,6 +1,5 @@
 package Activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,9 +14,10 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import toning.juriaan.vietnamsurgery.Form;
-import toning.juriaan.vietnamsurgery.R;
-import toning.juriaan.vietnamsurgery.Storage;
+import toning.juriaan.Models.Form;
+import toning.juriaan.Models.FormTemplate;
+import toning.juriaan.Models.R;
+import toning.juriaan.Models.Storage;
 
 public class MainActivity extends AppCompatActivity {
 

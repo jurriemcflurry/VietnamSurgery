@@ -12,19 +12,35 @@
         android:layout_height="wrap_content">
         
         <android.support.v7.widget.Toolbar
+            android:id="@+id/form_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:title="FormActivity"
+            android:layout_marginBottom="1dp"
             >
         </android.support.v7.widget.Toolbar>
 
         <LinearLayout
-            android:id="@+id/form_linear_layout"
+            android:id="@+id/section_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            style="@style/SectionView">
+
+            <TextView
+                android:id="@+id/section_name"
+                android:textSize="20sp"
+                android:textColor="#000"
+                style="@style/ListItemStyle"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/fields_recycler_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            </android.support.v7.widget.RecyclerView>
+
         </LinearLayout>
     </FrameLayout>
 
