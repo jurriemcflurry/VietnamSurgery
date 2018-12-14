@@ -8,5 +8,5 @@ import toning.juriaan.Models.FormTemplateObject;
 public interface FormWebInterface {
 
     @POST("/api/Formulieren")
-    Call<FormTemplateObject> postFormTemplate(@Body FormTemplateObject body);
+    Call<Void> postFormTemplate(@Body FormTemplateObject body);
 }

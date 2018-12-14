@@ -16,6 +16,7 @@ public class FormTemplateObject {
     public FormTemplateObject(FormTemplate formTemplate) {
         this.name = "test name";
         this.region = "test region";
-        this.formTemplateString = formTemplate.toJson().replace("\"", "\\\"");
+        this.formTemplateString = formTemplate.toJson();//.replace("\"", "\\\"");
+        Helper.log(this.formTemplateString);
     }
 }

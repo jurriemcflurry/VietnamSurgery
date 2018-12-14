@@ -81,18 +81,17 @@ public class MainActivity extends AppCompatActivity {
 
         Retrofit retrofit = builder.build();
         FormWebInterface client = retrofit.create(FormWebInterface.class);
-        Call<FormTemplateObject> call = client.postFormTemplate(new FormTemplateObject(form.getFormTemplate()));
+        Call<Void> call = client.postFormTemplate(new FormTemplateObject(form.getFormTemplate()));
 
-        call.enqueue(new Callback<FormTemplateObject>() {
+        call.enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<FormTemplateObject> call, Response<FormTemplateObject> response) {
+            public void onResponse(Call<Void> call, Response<Void> response) {
                 Helper.log("onResponse() " + response.code());
             }
 
             @Override
-            public void onFailure(Call<FormTemplateObject> call, Throwable t) {
+            public void onFailure(Call<Void> call, Throwable t) {
                 Helper.log("onFailure()");
-                Helper.log(t.getMessage());
             }
         });
     }
