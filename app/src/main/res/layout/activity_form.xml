@@ -10,25 +10,60 @@
         android:id="@+id/form_frame_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-        
+
         <android.support.v7.widget.Toolbar
+            android:id="@+id/form_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:title="FormActivity"
+            android:layout_marginBottom="1dp"
             >
         </android.support.v7.widget.Toolbar>
 
         <LinearLayout
-            android:id="@+id/form_linear_layout"
-            android:layout_width="wrap_content"
+            android:id="@+id/section_view"
+            style="@style/SectionView"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/section_name"
+                    style="@style/ListItemStyle"
+                    android:gravity="start"
+                    android:layout_weight="1"
+                    android:textColor="#000"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/step_counter"
+                    style="@style/ListItemStyle"
+                    android:gravity="end"
+                    android:layout_weight="1"
+                    android:text="testtest"
+                    android:textColor="#000"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/formLayout"
+                android:orientation="vertical">
+
+            </LinearLayout>
+
         </LinearLayout>
     </FrameLayout>
 
-    <android.support.design.widget.NavigationView
+    <!--<android.support.design.widget.NavigationView
         android:id="@+id/form_nav_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -38,5 +73,5 @@
         app:headerLayout="@layout/header_layout"
         >
 
-    </android.support.design.widget.NavigationView>
+    </android.support.design.widget.NavigationView>-->
 </android.support.v4.widget.DrawerLayout>

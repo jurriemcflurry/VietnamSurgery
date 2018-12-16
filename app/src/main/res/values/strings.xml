@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">VietnamSurgery</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_save">Save</string>
 </resources>

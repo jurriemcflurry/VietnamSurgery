@@ -24,9 +24,11 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:id="@+id/linLayout"
+            android:orientation="vertical"
             android:layout_marginTop="?attr/actionBarSize">
 
-            <Button
+            <!--<Button
                 android:id="@+id/ToCamera"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -42,13 +44,13 @@
                 android:id="@+id/toReadExcel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ReadExcel"/>
+                android:text="ReadExcel"/> -->
 
         </LinearLayout>
 
     </FrameLayout>
 
-    <android.support.design.widget.NavigationView
+    <!--<android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -57,6 +59,6 @@
         app:menu="@menu/drawer_view"
         app:headerLayout="@layout/header_layout">
 
-    </android.support.design.widget.NavigationView>
+    </android.support.design.widget.NavigationView>-->
 
 </android.support.v4.widget.DrawerLayout>

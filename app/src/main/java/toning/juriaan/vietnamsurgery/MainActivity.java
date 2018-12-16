@@ -21,18 +21,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.STDataValidationErrorStyleImpl;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
     private static final String TAG = "MyActivity";
+    private FormTemplate form = new FormTemplate();
+    private List<Section> sections = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,36 +43,29 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setupNavigation();
+        //setupNavigation();
 
-        Button OpenCamera = findViewById(R.id.ToCamera);
-        OpenCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent toCamera = new Intent(MainActivity.this, CameraActivity.class);
-                startActivity(toCamera);
-            }
-        });
+        /*Button OpenCamera = findViewById(R.id.ToCamera);
+        OpenCamera.setOnClickListener((View v) -> {
+            Intent toCamera = new Intent(MainActivity.this, CameraActivity.class);
+            startActivity(toCamera);
+        });*/
 
-        Button toFormActivityButton = findViewById(R.id.toFormActivity);
-        toFormActivityButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent toFormActivityIntent = new Intent(MainActivity.this, FormActivity.class);
-                startActivity(toFormActivityIntent);
-            }
-        });
+        /*Button toFormActivityButton = findViewById(R.id.toFormActivity);
+        toFormActivityButton.setOnClickListener((View v) -> {
+            Intent toFormActivityIntent = new Intent(MainActivity.this, FormActivity.class);
+            startActivity(toFormActivityIntent);
+        });*/
 
-        Button readExcel = findViewById(R.id.toReadExcel);
-        readExcel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                readExcelFile();
-            }
-        });
+        /*Button readExcel = findViewById(R.id.toReadExcel);
+        readExcel.setOnClickListener((View v) -> {
+            chooseExcelFile();
+        });*/
+
+        chooseExcelFile();
     }
 
-    @Override
+    /*@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -100,70 +88,123 @@ public class MainActivity extends AppCompatActivity {
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        login.setOnClickListener((View v) -> {
                 // ga naar pagina om in te loggen
                 Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(loginIntent);
 
                 loggedInUser.setText("Ingelogde Gebruiker"); //set text to logged in username
                 login.setText("Log out"); //change text when logging in/out
-            }
         });
 
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        // set item as selected to persist highlight
-                        menuItem.setChecked(true);
-                        // close drawer when item is tapped
-                        mDrawerLayout.closeDrawers();
+        navigationView.setNavigationItemSelectedListener((MenuItem menuItem) -> {
+            // set item as selected to persist highlight
+            menuItem.setChecked(true);
+            // close drawer when item is tapped
+            mDrawerLayout.closeDrawers();
 
-                        // Add code here to update the UI based on the item selected
-                        // For example, swap UI fragments here
+            // Add code here to update the UI based on the item selected
+            // For example, swap UI fragments here
 
-                        switch(menuItem.getItemId()){
-                            case 2131230828: //Bovenste Item
-                                break;
-                            case 2131230829: //2e item
-                                break;
-                            case 2131230830: //3e item
-                                break;
-                            case 2131230831: //4e item
-                                break;
-                            default: break;
-                        }
+            switch(menuItem.getItemId()){
+                case 2131230828: //Bovenste Item
+                    break;
+                case 2131230829: //2e item
+                    break;
+                case 2131230830: //3e item
+                    break;
+                case 2131230831: //4e item
+                    break;
+                default: break;
+            }
+            return true;
+        });
+    }*/
 
-                        return true;
-                    }
-                });
+    // Get all the files with xlsx extension
+    private List<File> getListFiles(File parentDir) {
+        // Check if we can read/write to the storage. If so, continue; if not; prompt the user
+        verifyStoragePermissions(this);
+
+        ArrayList<File> inFiles = new ArrayList<>();
+        File[] files = parentDir.listFiles();
+
+        for( File file : files) {
+            if(file.getName().substring(file.getName().lastIndexOf('.') + 1).equals("xlsx")) {
+                inFiles.add(file);
+            }
+        }
+
+        return inFiles;
     }
 
-    private void readExcelFile() {
+    private void chooseExcelFile() {
         File root = Environment.getExternalStorageDirectory();
-        File file = new File(root, "Screening.xlsx");
+        List<File> files = getListFiles(root);
 
+        // Check if there are more than 1 file, if so, show clickables for all files. If not: load the first one directly
+        if(files.size() > 1) {
+            LinearLayout layout = findViewById(R.id.linLayout);
+            // Choose a file
+            for (File f : files) {
+                Button newBtn = new Button(this);
+                newBtn.setText(f.getName());
+                layout.addView(newBtn);
+                newBtn.setOnClickListener((View v) -> {
+                    String fileName = ((Button) v).getText().toString();
+                    form.setFileName(fileName);
+                    form.setFormName(fileName.substring(0, fileName.lastIndexOf('.')));
+                    createExcelWorkbook(new File(root, fileName));
+                });
+            }
+        } else {
+            form.setFileName(files.get(0).getName());
+            form.setFormName(files.get(0).getName().substring(0, files.get(0).getName().lastIndexOf('.')));
+            createExcelWorkbook(new File(root, files.get(0).getName()));
+        }
+    }
+
+    private void createExcelWorkbook(File file) {
         try {
-            // Check if we can read/write to the storage. If so, continue; if not; prompt the user
-            verifyStoragePermissions(this);
-
-            // Open the file
-            FileInputStream fileInputStream = new FileInputStream(file);
-
             // Create a workbook object
-            Workbook workbook = new XSSFWorkbook(file);
+            XSSFWorkbook workbook = new XSSFWorkbook(file);
 
-            XSSFSheet sheet = ((XSSFWorkbook) workbook).getSheetAt(0);
+            chooseExcelSheet(workbook);
+        } catch (Exception ex) {
+            Log.i("TESTT", "Error");
+        }
+    }
 
-            int rowsCount = sheet.getPhysicalNumberOfRows();
+    private void chooseExcelSheet(XSSFWorkbook workbook) {
+        LinearLayout layout = findViewById(R.id.linLayout);
+
+        LinearLayout row = new LinearLayout(this);
+        row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+        if(workbook.getNumberOfSheets() == 1) {
+            readExcelFile(workbook.getSheetAt(0));
+        } else {
+            for( int sheetNumber = 0; sheetNumber < workbook.getNumberOfSheets(); sheetNumber++) {
+                Button newBtn = new Button(this);
+                newBtn.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                newBtn.setText(workbook.getSheetAt(sheetNumber).getSheetName());
+                newBtn.setOnClickListener((View v) ->
+                    readExcelFile(workbook.getSheet(((Button) v).getText().toString()))
+                );
+                row.addView(newBtn);
+            }
+            layout.addView(row);
+        }
+    }
+
+    private void readExcelFile(XSSFSheet sheet) {
+        try {
             int firstRowNum = sheet.getFirstRowNum();
             int lastRowNum = sheet.getLastRowNum();
 
-            List<List<String>> ret = new ArrayList<>();
+            List<List<String>> rows = new ArrayList<>();
 
-            for(int i=firstRowNum+1; i<lastRowNum+1; i++)
+            for(int i = firstRowNum; i <= lastRowNum; i++)
             {
                 Row row = sheet.getRow(i);
 
@@ -176,33 +217,76 @@ public class MainActivity extends AppCompatActivity {
                     String cellValue = row.getCell(j).getStringCellValue();
                     rowDataList.add(cellValue);
                 }
-
-                ret.add(rowDataList);
+                rows.add(rowDataList);
             }
 
-            List<String> te = ret.get(1);
+            // Get the formName
+            //List<String> formName = rows.get(0);
+            //form.setFormName(formName.get(0));
 
-            for (int i = 0; i < te.size(); i++) {
-                if(!te.get(i).isEmpty()) {
-                    Log.i("TESTT",te.get(i) + " --- " + Integer.toString(i));
+            // Get the name of the different parts of the form
+            List<String> stringsWithSections = rows.get(2);
+            List<String> firstFieldRow = rows.get(3);
+            List<String> secondFieldRow = rows.get(4);
+
+            Section section = null;
+            List<Field> fields = null;
+
+            for (int column = 0; column < stringsWithSections.size(); column++) {
+                if(!stringsWithSections.get(column).isEmpty()) {
+                    if(section != null) {
+                        section.setFields(fields);
+                        sections.add(section);
+                    }
+                    section = new Section();
+                    section.setSectionName(stringsWithSections.get(column));
+                    section.setColumn(column);
+                    fields = new ArrayList<>();
+                }
+
+                if(fields != null && column < firstFieldRow.size() && !firstFieldRow.get(column).isEmpty()) {
+                    Field field = new Field();
+                    field.setFieldName(firstFieldRow.get(column));
+                    field.setColumn(column);
+                    field.setRow(3);
+                    fields.add(field);
+                }
+
+                if(fields != null && column < secondFieldRow.size() && !secondFieldRow.get(column).isEmpty()) {
+                    Field field = new Field();
+                    field.setFieldName(secondFieldRow.get(column));
+                    field.setColumn(column);
+                    field.setRow(4);
+                    fields.add(field);
+                }
+
+                if(column == stringsWithSections.size()-1 && section != null) {
+                    section.setFields(fields);
+                    sections.add(section);
                 }
             }
 
-            List<String> tete = ret.get(2);
+            form.setSections(sections);
 
-            for (int i = 0; i < tete.size(); i++) {
-                if(!tete.get(i).isEmpty()) {
-                    Log.i("TESTT",tete.get(i) + " --- " + Integer.toString(i));
+            /*for (int i = 0; i < sections.size(); i++) {
+                Log.i("TESTT", sections.get(i).getSectionName());
+                for ( int j = 0; j < sections.get(i).getFields().size(); j++) {
+                    Log.i("TESTT", "   " + sections.get(i).getFields().get(j).getFieldName());
                 }
-            }
+            }*/
 
+            //Log.i("TESTT", Integer.toString(rows.size()));
 
-            Toast.makeText(getApplicationContext(), "Finished", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Finished reading", Toast.LENGTH_SHORT).show();
 
+            Intent i = new Intent(this, FormActivity.class);
+            i.putExtra("obj_form", form);
+            startActivity(i);
         } catch (Exception ex) {
-            Log.e("CHECKKK", ex.getMessage() + " -- " + ex.getCause());
+            Log.e("TESTT", ex.getMessage() + " -- " + ex.getCause());
         }
     }
+
 
     // Storage Permissions
     private static final int REQUEST_EXTERNAL_STORAGE = 1;

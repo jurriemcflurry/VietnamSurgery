@@ -3,8 +3,15 @@
     package="toning.juriaan.vietnamsurgery">
 
     <!-- External storage for the excel forms -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-feature
+        android:name="android.hardware.camera.any"
+        android:required="true" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -20,16 +27,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CameraActivity"></activity>
-        <activity android:name=".FormActivity"></activity>
-        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".CameraActivity">
+            <intent-filter>
+                <action android:name="android.media.action.IMAGE_CAPTURE" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".FormActivity" />
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".OverviewFormActivity"></activity>
     </application>
 
-
-    <uses-feature
-        android:name="android.hardware.camera.any"
-        android:required="true" />
-    <uses-feature
-        android:name="android.hardware.camera.autofocus"
-        android:required="false" />
 </manifest>
