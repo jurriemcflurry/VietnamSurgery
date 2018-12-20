@@ -9,6 +9,7 @@ import java.util.List;
 public class FormTemplate implements Parcelable {
     private String formName;
     private String fileName;
+    private String sheetName;
     private List<Section> sections;
     private List<String> pictures;
 
@@ -24,6 +25,13 @@ public class FormTemplate implements Parcelable {
     }
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public String getSheetName() {
+        return sheetName;
+    }
+    public void setSheetName(String sheetName) {
+        this.sheetName = sheetName;
     }
 
     public List<Section> getSections() {
@@ -49,6 +57,7 @@ public class FormTemplate implements Parcelable {
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(formName);
         out.writeString(fileName);
+        out.writeString(sheetName);
         out.writeList(sections);
         out.writeList(pictures);
     }
@@ -70,6 +79,7 @@ public class FormTemplate implements Parcelable {
     private FormTemplate(Parcel in) {
         formName = in.readString();
         fileName = in.readString();
+        sheetName = in.readString();
         sections = new ArrayList<>();
         in.readList(sections, Section.class.getClassLoader());
         pictures = new ArrayList<>();

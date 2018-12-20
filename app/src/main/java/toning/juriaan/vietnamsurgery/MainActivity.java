@@ -199,6 +199,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void readExcelFile(XSSFSheet sheet) {
         try {
+            form.setSheetName(sheet.getSheetName());
+
             int firstRowNum = sheet.getFirstRowNum();
             int lastRowNum = sheet.getLastRowNum();
 
@@ -219,10 +221,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 rows.add(rowDataList);
             }
-
-            // Get the formName
-            //List<String> formName = rows.get(0);
-            //form.setFormName(formName.get(0));
 
             // Get the name of the different parts of the form
             List<String> stringsWithSections = rows.get(2);
