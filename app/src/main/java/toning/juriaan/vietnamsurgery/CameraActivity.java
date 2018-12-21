@@ -124,8 +124,15 @@ public class CameraActivity extends AppCompatActivity {
             try {
                 filename += String.valueOf(i);
                 String root = Environment.getExternalStorageDirectory().toString();
-                File myDir = new File(root + "/VietnamSurgery");
-                File mypath = new File(myDir, filename + ".png");
+                File myDir = new File(root + File.separator + "/LenTab/lentab-susanne/VietnamSurgery");
+                File mypath = null;
+                if(!myDir.exists()) {
+                    if(myDir.mkdirs()){
+                        mypath = new File(myDir, filename + ".png");
+                    }
+                } else {
+                    mypath = new File(myDir, filename + ".png");
+                }
 
                 FileOutputStream fos = new FileOutputStream(mypath);
 

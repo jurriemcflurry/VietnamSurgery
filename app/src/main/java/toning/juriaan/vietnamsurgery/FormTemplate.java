@@ -85,4 +85,16 @@ public class FormTemplate implements Parcelable {
         pictures = new ArrayList<>();
         in.readList(pictures, String.class.getClassLoader());
     }
+
+    @Override
+    public String toString() {
+        String str = "Info\n" + fileName + "\n";
+        for (Section sec : sections) {
+            for (Field f : sec.getFields()) {
+                str += f.getFieldName() + ": " + f.getAnswer() + "\n";
+            }
+        }
+
+        return str;
+    }
 }

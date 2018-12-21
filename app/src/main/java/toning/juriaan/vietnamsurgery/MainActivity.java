@@ -26,6 +26,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -139,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void chooseExcelFile() {
-        File root = Environment.getExternalStorageDirectory();
+        File root = new File(Environment.getExternalStorageDirectory().toString() + "/LenTab/lentab-susanne");
         List<File> files = getListFiles(root);
 
         // Check if there are more than 1 file, if so, show clickables for all files. If not: load the first one directly
@@ -171,7 +172,8 @@ public class MainActivity extends AppCompatActivity {
 
             chooseExcelSheet(workbook);
         } catch (Exception ex) {
-            Log.i("TESTT", "Error");
+            Log.i("TESTT", "Error" + " " + ex.getMessage() + " " + ex.getCause());
+            Log.i("TESTT", "Error" + " " + ex.toString());
         }
     }
 
@@ -274,9 +276,9 @@ public class MainActivity extends AppCompatActivity {
             }*/
 
             //Log.i("TESTT", Integer.toString(rows.size()));
-
+            XSSFWorkbook wb = sheet.getWorkbook();
+            wb.close();
             Toast.makeText(getApplicationContext(), "Finished reading", Toast.LENGTH_SHORT).show();
-
             Intent i = new Intent(this, FormActivity.class);
             i.putExtra("obj_form", form);
             startActivity(i);

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Environment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +19,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 public class OverviewFormActivity extends AppCompatActivity {
 
@@ -34,6 +48,7 @@ public class OverviewFormActivity extends AppCompatActivity {
 
         Intent i = getIntent();
         form = i.getParcelableExtra("obj_form");
+        Log.i("TESTT", form.toString());
 
         toolbar = findViewById(R.id.form_toolbar);
 
@@ -57,7 +72,7 @@ public class OverviewFormActivity extends AppCompatActivity {
                         .setPositiveButton(R.string.dialog_save, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                saveForm();
+                                saveForm(form);
                             }
                         })
                         .setNegativeButton(R.string.dialog_cancel, null).show();
@@ -115,8 +130,48 @@ public class OverviewFormActivity extends AppCompatActivity {
         }
     }
 
-    private void saveForm() {
-        Toast.makeText(OverviewFormActivity.this, "Almost saved.. Wait untill finished", Toast.LENGTH_LONG).show();
+    private void saveForm(FormTemplate form) {
+        Toast.makeText(OverviewFormActivity.this, "Almost saved.. Wait untill finished - Don't working yet", Toast.LENGTH_LONG).show();
+        boolean success = false;
+        String root = Environment.getExternalStorageDirectory().toString() + "/LenTab/lentab-susanne";
+        File file = new File(root, form.getFileName());
+        try{
 
+            Workbook wb = WorkbookFactory.create(file);
+            Sheet s = wb.getSheet(form.getSheetName());
+            int lastRow = s.getLastRowNum();
+            Row r = s.getRow(3);
+
+            // Put the new things in Excel
+            /*for (Section sec : form.getSections()) {
+                for (Field f : sec.getFields()) {
+                    if(f.getRow() == 3) {
+                        Row r2 = s.createRow(lastRow++);
+                        r2.createCell(f.getColumn()).setCellValue(f.getAnswer());
+                    }
+                }
+            }*/
+            r = s.createRow(5);
+            r.createCell(0).setCellValue("test");
+            r.createCell(1).setCellValue("test");
+            r.createCell(2).setCellValue("test");
+            r.createCell(3).setCellValue("test");
+            r.createCell(4).setCellValue("test");
+            r.createCell(5).setCellValue("test");
+            r.createCell(6).setCellValue("test");
+            r.createCell(7).setCellValue("test");
+
+            // Save the file! And delete the "new" file - Because of a f-up in POI we have to do this unfortunatlu
+            File file2 = new File(root, "test.xlsx");
+            FileOutputStream out = new FileOutputStream(file2);
+            file2.delete();
+            wb.write(out);
+            wb.close();
+            out.flush();
+            out.close();
+
+        } catch (Exception ex) {
+            Log.i("TESTT", ex.getMessage());
+        }
     }
 }
