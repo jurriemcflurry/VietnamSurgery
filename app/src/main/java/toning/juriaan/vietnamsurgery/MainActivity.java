@@ -273,14 +273,6 @@ public class MainActivity extends AppCompatActivity {
 
             form.setSections(sections);
 
-            /*for (int i = 0; i < sections.size(); i++) {
-                Log.i("TESTT", sections.get(i).getSectionName());
-                for ( int j = 0; j < sections.get(i).getFields().size(); j++) {
-                    Log.i("TESTT", "   " + sections.get(i).getFields().get(j).getFieldName());
-                }
-            }*/
-
-            //Log.i("TESTT", Integer.toString(rows.size()));
             XSSFWorkbook wb = sheet.getWorkbook();
             wb.close();
             Toast.makeText(getApplicationContext(), "Finished reading", Toast.LENGTH_SHORT).show();

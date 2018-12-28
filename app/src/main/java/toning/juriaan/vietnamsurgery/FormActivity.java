@@ -48,13 +48,12 @@ public class FormActivity extends AppCompatActivity {
         Intent i = getIntent();
         form = i.getParcelableExtra("obj_form");
 
-
         toolbar = findViewById(R.id.form_toolbar);
-
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setTitle("New form" + form.getFormName());
+
         sectionNameTv = findViewById(R.id.section_name);
         noOfSections = form.getSections().size();
         stepCounter = findViewById(R.id.step_counter);
@@ -86,7 +85,14 @@ public class FormActivity extends AppCompatActivity {
         });
         toolbar.addView(bt);
 
-        generateForm(form.getSections().get(0), layout);
+        int tempNoOfSec = i.getIntExtra("step", 0);
+        if(tempNoOfSec == 0) {
+            generateForm(form.getSections().get(0), layout);
+        } else {
+            noOfThisSection = tempNoOfSec;
+            generateForm(form.getSections().get(tempNoOfSec-1), layout);
+        }
+
     }
 
     private void emptyForm(FormTemplate form, LinearLayout layout) {
@@ -165,7 +171,9 @@ public class FormActivity extends AppCompatActivity {
             case android.R.id.home:
                 // this takes the user 'back', as if they pressed the left-facing
                 noOfThisSection--;
-                if(noOfThisSection == 1) {
+                if(noOfThisSection == 0) {
+                    // Todo: Make sure user can go back to first screen!
+                    noOfThisSection = 1;
                     return true;
                 } else {
                     emptyForm(form, layout);

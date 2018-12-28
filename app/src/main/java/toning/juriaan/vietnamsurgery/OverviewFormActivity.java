@@ -19,21 +19,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.Iterator;
 
 public class OverviewFormActivity extends AppCompatActivity {
 
@@ -133,7 +125,7 @@ public class OverviewFormActivity extends AppCompatActivity {
     }
 
     private void saveForm(FormTemplate form) {
-        Toast.makeText(OverviewFormActivity.this, "Almost saved.. Wait untill finished - Don't working yet", Toast.LENGTH_LONG).show();
+        Toast.makeText(OverviewFormActivity.this, "Saving the form. Wait a moment until it's finished.", Toast.LENGTH_LONG).show();
         String root = Environment.getExternalStorageDirectory().toString() + "/LenTab/lentab-susanne";
         File file = new File(root, form.getFileName());
         try{
@@ -160,7 +152,6 @@ public class OverviewFormActivity extends AppCompatActivity {
                             r.createCell(f.getColumn()).setCellValue("");
                         }
                     }
-                    Log.i("TESTT", Integer.toString(f.getRow()) + " - " + Integer.toString(f.getColumn()) + " ---- " + f.getFieldName() + " - " + f.getAnswer() + " \n");
                     lastColumn = f.getColumn();
                 }
             }
@@ -173,12 +164,11 @@ public class OverviewFormActivity extends AppCompatActivity {
             wb.close();
             out.flush();
             out.close();
-
+            goToTheStart();
         } catch (Exception ex) {
             Log.i("TESTT", ex.getMessage() + " -- " + ex.getCause());
         }
     }
-
 
     public static int getLastRowNum(int startRow, Sheet s) {
         if(startRow > s.getLastRowNum()) {
@@ -205,5 +195,9 @@ public class OverviewFormActivity extends AppCompatActivity {
                 return false;
         }
         return true;
+    }
+
+    public void goToTheStart() {
+        // Todo: Make it work?
     }
 }

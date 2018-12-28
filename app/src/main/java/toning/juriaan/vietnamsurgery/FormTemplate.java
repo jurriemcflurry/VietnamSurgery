@@ -1,5 +1,6 @@
 package toning.juriaan.vietnamsurgery;
 
+import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -12,6 +13,7 @@ public class FormTemplate implements Parcelable {
     private String sheetName;
     private List<Section> sections;
     private List<String> pictures;
+    private List<Bitmap> bitmapImages;
 
     public String getFormName() {
         return formName;
@@ -48,6 +50,13 @@ public class FormTemplate implements Parcelable {
         this.pictures = pictures;
     }
 
+    public List<Bitmap> getBitmapImages() {
+        return bitmapImages;
+    }
+    public void setBitmapImages(List<Bitmap> bitmapImages) {
+        this.bitmapImages = bitmapImages;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -60,6 +69,7 @@ public class FormTemplate implements Parcelable {
         out.writeString(sheetName);
         out.writeList(sections);
         out.writeList(pictures);
+        out.writeList(bitmapImages);
     }
 
     public static final Creator<FormTemplate> CREATOR = new Creator<FormTemplate>() {
@@ -84,6 +94,8 @@ public class FormTemplate implements Parcelable {
         in.readList(sections, Section.class.getClassLoader());
         pictures = new ArrayList<>();
         in.readList(pictures, String.class.getClassLoader());
+        bitmapImages = new ArrayList<>();
+        in.readList(bitmapImages, Bitmap.class.getClassLoader());
     }
 
     @Override
