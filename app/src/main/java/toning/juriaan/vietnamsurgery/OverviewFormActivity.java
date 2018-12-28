@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -32,6 +33,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.Iterator;
 
 public class OverviewFormActivity extends AppCompatActivity {
 
@@ -48,7 +50,7 @@ public class OverviewFormActivity extends AppCompatActivity {
 
         Intent i = getIntent();
         form = i.getParcelableExtra("obj_form");
-        Log.i("TESTT", form.toString());
+        //Log.i("TESTT", form.toString());
 
         toolbar = findViewById(R.id.form_toolbar);
 
@@ -132,36 +134,38 @@ public class OverviewFormActivity extends AppCompatActivity {
 
     private void saveForm(FormTemplate form) {
         Toast.makeText(OverviewFormActivity.this, "Almost saved.. Wait untill finished - Don't working yet", Toast.LENGTH_LONG).show();
-        boolean success = false;
         String root = Environment.getExternalStorageDirectory().toString() + "/LenTab/lentab-susanne";
         File file = new File(root, form.getFileName());
         try{
-
             Workbook wb = WorkbookFactory.create(file);
             Sheet s = wb.getSheet(form.getSheetName());
-            int lastRow = s.getLastRowNum();
-            Row r = s.getRow(3);
+            int firstRowNum = 5;
+            int lastRowNum = getLastRowNum(firstRowNum, s);
+            Row r = s.createRow(lastRowNum);
+            int lastColumn = 0;
+            String birthYear = "";
 
-            // Put the new things in Excel
-            /*for (Section sec : form.getSections()) {
+            for (Section sec : form.getSections()) {
                 for (Field f : sec.getFields()) {
-                    if(f.getRow() == 3) {
-                        Row r2 = s.createRow(lastRow++);
-                        r2.createCell(f.getColumn()).setCellValue(f.getAnswer());
+                    if(!f.getAnswer().isEmpty() && f.getRow() == 3) {
+                        r.createCell(f.getColumn()).setCellValue(f.getAnswer());
                     }
+                    if(f.getColumn() == lastColumn && lastColumn != 0) {
+                        birthYear = sec.getFields().get(f.getColumn()).getAnswer();
+                    }
+                    if(f.getRow() == 4) {
+                        if(f.getFieldName().equals(f.getAnswer())) {
+                            r.createCell(f.getColumn()).setCellValue(birthYear);
+                        } else {
+                            r.createCell(f.getColumn()).setCellValue("");
+                        }
+                    }
+                    Log.i("TESTT", Integer.toString(f.getRow()) + " - " + Integer.toString(f.getColumn()) + " ---- " + f.getFieldName() + " - " + f.getAnswer() + " \n");
+                    lastColumn = f.getColumn();
                 }
-            }*/
-            r = s.createRow(5);
-            r.createCell(0).setCellValue("test");
-            r.createCell(1).setCellValue("test");
-            r.createCell(2).setCellValue("test");
-            r.createCell(3).setCellValue("test");
-            r.createCell(4).setCellValue("test");
-            r.createCell(5).setCellValue("test");
-            r.createCell(6).setCellValue("test");
-            r.createCell(7).setCellValue("test");
+            }
 
-            // Save the file! And delete the "new" file - Because of a f-up in POI we have to do this unfortunatlu
+            // Save the file! And delete the "new" file - Because of a f-up in POI we have to do this unfortunately
             File file2 = new File(root, "test.xlsx");
             FileOutputStream out = new FileOutputStream(file2);
             file2.delete();
@@ -171,7 +175,35 @@ public class OverviewFormActivity extends AppCompatActivity {
             out.close();
 
         } catch (Exception ex) {
-            Log.i("TESTT", ex.getMessage());
+            Log.i("TESTT", ex.getMessage() + " -- " + ex.getCause());
         }
+    }
+
+
+    public static int getLastRowNum(int startRow, Sheet s) {
+        if(startRow > s.getLastRowNum()) {
+            return startRow;
+        } else if(startRow == s.getLastRowNum()) {
+            return startRow+1;
+        } else  {
+            int rowNumEmptyRow = startRow;
+            for (int i = startRow; i < s.getLastRowNum(); i++) {
+                Row r = s.getRow(i);
+                if(isRowEmpty(r)) {
+                    rowNumEmptyRow = r.getRowNum();
+                    break;
+                }
+            }
+            return rowNumEmptyRow;
+        }
+    }
+
+    public static boolean isRowEmpty(Row row) {
+        for (int c = row.getFirstCellNum(); c < row.getLastCellNum(); c++) {
+            Cell cell = row.getCell(c);
+            if (cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK)
+                return false;
+        }
+        return true;
     }
 }

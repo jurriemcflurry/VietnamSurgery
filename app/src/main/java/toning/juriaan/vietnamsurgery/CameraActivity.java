@@ -116,13 +116,14 @@ public class CameraActivity extends AppCompatActivity {
             return false;
         }
 
-        String filename = form.getSections().get(0).getFields().get(1).getAnswer() + "_";
+        String filename = form.getSections().get(0).getFields().get(1).getAnswer();
         int i = 0;
         List<String> pictures = new ArrayList<>();
 
         for(Bitmap image : mImages){
+            String newFileName = "";
             try {
-                filename += String.valueOf(i);
+                newFileName = filename + "_" + String.valueOf(i);
                 String root = Environment.getExternalStorageDirectory().toString();
                 File myDir = new File(root + File.separator + "/LenTab/lentab-susanne/VietnamSurgery");
                 File mypath = null;

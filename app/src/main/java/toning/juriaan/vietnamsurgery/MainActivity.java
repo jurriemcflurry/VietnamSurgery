@@ -141,28 +141,33 @@ public class MainActivity extends AppCompatActivity {
 
     private void chooseExcelFile() {
         File root = new File(Environment.getExternalStorageDirectory().toString() + "/LenTab/lentab-susanne");
-        List<File> files = getListFiles(root);
+        try{
+            List<File> files = getListFiles(root);
 
-        // Check if there are more than 1 file, if so, show clickables for all files. If not: load the first one directly
-        if(files.size() > 1) {
-            LinearLayout layout = findViewById(R.id.linLayout);
-            // Choose a file
-            for (File f : files) {
-                Button newBtn = new Button(this);
-                newBtn.setText(f.getName());
-                layout.addView(newBtn);
-                newBtn.setOnClickListener((View v) -> {
-                    String fileName = ((Button) v).getText().toString();
-                    form.setFileName(fileName);
-                    form.setFormName(fileName.substring(0, fileName.lastIndexOf('.')));
-                    createExcelWorkbook(new File(root, fileName));
-                });
+            // Check if there are more than 1 file, if so, show clickables for all files. If not: load the first one directly
+            if(files.size() > 1) {
+                LinearLayout layout = findViewById(R.id.linLayout);
+                // Choose a file
+                for (File f : files) {
+                    Button newBtn = new Button(this);
+                    newBtn.setText(f.getName());
+                    layout.addView(newBtn);
+                    newBtn.setOnClickListener((View v) -> {
+                        String fileName = ((Button) v).getText().toString();
+                        form.setFileName(fileName);
+                        form.setFormName(fileName.substring(0, fileName.lastIndexOf('.')));
+                        createExcelWorkbook(new File(root, fileName));
+                    });
+                }
+            } else {
+                form.setFileName(files.get(0).getName());
+                form.setFormName(files.get(0).getName().substring(0, files.get(0).getName().lastIndexOf('.')));
+                createExcelWorkbook(new File(root, files.get(0).getName()));
             }
-        } else {
-            form.setFileName(files.get(0).getName());
-            form.setFormName(files.get(0).getName().substring(0, files.get(0).getName().lastIndexOf('.')));
-            createExcelWorkbook(new File(root, files.get(0).getName()));
+        } catch (Exception ex) {
+            Toast.makeText(this, "There was an error: " + ex.getMessage() + " -- Searched in directory: " + root.getPath(), Toast.LENGTH_LONG).show();
         }
+
     }
 
     private void createExcelWorkbook(File file) {
@@ -204,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
             form.setSheetName(sheet.getSheetName());
 
             int firstRowNum = sheet.getFirstRowNum();
-            int lastRowNum = sheet.getLastRowNum();
+            int lastRowNum = 4;
 
             List<List<String>> rows = new ArrayList<>();
 
