@@ -133,6 +133,7 @@ public class OverviewFormActivity extends AppCompatActivity {
             Sheet s = wb.getSheet(form.getSheetName());
             int firstRowNum = 5;
             int lastRowNum = getLastRowNum(firstRowNum, s);
+
             Row r = s.createRow(lastRowNum);
             int lastColumn = 0;
             String birthYear = "";
@@ -146,7 +147,7 @@ public class OverviewFormActivity extends AppCompatActivity {
                         birthYear = sec.getFields().get(f.getColumn()).getAnswer();
                     }
                     if(f.getRow() == 4) {
-                        if(f.getFieldName().equals(f.getAnswer())) {
+                        if(f.getAnswer().equals("true")) {
                             r.createCell(f.getColumn()).setCellValue(birthYear);
                         } else {
                             r.createCell(f.getColumn()).setCellValue("");
@@ -175,13 +176,15 @@ public class OverviewFormActivity extends AppCompatActivity {
             return startRow;
         } else if(startRow == s.getLastRowNum()) {
             return startRow+1;
-        } else  {
+        } else {
             int rowNumEmptyRow = startRow;
-            for (int i = startRow; i < s.getLastRowNum(); i++) {
+            for (int i = startRow; i <= s.getLastRowNum(); i++) {
                 Row r = s.getRow(i);
                 if(isRowEmpty(r)) {
                     rowNumEmptyRow = r.getRowNum();
                     break;
+                } else {
+                    rowNumEmptyRow = r.getRowNum() + 1;
                 }
             }
             return rowNumEmptyRow;
@@ -191,8 +194,9 @@ public class OverviewFormActivity extends AppCompatActivity {
     public static boolean isRowEmpty(Row row) {
         for (int c = row.getFirstCellNum(); c < row.getLastCellNum(); c++) {
             Cell cell = row.getCell(c);
-            if (cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK)
+            if (cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK) {
                 return false;
+            }
         }
         return true;
     }

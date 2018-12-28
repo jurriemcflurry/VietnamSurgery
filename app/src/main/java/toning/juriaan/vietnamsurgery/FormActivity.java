@@ -103,7 +103,7 @@ public class FormActivity extends AppCompatActivity {
                         String answer = ((EditText) findViewById((int)pair.getValue())).getText().toString();
                         f.setAnswer(answer);
                     } catch (Exception ex) {
-                        String answer = ((RadioButton) findViewById((int)pair.getValue())).getText().toString();
+                        String answer = Boolean.toString(((RadioButton) findViewById((int)pair.getValue())).isChecked());
                         f.setAnswer(answer);
                     }
                 }
@@ -158,6 +158,7 @@ public class FormActivity extends AppCompatActivity {
 
     private RadioButton createRadioButton(String text, int id) {
         RadioButton rb = new RadioButton(this);
+        id = id+10;
         rb.setId(id);
         idsMap.put(text, id);
         rb.setText(text);
