@@ -58,8 +58,6 @@ public class FormActivity extends AppCompatActivity {
         noOfSections = form.getSections().size();
         stepCounter = findViewById(R.id.step_counter);
 
-        sectionNameTv.setText(form.getSections().get(0).getSectionName());
-
         layout = findViewById(R.id.formLayout);
 
         Button bt = new Button(this);
@@ -115,6 +113,7 @@ public class FormActivity extends AppCompatActivity {
     }
 
     private void generateForm(Section section, LinearLayout layout) {
+        sectionNameTv.setText(form.getSections().get(noOfThisSection-1).getSectionName());
         stepCounter.setText("Step " + noOfThisSection + " of " + Integer.toString(noOfSections + 1));
         idsMap = new HashMap<>();
         if(noOfThisSection == 1) {
