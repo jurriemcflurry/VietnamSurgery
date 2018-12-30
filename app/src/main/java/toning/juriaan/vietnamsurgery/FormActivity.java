@@ -1,18 +1,14 @@
 package toning.juriaan.vietnamsurgery;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Layout;
-import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -20,7 +16,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,7 +25,7 @@ import java.util.Map;
 
 public class FormActivity extends AppCompatActivity {
 
-    private Toolbar toolbar;
+    Toolbar toolbar;
     private TextView sectionNameTv;
     private TextView stepCounter;
     private int noOfSections;
@@ -38,6 +33,7 @@ public class FormActivity extends AppCompatActivity {
     private Map<String, Integer> idsMap;
     private LinearLayout layout;
     private FormTemplate form;
+    private int tempNoOfSec;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,19 +41,10 @@ public class FormActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form);
 
-        Intent i = getIntent();
-        form = i.getParcelableExtra("obj_form");
-
-        sectionNameTv = findViewById(R.id.section_name);
-        noOfSections = form.getSections().size();
-        stepCounter = findViewById(R.id.step_counter);
-
-        layout = findViewById(R.id.formLayout);
-
+        loadIntent();
+        setupFields();
         setupToolbar();
 
-
-        int tempNoOfSec = i.getIntExtra("step", 0);
         if(tempNoOfSec == 0) {
             generateForm(form.getSections().get(0), layout);
         } else {
@@ -67,35 +54,25 @@ public class FormActivity extends AppCompatActivity {
 
     }
 
+    private void loadIntent(){
+        Intent i = getIntent();
+        form = i.getParcelableExtra("obj_form");
+        tempNoOfSec = i.getIntExtra("step", 0);
+    }
+
+    private void setupFields(){
+        sectionNameTv = findViewById(R.id.section_name);
+        noOfSections = form.getSections().size();
+        stepCounter = findViewById(R.id.step_counter);
+        layout = findViewById(R.id.formLayout);
+    }
+
     private void setupToolbar() {
         toolbar = findViewById(R.id.form_toolbar);
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setTitle("New form" + form.getFormName());
-
-        Button bt = new Button(this);
-        bt.setText("Next");
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.gravity = Gravity.END;
-        bt.setLayoutParams(params);
-        bt.setBackgroundColor(Color.TRANSPARENT);
-        bt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                emptyForm(form, layout);
-                noOfThisSection++;
-                if(noOfThisSection > noOfSections) {
-                    Intent i = new Intent(getApplicationContext(), CameraActivity.class);
-                    i.putExtra("obj_form", form);
-                    startActivity(i);
-                }
-                else {
-                    generateForm(form.getSections().get(noOfThisSection - 1), layout);
-                }
-            }
-        });
-        toolbar.addView(bt);
     }
 
     private void emptyForm(FormTemplate form, LinearLayout layout) {
@@ -119,11 +96,12 @@ public class FormActivity extends AppCompatActivity {
 
     private void generateForm(Section section, LinearLayout layout) {
         sectionNameTv.setText(form.getSections().get(noOfThisSection-1).getSectionName());
-        stepCounter.setText("Step " + noOfThisSection + " of " + Integer.toString(noOfSections + 1));
+        stepCounter.setText(getString(R.string.step_text, noOfThisSection, noOfSections + 1));
         idsMap = new HashMap<>();
         if(noOfThisSection == 1) {
             RadioGroup rg = new RadioGroup(this);
             rg.setOrientation(RadioGroup.HORIZONTAL);
+
             for(int i = 0; i < section.getFields().size(); i++) {
                 Field f = section.getFields().get(i);
                 if(i < section.getFields().size() - 2) {
@@ -163,6 +141,9 @@ public class FormActivity extends AppCompatActivity {
 
     private RadioButton createRadioButton(String text, int id) {
         RadioButton rb = new RadioButton(this);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(0,50,50,0);
+        rb.setLayoutParams(params);
         id = id+10;
         rb.setId(id);
         idsMap.put(text, id);
@@ -185,8 +166,27 @@ public class FormActivity extends AppCompatActivity {
                     generateForm(form.getSections().get(noOfThisSection - 1), layout);
                     return true;
                 }
+            case R.id.action_next:
+                emptyForm(form, layout);
+                noOfThisSection++;
+                if(noOfThisSection > noOfSections) {
+                    Intent i = new Intent(getApplicationContext(), CameraActivity.class);
+                    i.putExtra("obj_form", form);
+                    startActivity(i);
+                }
+                else {
+                    generateForm(form.getSections().get(noOfThisSection - 1), layout);
+                }
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.actionbar_menu, menu);
+        return true;
     }
 }

@@ -2,4 +2,7 @@
     <string name="app_name">VietnamSurgery</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_save">Save</string>
+    <string name="next_btn_txt">Next</string>
+    <string name="step_text">Step %1$d of %2$d</string>
+    <string name="section_name_photos">Photos</string>
 </resources>

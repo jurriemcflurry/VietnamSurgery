@@ -23,6 +23,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -60,43 +61,20 @@ public class CameraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.camera_activity);
 
-        gridLayout1 = findViewById(R.id.gridLayout1);
-        Intent i = getIntent();
-        form = i.getParcelableExtra("obj_form");
+        loadIntent();
+        setupFields();
+        setupToolbar();
 
-        noOfSections = form.getSections().size();
-        stepCounter = findViewById(R.id.step_counter);
-        stepCounter.setText("Step " + Integer.toString(noOfSections + 1) + " of " + Integer.toString(noOfSections + 1));
-        sectionNameTv = findViewById(R.id.section_name);
-        sectionNameTv.setText("Photos");
+
+
+
+
 
         toolbar = findViewById(R.id.form_toolbar);
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setTitle("New form" + form.getFormName());
-
-        LinearLayout layout = findViewById(R.id.formLayout);
-
-        Button bt = new Button(this);
-        bt.setText("Next");
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.gravity = Gravity.END;
-        bt.setLayoutParams(params);
-        bt.setBackgroundColor(Color.TRANSPARENT);
-        bt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(saveImages()){
-                    Toast.makeText(CameraActivity.this, "Images saved!", Toast.LENGTH_SHORT).show();
-                    Intent i = new Intent(getApplicationContext(), OverviewFormActivity.class);
-                    i.putExtra("obj_form", form);
-                    startActivity(i);
-                }
-                // mImages.clear();
-            }
-        });
-        toolbar.addView(bt);
 
         //onClick opent de native camera van de telefoon
         FloatingActionButton photoButton = (FloatingActionButton) this.findViewById(R.id.fab_camera);
@@ -108,7 +86,7 @@ public class CameraActivity extends AppCompatActivity {
             }
         });
 
-        if(form.getBitmapImages() != null) {
+        /*if(form.getBitmapImages() != null) {
             mImages.addAll(form.getBitmapImages());
             for( Bitmap bitmapImage : form.getBitmapImages()) {
                 try {
@@ -123,7 +101,25 @@ public class CameraActivity extends AppCompatActivity {
                     Log.e("TESTT", "oops " + ex.getMessage());
                 }
             }
-        }
+        }*/
+    }
+
+    private void loadIntent(){
+        Intent i = getIntent();
+        form = i.getParcelableExtra("obj_form");
+    }
+
+    private void setupFields(){
+        gridLayout1 = findViewById(R.id.gridLayout1);
+        noOfSections = form.getSections().size();
+        stepCounter = findViewById(R.id.step_counter);
+        stepCounter.setText(getString(R.string.step_text, noOfSections + 1, noOfSections + 1));
+        sectionNameTv = findViewById(R.id.section_name);
+        sectionNameTv.setText(R.string.section_name_photos);
+    }
+
+    private void setupToolbar() {
+
     }
 
     private void dispatchTakePictureIntent() {
@@ -193,13 +189,6 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
-    //ophalen van de schermafmetingen
-    private DisplayMetrics getDisplayMetrics(){
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        return displayMetrics;
-    }
-
     private boolean saveImages(){
         if(mImages.size() <= 0){
             Toast.makeText(getApplicationContext(), "Make at least one picture", Toast.LENGTH_LONG).show();
@@ -249,13 +238,28 @@ public class CameraActivity extends AppCompatActivity {
             case android.R.id.home:
                 // this takes the user 'back', as if they pressed the left-facing
                 //form.setBitmapImages(mImages);
-                Intent i = new Intent(getApplicationContext(), FormActivity.class);
-                i.putExtra("obj_form", form);
-                i.putExtra("step", noOfSections);
-                startActivity(i);
+                Intent formIntent = new Intent(getApplicationContext(), FormActivity.class);
+                formIntent.putExtra("obj_form", form);
+                formIntent.putExtra("step", noOfSections);
+                startActivity(formIntent);
+                return true;
+            case R.id.action_next:
+                if(saveImages()){
+                    Toast.makeText(CameraActivity.this, "Images saved!", Toast.LENGTH_SHORT).show();
+                    Intent formOverviewIntent = new Intent(getApplicationContext(), OverviewFormActivity.class);
+                    formOverviewIntent.putExtra("obj_form", form);
+                    startActivity(formOverviewIntent);
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.actionbar_menu, menu);
+        return true;
     }
 }
