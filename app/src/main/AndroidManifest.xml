@@ -6,12 +6,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-    <uses-feature
-        android:name="android.hardware.camera.any"
+    <uses-feature android:name="android.hardware.camera"
         android:required="true" />
-    <uses-feature
-        android:name="android.hardware.camera.autofocus"
-        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -32,9 +28,20 @@
                 <action android:name="android.media.action.IMAGE_CAPTURE" />
             </intent-filter>
         </activity>
-        <activity android:name=".FormActivity" />
+        <activity android:name=".FormActivity"
+            android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".LoginActivity" />
         <activity android:name=".OverviewFormActivity"></activity>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="toning.juriaan.vietnamsurgery.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/paths"></meta-data>
+        </provider>
     </application>
 
 </manifest>
