@@ -1,8 +1,11 @@
 <resources>
     <string name="app_name">VietnamSurgery</string>
     <string name="dialog_cancel">Cancel</string>
-    <string name="dialog_save">Save</string>
+    <string name="save">Save</string>
     <string name="next_btn_txt">Next</string>
     <string name="step_text">Step %1$d of %2$d</string>
     <string name="section_name_photos">Photos</string>
+
+    <string name="new_form_name">New Form %1$s</string>
+    <string name="form_name">%1$s - %2$s - %3$s</string>
 </resources>

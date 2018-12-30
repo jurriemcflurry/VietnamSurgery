@@ -34,6 +34,7 @@ public class FormActivity extends AppCompatActivity {
     private LinearLayout layout;
     private FormTemplate form;
     private int tempNoOfSec;
+    private ActionBar ab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,14 +66,14 @@ public class FormActivity extends AppCompatActivity {
         noOfSections = form.getSections().size();
         stepCounter = findViewById(R.id.step_counter);
         layout = findViewById(R.id.formLayout);
+        toolbar = findViewById(R.id.form_toolbar);
     }
 
     private void setupToolbar() {
-        toolbar = findViewById(R.id.form_toolbar);
         setSupportActionBar(toolbar);
-        ActionBar ab = getSupportActionBar();
+        ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
-        ab.setTitle("New form" + form.getFormName());
+        ab.setTitle(getString(R.string.new_form_name, form.getFormName()));
     }
 
     private void emptyForm(FormTemplate form, LinearLayout layout) {
@@ -97,6 +98,11 @@ public class FormActivity extends AppCompatActivity {
     private void generateForm(Section section, LinearLayout layout) {
         sectionNameTv.setText(form.getSections().get(noOfThisSection-1).getSectionName());
         stepCounter.setText(getString(R.string.step_text, noOfThisSection, noOfSections + 1));
+        if(noOfThisSection > 1) {
+            String name = form.getSections().get(0).getFields().get(1).getAnswer();
+            String birthYear = form.getSections().get(0).getFields().get(2).getAnswer();
+            ab.setTitle(getString(R.string.form_name, form.getFormName(), name, birthYear));
+        }
         idsMap = new HashMap<>();
         if(noOfThisSection == 1) {
             RadioGroup rg = new RadioGroup(this);

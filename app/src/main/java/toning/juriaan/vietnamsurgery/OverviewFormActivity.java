@@ -63,7 +63,7 @@ public class OverviewFormActivity extends AppCompatActivity {
                 new AlertDialog.Builder(OverviewFormActivity.this)
                         .setTitle("Confirm")
                         .setMessage("Are you sure you want to save the form?")
-                        .setPositiveButton(R.string.dialog_save, new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 saveForm(form);
@@ -101,7 +101,7 @@ public class OverviewFormActivity extends AppCompatActivity {
 
         TextView tv = new TextView(this);
         tv.setLayoutParams(params);
-        tv.setText("Photos");
+        tv.setText(R.string.section_name_photos);
         tv.setTextSize(20);
         layout.addView(tv);
 

@@ -41,19 +41,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static android.support.constraint.Constraints.TAG;
-
 public class CameraActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private Bitmap mImageBitmap;
     private GridLayout gridLayout1;
     private ArrayList<Bitmap> mImages = new ArrayList<>();
     private FormTemplate form;
-
-    private TextView sectionNameTv;
-    private TextView stepCounter;
     private int noOfSections;
     private Toolbar toolbar;
+
+    String mCurrentPhotoPath;
+    TextView sectionNameTv;
+    TextView stepCounter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,27 +63,7 @@ public class CameraActivity extends AppCompatActivity {
         loadIntent();
         setupFields();
         setupToolbar();
-
-
-
-
-
-
-        toolbar = findViewById(R.id.form_toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
-        ab.setTitle("New form" + form.getFormName());
-
-        //onClick opent de native camera van de telefoon
-        FloatingActionButton photoButton = (FloatingActionButton) this.findViewById(R.id.fab_camera);
-        photoButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                dispatchTakePictureIntent();
-            }
-        });
+        setupFloatingActionButton();
 
         /*if(form.getBitmapImages() != null) {
             mImages.addAll(form.getBitmapImages());
@@ -116,10 +95,22 @@ public class CameraActivity extends AppCompatActivity {
         stepCounter.setText(getString(R.string.step_text, noOfSections + 1, noOfSections + 1));
         sectionNameTv = findViewById(R.id.section_name);
         sectionNameTv.setText(R.string.section_name_photos);
+        toolbar = findViewById(R.id.form_toolbar);
     }
 
     private void setupToolbar() {
+        setSupportActionBar(toolbar);
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+        ab.setTitle("New form" + form.getFormName());
+    }
 
+    private void setupFloatingActionButton(){
+        //onClick opent de native camera van de telefoon
+        FloatingActionButton photoButton = this.findViewById(R.id.fab_camera);
+        photoButton.setOnClickListener((View v) -> {
+            dispatchTakePictureIntent();
+        });
     }
 
     private void dispatchTakePictureIntent() {
@@ -146,8 +137,6 @@ public class CameraActivity extends AppCompatActivity {
             }
         }
     }
-
-    String mCurrentPhotoPath;
 
     private File createImageFile() throws IOException {
         // Create an image file name - At this moment we're using the name, birthday & dateTimeformat
