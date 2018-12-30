@@ -48,17 +48,31 @@ public class FormActivity extends AppCompatActivity {
         Intent i = getIntent();
         form = i.getParcelableExtra("obj_form");
 
-        toolbar = findViewById(R.id.form_toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
-        ab.setTitle("New form" + form.getFormName());
-
         sectionNameTv = findViewById(R.id.section_name);
         noOfSections = form.getSections().size();
         stepCounter = findViewById(R.id.step_counter);
 
         layout = findViewById(R.id.formLayout);
+
+        setupToolbar();
+
+
+        int tempNoOfSec = i.getIntExtra("step", 0);
+        if(tempNoOfSec == 0) {
+            generateForm(form.getSections().get(0), layout);
+        } else {
+            noOfThisSection = tempNoOfSec;
+            generateForm(form.getSections().get(tempNoOfSec-1), layout);
+        }
+
+    }
+
+    private void setupToolbar() {
+        toolbar = findViewById(R.id.form_toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+        ab.setTitle("New form" + form.getFormName());
 
         Button bt = new Button(this);
         bt.setText("Next");
@@ -82,15 +96,6 @@ public class FormActivity extends AppCompatActivity {
             }
         });
         toolbar.addView(bt);
-
-        int tempNoOfSec = i.getIntExtra("step", 0);
-        if(tempNoOfSec == 0) {
-            generateForm(form.getSections().get(0), layout);
-        } else {
-            noOfThisSection = tempNoOfSec;
-            generateForm(form.getSections().get(tempNoOfSec-1), layout);
-        }
-
     }
 
     private void emptyForm(FormTemplate form, LinearLayout layout) {
