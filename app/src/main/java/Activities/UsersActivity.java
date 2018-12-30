@@ -74,7 +74,7 @@ public class UsersActivity extends AppCompatActivity implements Callback<List<Us
 
 
         getUsers();
-        Button register = (Button) findViewById(R.id.register_user);
+        TextView register = (TextView) findViewById(R.id.register_user);
 
         register.setOnClickListener(new View.OnClickListener() {
             @Override

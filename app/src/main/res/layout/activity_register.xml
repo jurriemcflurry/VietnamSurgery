@@ -29,30 +29,48 @@
             android:layout_marginTop="?attr/actionBarSize"
             android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/registeruserNameEditText"
-                android:layout_width="150dp"
-                android:layout_height="20dp"
-                android:background="@null"
-                android:hint="@string/username" />
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
-            <EditText
-                android:id="@+id/registerpasswordEditText"
-                android:layout_width="150dp"
-                android:layout_height="20dp"
-                android:layout_marginTop="20dp"
-                android:background="@null"
-                android:inputType="textPassword"
-                android:hint="@string/password"/>
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/registeruserNameEditText"
+                    android:layout_width="150dp"
+                    android:layout_height="20dp"
+                    android:background="@null"
+                    android:hint="@string/username" />
 
-            <EditText
-                android:id="@+id/registerconfirmpasswordEditText"
-                android:layout_width="150dp"
-                android:layout_height="20dp"
-                android:layout_marginTop="20dp"
-                android:background="@null"
-                android:inputType="textPassword"
-                android:hint="@string/confirmpassword"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/registerpasswordEditText"
+                    android:layout_width="150dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@null"
+                    android:inputType="textPassword"
+                    android:hint="@string/password"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/registerconfirmpasswordEditText"
+                    android:layout_width="150dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@null"
+                    android:inputType="textPassword"
+                    android:hint="@string/confirmpassword"/>
+
+            </android.support.design.widget.TextInputLayout>
 
             <Spinner
             android:id="@+id/spinner1"
@@ -61,13 +79,19 @@
             android:background="@android:drawable/btn_dropdown"
             android:spinnerMode="dropdown"/>
 
-            <EditText
-                android:id="@+id/registeremailEditText"
-                android:layout_width="150dp"
-                android:layout_height="20dp"
-                android:layout_marginTop="20dp"
-                android:background="@null"
-                android:hint="@string/email"/>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/registeremailEditText"
+                    android:layout_width="150dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@null"
+                    android:hint="@string/email"/>
+
+            </android.support.design.widget.TextInputLayout>
 
             <Button
                 android:id="@+id/register_button"

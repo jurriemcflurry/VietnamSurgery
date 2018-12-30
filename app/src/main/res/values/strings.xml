@@ -16,5 +16,6 @@
     <string name="email">Email</string>
     <string name="toUserDetail">User to Userdetailpage</string>\
     <string name="role">Role</string>
+    <string name="roleOverview">(Role)</string>
     <string name="admin">Admin</string>
 </resources>

@@ -5,6 +5,8 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -16,6 +18,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import ResponseModels.LoginResponse;
 import WebInterfaces.UserWebInterface;
@@ -31,10 +35,8 @@ import toning.juriaan.Models.R;
 public class LoginActivity extends AppCompatActivity implements Callback<LoginResponse> {
 
     private DrawerLayout mDrawerLayout;
-    private TextView userNameTextView;
-    private EditText userNameEditText;
-    private TextView passwordTextView;
-    private EditText passwordEditText;
+    private TextInputEditText userName;
+    private TextInputEditText password;
     private Button loginButton;
     private UserWebInterface userWebInterface;
 
@@ -112,28 +114,9 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
     }
 
     private void setupLayoutControls(){
-        userNameEditText = (EditText) findViewById(R.id.userNameEditText);
-        userNameTextView = (TextView) findViewById(R.id.userNameTextView);
-        passwordEditText = (EditText) findViewById(R.id.passwordEditText);
-        passwordTextView = (TextView) findViewById(R.id.passwordTextView);
+        userName = (TextInputEditText) findViewById(R.id.userName);
+        password = (TextInputEditText) findViewById(R.id.password);
         loginButton = (Button) findViewById(R.id.login_button);
-
-        userNameEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                userNameTextView.setVisibility(View.VISIBLE);
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                lp.setMargins(0, dpToPx(20), 0,0 );
-                userNameEditText.setLayoutParams(lp);
-            }
-        });
-
-        passwordEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                passwordTextView.setVisibility(View.VISIBLE);
-            }
-        });
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,19 +128,15 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
     }
 
     private void login(){
-        if(userNameEditText.getText() == null || passwordEditText.getText() == null){
+        if(userName.getText() == null || password.getText() == null){
             return;
         }
 
-        String username = userNameEditText.getText().toString();
-        String password = passwordEditText.getText().toString();
+        String username = userName.getText().toString();
+        String passWord = password.getText().toString();
         String granttype = getString(R.string.password2);
 
-        userWebInterface.login(username, password, granttype).enqueue(this);
-    }
-
-    public static int dpToPx(int dp){
-        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+        userWebInterface.login(username, passWord, granttype).enqueue(this);
     }
 
     @Override

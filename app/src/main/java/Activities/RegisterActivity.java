@@ -4,6 +4,7 @@ package Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -12,6 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
+
+import org.w3c.dom.Text;
 
 import ResponseModels.RegisterResponse;
 import WebInterfaces.UserWebInterface;
@@ -26,11 +29,11 @@ import toning.juriaan.Models.RegisterObject;
 public class RegisterActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, Callback<RegisterResponse> {
 
     private UserWebInterface userWebInterface;
-    private EditText username;
-    private EditText password;
-    private EditText confirmPassword;
+    private TextInputEditText username;
+    private TextInputEditText password;
+    private TextInputEditText confirmPassword;
     private Spinner userrole;
-    private EditText email;
+    private TextInputEditText email;
     private Button register;
     private FrameLayout frameLayout;
 
@@ -63,10 +66,10 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
 
         userrole.setOnItemSelectedListener(this);
 
-        username = (EditText) findViewById(R.id.registeruserNameEditText);
-        password = (EditText) findViewById(R.id.registerpasswordEditText);
-        confirmPassword = (EditText) findViewById(R.id.registerconfirmpasswordEditText);
-        email = (EditText) findViewById(R.id.registeremailEditText);
+        username = (TextInputEditText) findViewById(R.id.registeruserNameEditText);
+        password = (TextInputEditText) findViewById(R.id.registerpasswordEditText);
+        confirmPassword = (TextInputEditText) findViewById(R.id.registerconfirmpasswordEditText);
+        email = (TextInputEditText) findViewById(R.id.registeremailEditText);
         register = (Button) findViewById(R.id.register_button);
 
         register.setOnClickListener(new View.OnClickListener() {
