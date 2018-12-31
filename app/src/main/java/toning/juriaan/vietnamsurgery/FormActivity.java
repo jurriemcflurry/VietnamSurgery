@@ -7,6 +7,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -138,6 +139,7 @@ public class FormActivity extends AppCompatActivity {
         EditText editText = new EditText(textInputLayout.getContext());
         editText.setLayoutParams(layoutParams);
         editText.setHint(textFieldName);
+        editText.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES );
         editText.setId(column);
 
         textInputLayout.addView(editText);

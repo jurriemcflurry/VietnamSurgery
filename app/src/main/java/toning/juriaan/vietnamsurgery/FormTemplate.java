@@ -13,7 +13,7 @@ public class FormTemplate implements Parcelable {
     private String sheetName;
     private List<Section> sections;
     private List<String> pictures;
-    private List<Bitmap> bitmapImages;
+    private List<String> thumbImages;
 
     public String getFormName() {
         return formName;
@@ -50,11 +50,11 @@ public class FormTemplate implements Parcelable {
         this.pictures = pictures;
     }
 
-    public List<Bitmap> getBitmapImages() {
-        return bitmapImages;
+    public List<String> getThumbImages() {
+        return thumbImages;
     }
-    public void setBitmapImages(List<Bitmap> bitmapImages) {
-        this.bitmapImages = bitmapImages;
+    public void setThumbImages(List<String> bitmapImages) {
+        this.thumbImages = thumbImages;
     }
 
     @Override
@@ -69,7 +69,7 @@ public class FormTemplate implements Parcelable {
         out.writeString(sheetName);
         out.writeList(sections);
         out.writeList(pictures);
-        out.writeList(bitmapImages);
+        out.writeList(thumbImages);
     }
 
     public static final Creator<FormTemplate> CREATOR = new Creator<FormTemplate>() {
@@ -94,8 +94,8 @@ public class FormTemplate implements Parcelable {
         in.readList(sections, Section.class.getClassLoader());
         pictures = new ArrayList<>();
         in.readList(pictures, String.class.getClassLoader());
-        bitmapImages = new ArrayList<>();
-        in.readList(bitmapImages, Bitmap.class.getClassLoader());
+        thumbImages = new ArrayList<>();
+        in.readList(thumbImages, String.class.getClassLoader());
     }
 
     @Override

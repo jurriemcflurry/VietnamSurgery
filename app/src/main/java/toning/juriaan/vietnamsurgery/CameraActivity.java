@@ -1,6 +1,8 @@
 package toning.juriaan.vietnamsurgery;
 
 import android.app.Activity;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -14,6 +16,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -32,6 +35,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.apache.xmlbeans.impl.soap.Detail;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -53,6 +58,8 @@ public class CameraActivity extends AppCompatActivity {
     String mCurrentPhotoPath;
     TextView sectionNameTv;
     TextView stepCounter;
+    List<String> pictures = new ArrayList<>();
+    List<String> thumbImages = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -163,14 +170,18 @@ public class CameraActivity extends AppCompatActivity {
             int thumbSize = 400;
             try {
                 Bitmap thumb = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(mCurrentPhotoPath), thumbSize, thumbSize);
-                /*Bitmap bitmap = MediaStore.Images.Media
-                        .getBitmap(this.getContentResolver(), Uri.fromFile(file));*/
                 imageView.setImageBitmap(thumb);
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 lp.setMargins(10, 10, 10, 10);
                 imageView.setLayoutParams(lp);
+
+                imageView.setOnClickListener((View v) -> {
+                    goToDetailPage(file);
+                });
+
                 gridLayout1.addView(imageView);
                 mImages.add(thumb);
+                pictures.add(mCurrentPhotoPath);
 
             } catch (Exception ex) {
                 Log.i("TESTT", "I made a fkup");
@@ -186,7 +197,6 @@ public class CameraActivity extends AppCompatActivity {
 
         String filename = form.getSections().get(0).getFields().get(1).getAnswer();
         int i = 0;
-        List<String> pictures = new ArrayList<>();
 
         for(Bitmap image : mImages){
             String newFileName = "";
@@ -207,8 +217,8 @@ public class CameraActivity extends AppCompatActivity {
 
                 image.compress(Bitmap.CompressFormat.PNG, 100, fos);
                 fos.close();
-                pictures.add(mypath.getAbsolutePath());
                 i++;
+                thumbImages.add(mypath.getAbsolutePath());
             }
             catch(Exception e){
                 e.printStackTrace();
@@ -218,7 +228,15 @@ public class CameraActivity extends AppCompatActivity {
         mImages.clear();
         gridLayout1.removeAllViews();
         form.setPictures(pictures);
+        form.setThumbImages(thumbImages);
         return true;
+    }
+
+    private void goToDetailPage(File photoFile) {
+        Intent intent = new Intent(this, DetailPhotoActivity.class);
+        intent.putExtra("obj_form", form);
+        intent.putExtra("photoUrl", photoFile.getAbsolutePath());
+        startActivity(intent);
     }
 
     @Override

@@ -105,7 +105,7 @@ public class OverviewFormActivity extends AppCompatActivity {
         tv.setTextSize(20);
         layout.addView(tv);
 
-        for( String pathToFile : form.getPictures()) {
+        for( String pathToFile : form.getThumbImages()) {
             try {
                 Bitmap pic = BitmapFactory.decodeFile(pathToFile);
 
