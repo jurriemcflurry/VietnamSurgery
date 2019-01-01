@@ -1,5 +1,6 @@
 package toning.juriaan.vietnamsurgery;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -104,20 +106,23 @@ public class OverviewFormActivity extends AppCompatActivity {
         tv.setTextSize(20);
         layout.addView(tv);
 
+        LinearLayout mGallery = findViewById(R.id.photo_gallery);
+        LayoutInflater mInflator = getLayoutInflater();
+        int index = 0;
+
         for( String pathToFile : form.getThumbImages()) {
-            Log.i("TESTT", pathToFile);
             try {
+                View view = mInflator.inflate(R.layout.photo_gallery_item, mGallery, false);
+                ImageView imageView = view.findViewById(R.id.image_list_iv);
+                File file = new File(form.getPictures().get(index));
+                imageView.setOnClickListener((View v) -> {
+                    goToDetailPage(file);
+                });
+
                 Bitmap pic = BitmapFactory.decodeFile(pathToFile);
-
-                ImageView iv = new ImageView(this);
-                iv.setLayoutParams(params);
-                iv.getLayoutParams().height = 200;
-                iv.getLayoutParams().width = 200;
-                iv.requestLayout();
-
-                iv.setImageBitmap(pic);
-
-                layout.addView(iv);
+                imageView.setImageBitmap(pic);
+                mGallery.addView(view);
+                index++;
             } catch (Exception ex) {
                 Log.e("TESTT", "oops " + ex.getMessage());
             }
@@ -203,5 +208,12 @@ public class OverviewFormActivity extends AppCompatActivity {
 
     public void goToTheStart() {
         // Todo: Make it work?
+    }
+
+    private void goToDetailPage(File photoFile) {
+        Intent intent = new Intent(this, DetailPhotoActivity.class);
+        intent.putExtra("obj_form", form);
+        intent.putExtra("photoUrl", photoFile.getAbsolutePath());
+        startActivity(intent);
     }
 }

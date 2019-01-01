@@ -19,25 +19,35 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="?attr/actionBarSize">
-
+            
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/formLayout"
                 android:orientation="vertical">
 
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="bottom">
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/image_overview"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:id="@+id/formLayout"
+                    android:orientation="vertical">
+                </LinearLayout>
+                
+                <HorizontalScrollView
+                    android:layout_width="wrap_content"
+                    android:layout_height="150dp"
+                    android:layout_gravity="center_vertical"
+                    android:scrollbars="none">
 
-                    </android.support.v7.widget.RecyclerView>
-                </RelativeLayout>
+                    <LinearLayout
+                        android:id="@+id/photo_gallery"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:orientation="horizontal">
 
+                    </LinearLayout>
+
+                </HorizontalScrollView>
             </LinearLayout>
         </ScrollView>
 
