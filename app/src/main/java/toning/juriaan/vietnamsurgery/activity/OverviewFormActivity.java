@@ -1,6 +1,5 @@
-package toning.juriaan.vietnamsurgery;
+package toning.juriaan.vietnamsurgery.activity;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -28,6 +27,11 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import java.io.File;
 import java.io.FileOutputStream;
+
+import toning.juriaan.vietnamsurgery.model.Field;
+import toning.juriaan.vietnamsurgery.model.FormTemplate;
+import toning.juriaan.vietnamsurgery.R;
+import toning.juriaan.vietnamsurgery.model.Section;
 
 public class OverviewFormActivity extends AppCompatActivity {
 

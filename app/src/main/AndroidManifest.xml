@@ -24,16 +24,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CameraActivity">
+        <activity android:name=".activity.CameraActivity">
             <intent-filter>
                 <action android:name="android.media.action.IMAGE_CAPTURE" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".FormActivity"
+            android:name=".activity.FormActivity"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".OverviewFormActivity" />
+        <activity android:name=".activity.LoginActivity" />
+        <activity android:name=".activity.OverviewFormActivity" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -45,7 +45,7 @@
                 android:resource="@xml/paths" />
         </provider>
 
-        <activity android:name=".DetailPhotoActivity"></activity>
+        <activity android:name=".activity.DetailPhotoActivity"></activity>
     </application>
 
 </manifest>

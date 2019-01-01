@@ -1,4 +1,4 @@
-package toning.juriaan.vietnamsurgery;
+package toning.juriaan.vietnamsurgery.activity;
 
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import toning.juriaan.vietnamsurgery.R;
 
 public class LoginActivity extends AppCompatActivity {
 

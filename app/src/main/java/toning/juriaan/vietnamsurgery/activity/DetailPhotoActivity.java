@@ -1,4 +1,4 @@
-package toning.juriaan.vietnamsurgery;
+package toning.juriaan.vietnamsurgery.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,6 +14,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
+
+import toning.juriaan.vietnamsurgery.model.FormTemplate;
+import toning.juriaan.vietnamsurgery.R;
 
 public class DetailPhotoActivity extends AppCompatActivity {
 
