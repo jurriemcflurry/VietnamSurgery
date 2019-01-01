@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -169,17 +170,8 @@ public class FormActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                // this takes the user 'back', as if they pressed the left-facing
-                noOfThisSection--;
-                if(noOfThisSection == 0) {
-                    // Todo: Make sure user can go back to first screen!
-                    noOfThisSection = 1;
-                    return true;
-                } else {
-                    emptyForm(form, layout);
-                    generateForm(form.getSections().get(noOfThisSection - 1), layout);
-                    return true;
-                }
+                onBackPressed();
+                return true;
             case R.id.action_next:
                 emptyForm(form, layout);
                 noOfThisSection++;
@@ -202,5 +194,18 @@ public class FormActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.actionbar_menu, menu);
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        // this takes the user 'back', as if they pressed the left-facing
+        noOfThisSection--;
+        if(noOfThisSection == 0) {
+            // Todo: Make sure user can go back to first screen!
+            noOfThisSection = 1;
+        } else {
+            emptyForm(form, layout);
+            generateForm(form.getSections().get(noOfThisSection - 1), layout);
+        }
     }
 }

@@ -23,6 +23,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.poi.hssf.record.BoolErrRecord;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,7 +38,6 @@ import toning.juriaan.vietnamsurgery.R;
 
 public class CameraActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
-    private Bitmap mImageBitmap;
     private GridLayout gridLayout1;
     private ArrayList<Bitmap> mImages = new ArrayList<>();
     private FormTemplate form;
@@ -59,23 +60,7 @@ public class CameraActivity extends AppCompatActivity {
         setupFields();
         setupToolbar();
         setupFloatingActionButton();
-
-        /*if(form.getBitmapImages() != null) {
-            mImages.addAll(form.getBitmapImages());
-            for( Bitmap bitmapImage : form.getBitmapImages()) {
-                try {
-                    ImageView iv = new ImageView(this);
-                    iv.setImageBitmap(bitmapImage);
-                    gridLayout1.addView(iv);
-                    iv.getLayoutParams().height = (getDisplayMetrics().heightPixels)/2;
-                    iv.getLayoutParams().width = (getDisplayMetrics().widthPixels)/2;
-                    iv.setScaleType(ImageView.ScaleType.FIT_XY);
-
-                } catch (Exception ex) {
-                    Log.e("TESTT", "oops " + ex.getMessage());
-                }
-            }
-        }*/
+        checkForPictures();
     }
 
     private void loadIntent(){
@@ -153,24 +138,14 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            File file = new File(mCurrentPhotoPath);
-            ImageView imageView = new ImageView(CameraActivity.this);
             int thumbSize = 400;
             try {
                 Bitmap thumb = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(mCurrentPhotoPath), thumbSize, thumbSize);
-                imageView.setImageBitmap(thumb);
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                lp.setMargins(10, 10, 10, 10);
-                imageView.setLayoutParams(lp);
-
-                imageView.setOnClickListener((View v) -> {
-                    goToDetailPage(file);
-                });
-
-                gridLayout1.addView(imageView);
+                // Todo: Make a saveThumb so that the images are saved before clicking on Next -> Next should only bring you a new activity.
+                //saveThumb();
+                putPictureInGridLayout(thumb, mCurrentPhotoPath);
                 mImages.add(thumb);
                 pictures.add(mCurrentPhotoPath);
-
             } catch (Exception ex) {
                 Log.i("TESTT", "I made a fkup");
             }
@@ -183,11 +158,12 @@ public class CameraActivity extends AppCompatActivity {
             return false;
         }
 
+        // Todo: Filename...?
         String filename = form.getSections().get(0).getFields().get(1).getAnswer();
         int i = 0;
 
         for(Bitmap image : mImages){
-            String newFileName = "";
+            String newFileName;
             try {
                 newFileName = filename + "_" + String.valueOf(i);
                 String root = Environment.getExternalStorageDirectory().toString();
@@ -201,12 +177,18 @@ public class CameraActivity extends AppCompatActivity {
                     mypath = new File(myDir, newFileName + ".png");
                 }
 
-                FileOutputStream fos = new FileOutputStream(mypath);
+                if(mypath != null) {
+                    if(!thumbImages.contains(mypath.getAbsolutePath())) {
+                        FileOutputStream fos = new FileOutputStream(mypath);
+                        image.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                        fos.close();
+                        thumbImages.add(mypath.getAbsolutePath());
+                    }
+                    i++;
+                } else {
+                    // Todo: Errormessage!
+                }
 
-                image.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                fos.close();
-                i++;
-                thumbImages.add(mypath.getAbsolutePath());
             }
             catch(Exception e){
                 e.printStackTrace();
@@ -227,16 +209,35 @@ public class CameraActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void putPictureInGridLayout(Bitmap picture, String path) {
+        ImageView imageView = new ImageView(this);
+        imageView.setImageBitmap(picture);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(10, 10, 10, 10);
+        imageView.setLayoutParams(lp);
+        imageView.setOnClickListener((View v) ->
+            goToDetailPage(new File(path))
+        );
+        gridLayout1.addView(imageView);
+    }
+
+    private void checkForPictures() {
+        if(form.getThumbImages().size() > 0) {
+            int index = 0;
+            for( String filePath : form.getThumbImages()) {
+                Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+                putPictureInGridLayout(bitmap, form.getPictures().get(index));
+                mImages.add(bitmap);
+                index++;
+            }
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                // this takes the user 'back', as if they pressed the left-facing
-                //form.setBitmapImages(mImages);
-                Intent formIntent = new Intent(getApplicationContext(), FormActivity.class);
-                formIntent.putExtra("obj_form", form);
-                formIntent.putExtra("step", noOfSections);
-                startActivity(formIntent);
+                onBackPressed();
                 return true;
             case R.id.action_next:
                 if(saveImages()){
@@ -256,5 +257,20 @@ public class CameraActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.actionbar_menu, menu);
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        // this takes the user 'back', as if they pressed the left-facing
+        Intent formIntent = new Intent(getApplicationContext(), FormActivity.class);
+        formIntent.putExtra("obj_form", form);
+        formIntent.putExtra("step", noOfSections);
+        startActivity(formIntent);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        checkForPictures();
     }
 }

@@ -119,9 +119,9 @@ public class OverviewFormActivity extends AppCompatActivity {
                 View view = mInflator.inflate(R.layout.photo_gallery_item, mGallery, false);
                 ImageView imageView = view.findViewById(R.id.image_list_iv);
                 File file = new File(form.getPictures().get(index));
-                imageView.setOnClickListener((View v) -> {
-                    goToDetailPage(file);
-                });
+                imageView.setOnClickListener((View v) ->
+                    goToDetailPage(file)
+                );
 
                 Bitmap pic = BitmapFactory.decodeFile(pathToFile);
                 imageView.setImageBitmap(pic);
