@@ -112,25 +112,25 @@ public class FormActivity extends AppCompatActivity {
             for(int i = 0; i < section.getFields().size(); i++) {
                 Field f = section.getFields().get(i);
                 if(i < section.getFields().size() - 2) {
-                    TextInputLayout editField = createTextField(f.getFieldName(), f.getColumn());
+                    TextInputLayout editField = createTextField(f.getFieldName(), f.getColumn(), f.getAnswer());
                     idsMap.put(f.getFieldName(), f.getColumn());
                     layout.addView(editField);
                 } else {
-                    RadioButton rb = createRadioButton(f.getFieldName(), f.getColumn());
+                    RadioButton rb = createRadioButton(f.getFieldName(), f.getColumn(), f.getAnswer());
                     rg.addView(rb);
                 }
             }
             layout.addView(rg);
         } else {
             for(Field f : section.getFields()) {
-                TextInputLayout editField = createTextField(f.getFieldName(), f.getColumn());
+                TextInputLayout editField = createTextField(f.getFieldName(), f.getColumn(), f.getAnswer());
                 idsMap.put(f.getFieldName(), f.getColumn());
                 layout.addView(editField);
             }
         }
     }
 
-    private TextInputLayout createTextField(String textFieldName, int column) {
+    private TextInputLayout createTextField(String textFieldName, int column, String answer) {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
         TextInputLayout textInputLayout = new TextInputLayout(this);
@@ -140,6 +140,9 @@ public class FormActivity extends AppCompatActivity {
         editText.setLayoutParams(layoutParams);
         editText.setHint(textFieldName);
         editText.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES );
+        if(answer != null) {
+            editText.setText(answer);
+        }
         editText.setId(column);
 
         textInputLayout.addView(editText);
@@ -147,7 +150,7 @@ public class FormActivity extends AppCompatActivity {
         return textInputLayout;
     }
 
-    private RadioButton createRadioButton(String text, int id) {
+    private RadioButton createRadioButton(String text, int id, String answer) {
         RadioButton rb = new RadioButton(this);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params.setMargins(0,50,50,0);
@@ -156,6 +159,9 @@ public class FormActivity extends AppCompatActivity {
         rb.setId(id);
         idsMap.put(text, id);
         rb.setText(text);
+        if(answer != null && Boolean.parseBoolean(answer)) {
+            rb.setChecked(true);
+        }
         return rb;
     }
 
