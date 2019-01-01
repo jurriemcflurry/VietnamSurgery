@@ -53,7 +53,7 @@ public class FormTemplate implements Parcelable {
     public List<String> getThumbImages() {
         return thumbImages;
     }
-    public void setThumbImages(List<String> bitmapImages) {
+    public void setThumbImages(List<String> thumbImages) {
         this.thumbImages = thumbImages;
     }
 

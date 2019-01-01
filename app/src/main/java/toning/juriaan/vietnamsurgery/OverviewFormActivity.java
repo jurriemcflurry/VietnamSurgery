@@ -42,7 +42,6 @@ public class OverviewFormActivity extends AppCompatActivity {
 
         Intent i = getIntent();
         form = i.getParcelableExtra("obj_form");
-        //Log.i("TESTT", form.toString());
 
         toolbar = findViewById(R.id.form_toolbar);
 
@@ -106,6 +105,7 @@ public class OverviewFormActivity extends AppCompatActivity {
         layout.addView(tv);
 
         for( String pathToFile : form.getThumbImages()) {
+            Log.i("TESTT", pathToFile);
             try {
                 Bitmap pic = BitmapFactory.decodeFile(pathToFile);
 
