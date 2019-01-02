@@ -236,6 +236,18 @@ public class OverviewFormActivity extends AppCompatActivity {
             case android.R.id.home:
                 onBackPressed();
                 return true;
+            case R.id.action_next:
+                new AlertDialog.Builder(OverviewFormActivity.this)
+                        .setTitle("Confirm")
+                        .setMessage("Are you sure you want to save the form?")
+                        .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                saveForm(form);
+                            }
+                        })
+                        .setNegativeButton(R.string.dialog_cancel, null).show();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -254,4 +266,5 @@ public class OverviewFormActivity extends AppCompatActivity {
         cameraActivity.putExtra("obj_form", form);
         startActivity(cameraActivity);
     }
+
 }
