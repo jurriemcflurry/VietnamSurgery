@@ -23,8 +23,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.apache.poi.hssf.record.BoolErrRecord;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -123,8 +121,13 @@ public class CameraActivity extends AppCompatActivity {
         // Todo: Create a possibility to get a name out of the Excel or let the user choose.
         String patientName = form.getSections().get(0).getFields().get(1).getAnswer();
         String birthYear = form.getSections().get(0).getFields().get(2).getAnswer();
-        String dateStamp = new SimpleDateFormat("yyyyMMdd_HH:mm:ss").format(new Date());
-        String imageFileName = patientName + "_" + birthYear + "_" + dateStamp;
+        String dateStamp = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        String imageFileName;
+        if(mImages.size() > 0) {
+            imageFileName = patientName + "_" + birthYear + "_" + "_" + dateStamp + "_" + Integer.toString(mImages.size());
+        } else {
+            imageFileName = patientName + "_" + birthYear + "_" + "_" + dateStamp;
+        }
         File storageDir = new File(Environment.getExternalStorageDirectory().toString() + "/LenTab/lentab-susanne/VietnamSurgery");
         File image = new File(storageDir, imageFileName + ".jpg");
 
@@ -141,64 +144,57 @@ public class CameraActivity extends AppCompatActivity {
             int thumbSize = 400;
             try {
                 Bitmap thumb = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(mCurrentPhotoPath), thumbSize, thumbSize);
-                // Todo: Make a saveThumb so that the images are saved before clicking on Next -> Next should only bring you a new activity.
-                //saveThumb();
-                putPictureInGridLayout(thumb, mCurrentPhotoPath);
                 mImages.add(thumb);
+                saveThumb(thumb);
+                putPictureInGridLayout(thumb, mCurrentPhotoPath);
                 pictures.add(mCurrentPhotoPath);
+                form.setPictures(pictures);
             } catch (Exception ex) {
                 Log.i("TESTT", "I made a fkup");
             }
         }
     }
 
-    private boolean saveImages(){
+    private void saveThumb(Bitmap thumb) {
+        // Todo: Filename...?
+        String filename = form.getSections().get(0).getFields().get(1).getAnswer();
+        try {
+            String newFileName = filename + "_" + String.valueOf(mImages.size());
+            String root = Environment.getExternalStorageDirectory().toString();
+            File myDir = new File(root + File.separator + "/LenTab/lentab-susanne/VietnamSurgery/thumbs");
+            File mypath = null;
+
+            if(!myDir.exists()) {
+                if(myDir.mkdirs()){
+                    mypath = new File(myDir, newFileName + ".png");
+                }
+            } else {
+                mypath = new File(myDir, newFileName + ".png");
+            }
+
+            if(mypath != null) {
+                FileOutputStream fos = new FileOutputStream(mypath);
+                thumb.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                fos.close();
+                thumbImages.add(mypath.getAbsolutePath());
+                form.setThumbImages(thumbImages);
+            } else {
+                Toast.makeText(this, "There was an error while saving the thumb-image. Please try again.", Toast.LENGTH_LONG).show();
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private boolean goNext(){
         if(mImages.size() <= 0){
             Toast.makeText(getApplicationContext(), "Make at least one picture", Toast.LENGTH_LONG).show();
             return false;
         }
 
-        // Todo: Filename...?
-        String filename = form.getSections().get(0).getFields().get(1).getAnswer();
-        int i = 0;
-
-        for(Bitmap image : mImages){
-            String newFileName;
-            try {
-                newFileName = filename + "_" + String.valueOf(i);
-                String root = Environment.getExternalStorageDirectory().toString();
-                File myDir = new File(root + File.separator + "/LenTab/lentab-susanne/VietnamSurgery/thumbs");
-                File mypath = null;
-                if(!myDir.exists()) {
-                    if(myDir.mkdirs()){
-                        mypath = new File(myDir, newFileName + ".png");
-                    }
-                } else {
-                    mypath = new File(myDir, newFileName + ".png");
-                }
-
-                if(mypath != null) {
-                    if(!thumbImages.contains(mypath.getAbsolutePath())) {
-                        FileOutputStream fos = new FileOutputStream(mypath);
-                        image.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                        fos.close();
-                        thumbImages.add(mypath.getAbsolutePath());
-                    }
-                    i++;
-                } else {
-                    // Todo: Errormessage!
-                }
-
-            }
-            catch(Exception e){
-                e.printStackTrace();
-                return false;
-            }
-        }
         mImages.clear();
         gridLayout1.removeAllViews();
-        form.setPictures(pictures);
-        form.setThumbImages(thumbImages);
         return true;
     }
 
@@ -224,9 +220,9 @@ public class CameraActivity extends AppCompatActivity {
     private void checkForPictures() {
         if(form.getThumbImages().size() > 0) {
             int index = 0;
-            for( String filePath : form.getThumbImages()) {
+            for( String filePath : thumbImages) {
                 Bitmap bitmap = BitmapFactory.decodeFile(filePath);
-                putPictureInGridLayout(bitmap, form.getPictures().get(index));
+                putPictureInGridLayout(bitmap, pictures.get(index));
                 mImages.add(bitmap);
                 index++;
             }
@@ -240,8 +236,7 @@ public class CameraActivity extends AppCompatActivity {
                 onBackPressed();
                 return true;
             case R.id.action_next:
-                if(saveImages()){
-                    Toast.makeText(CameraActivity.this, "Images saved!", Toast.LENGTH_SHORT).show();
+                if(goNext()){
                     Intent formOverviewIntent = new Intent(getApplicationContext(), OverviewFormActivity.class);
                     formOverviewIntent.putExtra("obj_form", form);
                     startActivity(formOverviewIntent);
@@ -269,8 +264,12 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
+        gridLayout1.removeAllViews();
+        mImages.clear();
+        pictures = form.getPictures();
+        thumbImages = form.getThumbImages();
         checkForPictures();
     }
 }
