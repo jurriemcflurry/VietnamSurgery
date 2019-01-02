@@ -80,7 +80,9 @@ public class CameraActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
-        ab.setTitle("New form" + form.getFormName());
+        String name = form.getSections().get(0).getFields().get(1).getAnswer();
+        String birthYear = form.getSections().get(0).getFields().get(2).getAnswer();
+        ab.setTitle(getString(R.string.form_name, form.getFormName(), name, birthYear));
     }
 
     private void setupFloatingActionButton(){

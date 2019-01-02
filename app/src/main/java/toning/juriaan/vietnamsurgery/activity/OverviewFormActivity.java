@@ -14,9 +14,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.GridLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -40,6 +43,8 @@ public class OverviewFormActivity extends AppCompatActivity {
     private FormTemplate form;
     private LinearLayout layout;
     private LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+    LinearLayout mFormOverview;
+    LayoutInflater mInflator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,81 +52,84 @@ public class OverviewFormActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_overview_form);
 
-        Intent i = getIntent();
-        form = i.getParcelableExtra("obj_form");
-
-        toolbar = findViewById(R.id.form_toolbar);
-
-        setSupportActionBar(toolbar);
-        ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
-        ab.setTitle("New form" + form.getFormName());
-        layout = findViewById(R.id.formLayout);
-
-        Button bt = new Button(this);
-        bt.setText("Save");
-        params.gravity = Gravity.END;
-        bt.setLayoutParams(params);
-        bt.setBackgroundColor(Color.TRANSPARENT);
-        bt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new AlertDialog.Builder(OverviewFormActivity.this)
-                        .setTitle("Confirm")
-                        .setMessage("Are you sure you want to save the form?")
-                        .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                saveForm(form);
-                            }
-                        })
-                        .setNegativeButton(R.string.dialog_cancel, null).show();
-            }
-        });
-        toolbar.addView(bt);
-
+        loadIntent();
+        setupFields();
+        setupToolbar();
         loadForm();
     }
 
+
+    private void loadIntent(){
+        Intent i = getIntent();
+        form = i.getParcelableExtra("obj_form");
+    }
+    private void setupFields() {
+        mFormOverview = findViewById(R.id.formLayout);
+        mInflator = getLayoutInflater();
+        toolbar = findViewById(R.id.form_toolbar);
+    }
+
+    private void setupToolbar() {
+        setSupportActionBar(toolbar);
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+        String name = form.getSections().get(0).getFields().get(1).getAnswer();
+        String birthYear = form.getSections().get(0).getFields().get(2).getAnswer();
+        ab.setTitle(getString(R.string.form_name, form.getFormName(), name, birthYear));
+    }
+
     private void loadForm(){
+        placeFieldsInOverview();
+        placePicturesInOverview();
+    }
+
+    private void placeFieldsInOverview() {
         for (Section sec : form.getSections()) {
-            TextView tv = new TextView(this);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            tv.setLayoutParams(params);
-            tv.setText(sec.getSectionName());
-            tv.setTextSize(20);
-            layout.addView(tv);
+            View view = mInflator.inflate(R.layout.overview_grid_item_list, mFormOverview, false);
+            TextView txtView = view.findViewById(R.id.section_name);
+            txtView.setText(sec.getSectionName());
+            ImageButton editBtn = view.findViewById(R.id.edit_btn);
+            editBtn.setOnClickListener((View v) ->
+                    Toast.makeText(OverviewFormActivity.this, "I pressed the editBtn!", Toast.LENGTH_LONG).show()
+            );
 
-            for(Field f : sec.getFields()) {
-                TextView tvField = new TextView(this);
-                tvField.setLayoutParams(params);
-                tvField.setText(f.getFieldName());
-                layout.addView(tvField);
+            GridLayout mGridLayout = view.findViewById(R.id.grid_view);
+            for( Field f : sec.getFields()) {
+                View itemView = getLayoutInflater().inflate(R.layout.overview_grid_item, mGridLayout, false);
+                TextView fieldName = itemView.findViewById(R.id.field_name);
+                fieldName.setText(f.getFieldName());
 
-                TextView tv3 = new TextView(this);
-                tv3.setLayoutParams(params);
-                tv3.setText(f.getAnswer());
-                layout.addView(tv3);
+                TextView fieldAnswer = itemView.findViewById(R.id.field_answer);
+                fieldAnswer.setText(f.getAnswer());
+                mGridLayout.addView(itemView);
             }
-        }
 
-        TextView tv = new TextView(this);
-        tv.setLayoutParams(params);
-        tv.setText(R.string.section_name_photos);
-        tv.setTextSize(20);
-        layout.addView(tv);
+            mFormOverview.addView(view);
+        }
+    }
+
+    private void placePicturesInOverview() {
+        View headerView = mInflator.inflate(R.layout.overview_grid_item_list, mFormOverview, false);
+        TextView txtView = headerView.findViewById(R.id.section_name);
+        txtView.setText(R.string.section_name_photos);
+
+        ImageButton editBtn = headerView.findViewById(R.id.edit_btn);
+        editBtn.setOnClickListener((View v) ->
+                Toast.makeText(OverviewFormActivity.this, "I pressed the editBtn!", Toast.LENGTH_LONG).show()
+        );
+
+        mFormOverview.addView(headerView);
 
         LinearLayout mGallery = findViewById(R.id.photo_gallery);
         LayoutInflater mInflator = getLayoutInflater();
         int index = 0;
-
         for( String pathToFile : form.getThumbImages()) {
             try {
                 View view = mInflator.inflate(R.layout.photo_gallery_item, mGallery, false);
                 ImageView imageView = view.findViewById(R.id.image_list_iv);
                 File file = new File(form.getPictures().get(index));
                 imageView.setOnClickListener((View v) ->
-                    goToDetailPage(file)
+                        goToDetailPage(file)
                 );
 
                 Bitmap pic = BitmapFactory.decodeFile(pathToFile);
@@ -231,6 +239,13 @@ public class OverviewFormActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.actionbar_menu_form_overview, menu);
+        return true;
     }
 
     @Override
