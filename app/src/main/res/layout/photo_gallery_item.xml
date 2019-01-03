@@ -5,6 +5,7 @@
     android:layout_width="108dp"
     android:layout_height="108dp"
     android:paddingEnd="8dp"
+    android:paddingStart="0dp"
     android:paddingBottom="8dp">
 
     <ImageView
