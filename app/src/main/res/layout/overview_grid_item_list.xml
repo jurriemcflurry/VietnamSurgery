@@ -22,7 +22,7 @@
             android:textColor="#000"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textSize="24sp"
-            android:text="testtext"/>
+            />
 
         <ImageButton
             android:id="@+id/edit_btn"
