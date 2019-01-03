@@ -45,7 +45,8 @@
                 android:resource="@xml/paths" />
         </provider>
 
-        <activity android:name=".activity.DetailPhotoActivity"></activity>
+        <activity android:name=".activity.DetailPhotoActivity" />
+        <activity android:name=".activity.FormListActivity"></activity>
     </application>
 
 </manifest>

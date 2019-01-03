@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import toning.juriaan.vietnamsurgery.activity.FormActivity;
+import toning.juriaan.vietnamsurgery.activity.FormListActivity;
+import toning.juriaan.vietnamsurgery.adapter.FormListAdapter;
 import toning.juriaan.vietnamsurgery.model.Field;
 import toning.juriaan.vietnamsurgery.model.FormTemplate;
 import toning.juriaan.vietnamsurgery.model.Section;
@@ -41,6 +43,16 @@ public class MainActivity extends AppCompatActivity {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        LinearLayout layout = findViewById(R.id.linLayout);
+        // Choose a file
+            Button newBtn = new Button(this);
+            newBtn.setText("test");
+            layout.addView(newBtn);
+            newBtn.setOnClickListener((View v) -> {
+                Intent i = new Intent(this, FormListActivity.class);
+                startActivity(i);
+            });
 
         //setupNavigation();
 
