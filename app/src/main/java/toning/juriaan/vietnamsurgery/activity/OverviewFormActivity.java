@@ -90,7 +90,7 @@ public class OverviewFormActivity extends AppCompatActivity {
             txtView.setText(sec.getSectionName());
             ImageButton editBtn = view.findViewById(R.id.edit_btn);
             editBtn.setOnClickListener((View v) ->
-                    Toast.makeText(OverviewFormActivity.this, "I pressed the editBtn!", Toast.LENGTH_LONG).show()
+                    goBackToForm(sec.getNumber())
             );
 
             GridLayout mGridLayout = view.findViewById(R.id.grid_view);
@@ -115,7 +115,7 @@ public class OverviewFormActivity extends AppCompatActivity {
 
         ImageButton editBtn = headerView.findViewById(R.id.edit_btn);
         editBtn.setOnClickListener((View v) ->
-                Toast.makeText(OverviewFormActivity.this, "I pressed the editBtn!", Toast.LENGTH_LONG).show()
+                goBackToForm(form.getSections().size() + 1)
         );
 
         mFormOverview.addView(headerView);
@@ -228,6 +228,20 @@ public class OverviewFormActivity extends AppCompatActivity {
         intent.putExtra("obj_form", form);
         intent.putExtra("photoUrl", photoFile.getAbsolutePath());
         startActivity(intent);
+    }
+
+    private void goBackToForm(int step) {
+        if(step > form.getSections().size()) {
+            Intent formIntent = new Intent(getApplicationContext(), CameraActivity.class);
+            formIntent.putExtra("obj_form", form);
+            formIntent.putExtra("step", step);
+            startActivity(formIntent);
+        } else {
+            Intent formIntent = new Intent(getApplicationContext(), FormActivity.class);
+            formIntent.putExtra("obj_form", form);
+            formIntent.putExtra("step", step);
+            startActivity(formIntent);
+        }
     }
 
     @Override

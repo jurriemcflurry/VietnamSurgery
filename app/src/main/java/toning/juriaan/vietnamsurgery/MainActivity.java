@@ -235,6 +235,7 @@ public class MainActivity extends AppCompatActivity {
             Section section = null;
             List<Field> fields = null;
 
+            int sectionCounter = 1;
             for (int column = 0; column < stringsWithSections.size(); column++) {
                 if(!stringsWithSections.get(column).isEmpty()) {
                     if(section != null) {
@@ -243,8 +244,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                     section = new Section();
                     section.setSectionName(stringsWithSections.get(column));
+                    section.setNumber(sectionCounter);
                     section.setColumn(column);
                     fields = new ArrayList<>();
+                    sectionCounter++;
                 }
 
                 if(fields != null && column < firstFieldRow.size() && !firstFieldRow.get(column).isEmpty()) {

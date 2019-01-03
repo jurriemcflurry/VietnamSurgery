@@ -10,6 +10,7 @@ public class Section implements Parcelable {
     private String sectionName;
     private int column;
     private List<Field> fields;
+    private int number;
 
     public String getSectionName() {
         return sectionName;
@@ -32,6 +33,13 @@ public class Section implements Parcelable {
         this.fields = fields;
     }
 
+    public int getNumber() {
+        return number;
+    }
+    public void setNumber(int number) {
+        this.number = number;
+    }
+
     public Section() {}
 
     @Override
@@ -44,6 +52,7 @@ public class Section implements Parcelable {
         out.writeString(sectionName);
         out.writeInt(column);
         out.writeList(fields);
+        out.writeInt(number);
     }
 
     public static final Creator<Section> CREATOR = new Creator<Section>() {
@@ -63,5 +72,6 @@ public class Section implements Parcelable {
         column = in.readInt();
         fields = new ArrayList<>();
         in.readList(fields, Field.class.getClassLoader());
+        number = in.readInt();
     }
 }
