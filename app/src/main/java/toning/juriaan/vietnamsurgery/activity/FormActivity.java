@@ -179,6 +179,7 @@ public class FormActivity extends AppCompatActivity {
                     Intent i = new Intent(getApplicationContext(), CameraActivity.class);
                     i.putExtra("obj_form", form);
                     startActivity(i);
+                    finish();
                 }
                 else {
                     generateForm(form.getSections().get(noOfThisSection - 1), layout);

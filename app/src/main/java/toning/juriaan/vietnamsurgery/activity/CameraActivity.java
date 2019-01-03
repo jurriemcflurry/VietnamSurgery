@@ -242,6 +242,7 @@ public class CameraActivity extends AppCompatActivity {
                     Intent formOverviewIntent = new Intent(getApplicationContext(), OverviewFormActivity.class);
                     formOverviewIntent.putExtra("obj_form", form);
                     startActivity(formOverviewIntent);
+                    finish();
                 }
                 return true;
             default:
@@ -263,6 +264,7 @@ public class CameraActivity extends AppCompatActivity {
         formIntent.putExtra("obj_form", form);
         formIntent.putExtra("step", noOfSections);
         startActivity(formIntent);
+        finish();
     }
 
     @Override

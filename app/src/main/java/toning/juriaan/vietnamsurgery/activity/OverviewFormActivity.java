@@ -236,11 +236,13 @@ public class OverviewFormActivity extends AppCompatActivity {
             formIntent.putExtra("obj_form", form);
             formIntent.putExtra("step", step);
             startActivity(formIntent);
+            finish();
         } else {
             Intent formIntent = new Intent(getApplicationContext(), FormActivity.class);
             formIntent.putExtra("obj_form", form);
             formIntent.putExtra("step", step);
             startActivity(formIntent);
+            finish();
         }
     }
 
