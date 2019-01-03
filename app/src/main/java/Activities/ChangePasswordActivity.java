@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -169,8 +170,14 @@ public class ChangePasswordActivity extends AppCompatActivity implements Callbac
     public void onResponse(Call<ChangePasswordResponse> call, Response<ChangePasswordResponse> response) {
         if(response.isSuccessful() && response.body() == null){
             AccessToken.access_token = null;
-            Intent toLogin = new Intent(ChangePasswordActivity.this, LoginActivity.class);
-            startActivity(toLogin);
+            Snackbar.make(findViewById(R.id.changePassword_linear_layout), "Wachtwoord gewijzigd, log opnieuw in", Snackbar.LENGTH_LONG)
+                    .setAction("LOGIN", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent toLogin = new Intent(ChangePasswordActivity.this, LoginActivity.class);
+                            startActivity(toLogin);
+                        }
+                    });
         }
     }
 

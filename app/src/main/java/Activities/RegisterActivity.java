@@ -4,6 +4,7 @@ package Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -113,10 +114,15 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
 
     @Override
     public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
-        System.out.println(response.message());
         if(response.isSuccessful() && response.body() != null){
-            Intent backHome = new Intent(RegisterActivity.this, MainActivity.class);
-            startActivity(backHome);
+            Snackbar.make(findViewById(R.id.register_linear_layout), "Gebruiker succesvol toegevoegd", Snackbar.LENGTH_LONG)
+                    .setAction("HOME", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent backHome = new Intent(RegisterActivity.this, MainActivity.class);
+                            startActivity(backHome);
+                        }
+                    });
         }
     }
 

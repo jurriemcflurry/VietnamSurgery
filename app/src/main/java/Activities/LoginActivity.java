@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.view.GravityCompat;
@@ -128,6 +129,10 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(userName.getText() == null || password.getText() == null){
+                    return;
+                }
+
                 //call om in te loggen
                 login();
             }
@@ -135,9 +140,6 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
     }
 
     private void login(){
-        if(userName.getText() == null || password.getText() == null){
-            return;
-        }
 
         String username = userName.getText().toString();
         String passWord = password.getText().toString();
@@ -153,14 +155,20 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
         //terug naar home
 
         if(response.isSuccessful() && response.body() != null){
+            Snackbar.make(findViewById(R.id.login_linear_layout), "Succesvol ingelogd", Snackbar.LENGTH_LONG)
+                    .setAction("HOME", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent backToHome = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(backToHome);
+                        }
+                    }).show();
             AccessToken.access_token = "Bearer " + response.body().accesstoken;
             AccessToken.userName = response.body().userName;
             TextView loginText = (TextView) findViewById(R.id.Logintext);
             TextView loggedInUser = (TextView) findViewById(R.id.LoggedinUser);
             loginText.setText(getString(R.string.logout));
             loggedInUser.setText(AccessToken.userName);
-            Intent backToHome = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(backToHome);
         }
     }
 
