@@ -1,12 +1,14 @@
 package Activities;
 
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,86 +16,41 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import WebInterfaces.FormWebInterface;
+import ResponseModels.ChangePasswordResponse;
+import WebInterfaces.UserWebInterface;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import toning.juriaan.Models.AccessToken;
-import toning.juriaan.Models.Form;
-import toning.juriaan.Models.FormTemplateObject;
-import toning.juriaan.Models.Helper;
+import toning.juriaan.Models.ChangePasswordObject;
 import toning.juriaan.Models.R;
-import toning.juriaan.Models.Storage;
 
-
-public class MainActivity extends AppCompatActivity {
+public class ChangePasswordActivity extends AppCompatActivity implements Callback<ChangePasswordResponse> {
 
     private DrawerLayout mDrawerLayout;
-    private Form form;
+    private TextInputEditText oldPassword;
+    private TextInputEditText newPassword;
+    private TextInputEditText confirmNewPassword;
+    private Button changePassword;
+    private UserWebInterface userWebInterface;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        //thema moet altijd worden gezet naar AppTheme, zodat de Launcher van het splashscreen niet bij elke actie wordt getoond
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        form = Form.getDummyForm();
-        form.setFormName("MainActivity form");
+        setContentView(R.layout.change_password);
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(getString(R.string.baseURL))
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        userWebInterface = retrofit.create(UserWebInterface.class);
 
         setupNavigation();
-
-        Button OpenCamera = (Button) findViewById(R.id.ToCamera);
-        OpenCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent toCamera = new Intent(MainActivity.this, CameraActivity.class);
-                startActivity(toCamera);
-            }
-        });
-
-        Button toFormActivityButton = findViewById(R.id.toFormActivity);
-        toFormActivityButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Storage.saveForm(form, MainActivity.this);
-
-                Intent toFormActivityIntent = new Intent(MainActivity.this, FormActivity.class);
-                toFormActivityIntent.putExtra(FormActivity.FORM, form.getFormattedFormName());
-                startActivity(toFormActivityIntent);
-            }
-        });
-
-        final Button postForm = findViewById(R.id.postForm);
-        postForm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                postForm();
-            }
-        });
-    }
-
-    private void postForm() {
-        Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl(getString(R.string.baseURL))
-                .addConverterFactory(GsonConverterFactory.create());
-
-        Retrofit retrofit = builder.build();
-        FormWebInterface client = retrofit.create(FormWebInterface.class);
-        Call<Void> call = client.postFormTemplate(new FormTemplateObject(form.getFormTemplate()));
-
-        call.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                Helper.log("onResponse() " + response.code());
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Helper.log("onFailure()");
-            }
-        });
+        setupLayout();
     }
 
     @Override
@@ -107,13 +64,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupNavigation(){
-        mDrawerLayout = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        mDrawerLayout = findViewById(R.id.changePassword_drawer_layout);
+        NavigationView navigationView = findViewById(R.id.changePassword_nav_view);
         View headerView = navigationView.getHeaderView(0);
         LinearLayout header = (LinearLayout) headerView.findViewById(R.id.headerlayout);
         final TextView login = (TextView) header.findViewById(R.id.Logintext);
         final TextView loggedInUser = (TextView) header.findViewById(R.id.LoggedinUser);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.changePassword_toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
@@ -122,13 +79,6 @@ public class MainActivity extends AppCompatActivity {
         if(AccessToken.access_token != null){
             login.setText(getString(R.string.logout));
             loggedInUser.setText(AccessToken.userName);
-            loggedInUser.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent toChangePassword = new Intent(MainActivity.this, ChangePasswordActivity.class);
-                    startActivity(toChangePassword);
-                }
-            });
         }
         else{
             login.setText(getString(R.string.login));
@@ -148,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else{
                     // ga naar pagina om in te loggen
-                    Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+                    Intent loginIntent = new Intent(ChangePasswordActivity.this, LoginActivity.class);
                     startActivity(loginIntent);
                 }
             }
@@ -168,11 +118,11 @@ public class MainActivity extends AppCompatActivity {
 
                         switch(menuItem.getItemId()){
                             case R.id.nav_1: //Bovenste Item
-                                Intent naarForms = new Intent(MainActivity.this, FormActivity.class);
+                                Intent naarForms = new Intent(ChangePasswordActivity.this, FormActivity.class);
                                 startActivity(naarForms);
                                 break;
                             case R.id.nav_2: //2e item
-                                Intent naarUsers = new Intent(MainActivity.this, UsersActivity.class);
+                                Intent naarUsers = new Intent(ChangePasswordActivity.this, UsersActivity.class);
                                 startActivity(naarUsers);
                                 break;
                             case R.id.nav_3: //3e item
@@ -185,5 +135,47 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     }
                 });
+    }
+
+    private void setupLayout(){
+        oldPassword = findViewById(R.id.oldPasswordEditText);
+        newPassword = findViewById(R.id.newPasswordEditText);
+        confirmNewPassword = findViewById(R.id.confirmNewPasswordEditText);
+        changePassword = findViewById(R.id.changePassword_button);
+
+        changePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changePassWord();
+            }
+        });
+    }
+
+    private void changePassWord(){
+        if(AccessToken.access_token == null){
+            return;
+        }
+
+        String oldPasswordText = oldPassword.getText().toString();
+        String newPasswordText = newPassword.getText().toString();
+        String confirmNewPasswordText = confirmNewPassword.getText().toString();
+
+        ChangePasswordObject changePasswordObject = new ChangePasswordObject(oldPasswordText, newPasswordText, confirmNewPasswordText);
+
+        userWebInterface.changePassword(AccessToken.access_token, changePasswordObject).enqueue(this);
+    }
+
+    @Override
+    public void onResponse(Call<ChangePasswordResponse> call, Response<ChangePasswordResponse> response) {
+        if(response.isSuccessful() && response.body() == null){
+            AccessToken.access_token = null;
+            Intent toLogin = new Intent(ChangePasswordActivity.this, LoginActivity.class);
+            startActivity(toLogin);
+        }
+    }
+
+    @Override
+    public void onFailure(Call<ChangePasswordResponse> call, Throwable t) {
+        t.printStackTrace();
     }
 }

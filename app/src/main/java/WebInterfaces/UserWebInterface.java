@@ -2,6 +2,7 @@ package WebInterfaces;
 
 import java.util.List;
 
+import ResponseModels.ChangePasswordResponse;
 import ResponseModels.LoginResponse;
 import ResponseModels.RegisterResponse;
 import retrofit2.Call;
@@ -11,6 +12,7 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import toning.juriaan.Models.ChangePasswordObject;
 import toning.juriaan.Models.User;
 import toning.juriaan.Models.RegisterObject;
 
@@ -26,4 +28,7 @@ public interface UserWebInterface {
 
     @GET("/api/Account")
     Call<List<User>> getUsers(@Header("Authorization") String access_token);
+
+    @POST("/api/Account/ChangePassword")
+    Call<ChangePasswordResponse> changePassword(@Header("Authorization") String access_token, @Body ChangePasswordObject changePasswordObject);
 }

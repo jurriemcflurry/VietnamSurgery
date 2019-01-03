@@ -18,4 +18,8 @@
     <string name="role">Role</string>
     <string name="roleOverview">(Role)</string>
     <string name="admin">Admin</string>
+    <string name="oldPassword">Old Password</string>
+    <string name="newPassword">New Password</string>
+    <string name="confirmNewPassword">Confirm New Password</string>
+    <string name="changePassword">Change Password</string>
 </resources>
