@@ -82,6 +82,13 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
         if(AccessToken.access_token != null){
             login.setText(getString(R.string.logout));
             loggedInUser.setText(AccessToken.userName);
+            loggedInUser.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent toChangePassword = new Intent(LoginActivity.this, ChangePasswordActivity.class);
+                    startActivity(toChangePassword);
+                }
+            });
         }
 
         navigationView.setNavigationItemSelectedListener(
