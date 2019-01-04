@@ -42,6 +42,8 @@ public class MainActivity extends BaseActivity {
 
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_main, contentFrameLayout);
+        getSupportActionBar().setTitle(getString(R.string.home));
+
         form = Form.getDummyForm();
         form.setFormName("MainActivity form");
 

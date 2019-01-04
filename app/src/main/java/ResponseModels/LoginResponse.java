@@ -15,6 +15,9 @@ public class LoginResponse {
     @SerializedName("userName")
     public String userName;
 
+    @SerializedName("role")
+    public String role;
+
     /*@SerializedName(".issued")
     public String issued;
 

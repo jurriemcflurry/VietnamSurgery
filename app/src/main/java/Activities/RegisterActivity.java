@@ -44,6 +44,8 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
 
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_register, contentFrameLayout);
+        getSupportActionBar().setTitle(getString(R.string.register));
+
         setupLayout();
 
         Retrofit retrofit = new Retrofit.Builder()

@@ -48,6 +48,7 @@ public class ChangePasswordActivity extends BaseActivity implements Callback<Cha
 
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.change_password, contentFrameLayout);
+        getSupportActionBar().setTitle(getString(R.string.changePassword));
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(getString(R.string.baseURL))

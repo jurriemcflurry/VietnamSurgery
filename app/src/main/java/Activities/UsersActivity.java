@@ -49,6 +49,7 @@ public class UsersActivity extends BaseActivity implements Callback<List<User>> 
 
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_users, contentFrameLayout);
+        getSupportActionBar().setTitle(getString(R.string.users));
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(getString(R.string.baseURL))
@@ -84,6 +85,13 @@ public class UsersActivity extends BaseActivity implements Callback<List<User>> 
                 startActivity(toRegister);
             }
         });
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        mContent.clear();
+        getUsers();
     }
 
     private void getUsers(){

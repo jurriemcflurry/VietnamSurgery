@@ -11,6 +11,7 @@
     <string name="logout">Log out</string>
     <string name="forms">Forms</string>
     <string name="users">Users</string>
+    <string name="userdetail">Details van user</string>
     <string name="camera_title">Pictures</string>
     <string name="next">next</string>
     <string name="baseURL">http://vietnamcloudapi.azurewebsites.net</string>
@@ -28,4 +29,5 @@
     <string name="passwordChanged">Password is changed, please login again</string>
     <string name="userAdded">User successfully added</string>
     <string name="loggedIn">Successfully logged in</string>
+    <string name="delete">Delete</string>
 </resources>

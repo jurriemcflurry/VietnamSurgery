@@ -7,6 +7,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -27,6 +28,19 @@ public class BaseActivity extends AppCompatActivity {
 
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+        Menu menu = navigationView.getMenu();
+
+        if(AccessToken.userrole != null && AccessToken.userrole.equals("Admin")){
+            menu.add("Users").setIcon(R.drawable.user_menu_icon_black).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    Intent naarUsers = new Intent(getApplicationContext(), UsersActivity.class);
+                    startActivity(naarUsers);
+                    return false;
+                }
+            });
+        }
+
         View headerView = navigationView.getHeaderView(0);
         LinearLayout header = (LinearLayout) headerView.findViewById(R.id.headerlayout);
         final TextView login = (TextView) header.findViewById(R.id.Logintext);
@@ -60,9 +74,12 @@ public class BaseActivity extends AppCompatActivity {
                 if(login.getText().equals(getString(R.string.logout))){
                     AccessToken.access_token = null;
                     AccessToken.userName = null;
+                    AccessToken.userrole = null;
                     login.setText(getString(R.string.login));
                     loggedInUser.setText(getString(R.string.not_logged_in));
                     drawerLayout.closeDrawers();
+                    Intent refresh = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(refresh);
                 }
                 else{
                     // ga naar pagina om in te loggen
@@ -86,16 +103,8 @@ public class BaseActivity extends AppCompatActivity {
 
                         switch(menuItem.getItemId()){
                             case R.id.nav_1: //Bovenste Item
-                                Intent naarForms = new Intent(getApplicationContext(), FormActivity.class);
-                                startActivity(naarForms);
-                                break;
-                            case R.id.nav_2: //2e item
-                                Intent naarUsers = new Intent(getApplicationContext(), UsersActivity.class);
-                                startActivity(naarUsers);
-                                break;
-                            case R.id.nav_3: //3e item
-                                break;
-                            case R.id.nav_4: //4e item
+                                Intent naarHome = new Intent(getApplicationContext(), MainActivity.class);
+                                startActivity(naarHome);
                                 break;
                             default: break;
                         }

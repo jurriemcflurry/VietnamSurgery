@@ -2,6 +2,7 @@ package Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -46,6 +47,8 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
 
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.login_activity, contentFrameLayout);
+        getSupportActionBar().setTitle(getString(R.string.login));
+
         setupLayoutControls();
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -92,19 +95,23 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
 
         if(response.isSuccessful() && response.body() != null){
             Snackbar.make(findViewById(R.id.login_linear_layout),getString(R.string.loggedIn), Snackbar.LENGTH_INDEFINITE)
-                    .setAction(getString(R.string.homeCaps), new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent backToHome = new Intent(LoginActivity.this, MainActivity.class);
-                            startActivity(backToHome);
-                        }
-                    }).show();
+                    .show();
             AccessToken.access_token = response.body().token_type + " " + response.body().accesstoken;
             AccessToken.userName = response.body().userName;
+            AccessToken.userrole = response.body().role;
             TextView loginText = (TextView) findViewById(R.id.Logintext);
             TextView loggedInUser = (TextView) findViewById(R.id.LoggedinUser);
             loginText.setText(getString(R.string.logout));
             loggedInUser.setText(AccessToken.userName);
+
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    // Actions to do after 2 seconds
+                    Intent backToHome = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(backToHome);
+                }
+            }, 2000);
         }
         else{
             Snackbar.make(findViewById(R.id.login_linear_layout), response.message(),Snackbar.LENGTH_LONG)
