@@ -1,13 +1,12 @@
 package Activities;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -15,12 +14,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import ResponseModels.LoginResponse;
 import WebInterfaces.UserWebInterface;
@@ -30,6 +27,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import toning.juriaan.Models.AccessToken;
+import toning.juriaan.Models.Helper;
 import toning.juriaan.Models.R;
 
 
@@ -40,6 +38,7 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
     private TextInputEditText password;
     private Button loginButton;
     private UserWebInterface userWebInterface;
+    private Helper helper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -153,22 +152,27 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
         //sla token op
         //set headertexts goed
         //terug naar home
+        helper.hideKeyboard(this);
 
         if(response.isSuccessful() && response.body() != null){
-            Snackbar.make(findViewById(R.id.login_linear_layout), "Succesvol ingelogd", Snackbar.LENGTH_LONG)
-                    .setAction("HOME", new View.OnClickListener() {
+            Snackbar.make(findViewById(R.id.login_linear_layout),getString(R.string.loggedIn), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getString(R.string.homeCaps), new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent backToHome = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(backToHome);
                         }
                     }).show();
-            AccessToken.access_token = "Bearer " + response.body().accesstoken;
+            AccessToken.access_token = response.body().token_type + " " + response.body().accesstoken;
             AccessToken.userName = response.body().userName;
             TextView loginText = (TextView) findViewById(R.id.Logintext);
             TextView loggedInUser = (TextView) findViewById(R.id.LoggedinUser);
             loginText.setText(getString(R.string.logout));
             loggedInUser.setText(AccessToken.userName);
+        }
+        else{
+            Snackbar.make(findViewById(R.id.login_linear_layout), response.message(),Snackbar.LENGTH_LONG)
+                    .show();
         }
     }
 

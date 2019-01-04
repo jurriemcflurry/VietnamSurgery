@@ -26,6 +26,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import toning.juriaan.Models.AccessToken;
 import toning.juriaan.Models.ChangePasswordObject;
+import toning.juriaan.Models.Helper;
 import toning.juriaan.Models.R;
 
 public class ChangePasswordActivity extends AppCompatActivity implements Callback<ChangePasswordResponse> {
@@ -36,6 +37,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements Callbac
     private TextInputEditText confirmNewPassword;
     private Button changePassword;
     private UserWebInterface userWebInterface;
+    private Helper helper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -168,16 +170,22 @@ public class ChangePasswordActivity extends AppCompatActivity implements Callbac
 
     @Override
     public void onResponse(Call<ChangePasswordResponse> call, Response<ChangePasswordResponse> response) {
+        helper.hideKeyboard(this);
+
         if(response.isSuccessful() && response.body() == null){
             AccessToken.access_token = null;
-            Snackbar.make(findViewById(R.id.changePassword_linear_layout), "Wachtwoord gewijzigd, log opnieuw in", Snackbar.LENGTH_LONG)
-                    .setAction("LOGIN", new View.OnClickListener() {
+            Snackbar.make(findViewById(R.id.changePassword_linear_layout), getString(R.string.passwordChanged), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getString(R.string.loginCaps), new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent toLogin = new Intent(ChangePasswordActivity.this, LoginActivity.class);
                             startActivity(toLogin);
                         }
                     });
+        }
+        else{
+            Snackbar.make(findViewById(R.id.changePassword_linear_layout), response.message(),Snackbar.LENGTH_LONG)
+                    .show();
         }
     }
 

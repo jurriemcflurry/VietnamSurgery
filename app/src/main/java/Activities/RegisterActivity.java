@@ -24,6 +24,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import toning.juriaan.Models.Helper;
 import toning.juriaan.Models.R;
 import toning.juriaan.Models.RegisterObject;
 
@@ -37,6 +38,7 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
     private TextInputEditText email;
     private Button register;
     private FrameLayout frameLayout;
+    private Helper helper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -114,15 +116,20 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
 
     @Override
     public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
+        helper.hideKeyboard(this);
         if(response.isSuccessful() && response.body() != null){
-            Snackbar.make(findViewById(R.id.register_linear_layout), "Gebruiker succesvol toegevoegd", Snackbar.LENGTH_LONG)
-                    .setAction("HOME", new View.OnClickListener() {
+            Snackbar.make(findViewById(R.id.register_linear_layout), getString(R.string.userAdded), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getString(R.string.homeCaps), new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent backHome = new Intent(RegisterActivity.this, MainActivity.class);
                             startActivity(backHome);
                         }
                     });
+        }
+        else{
+            Snackbar.make(findViewById(R.id.register_linear_layout), response.message(),Snackbar.LENGTH_LONG)
+                    .show();
         }
     }
 

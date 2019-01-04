@@ -42,6 +42,7 @@
                     android:layout_height="20dp"
                     android:layout_marginTop="20dp"
                     android:background="@null"
+                    android:inputType="textEmailAddress"
                     android:hint="@string/username" />
 
             </android.support.design.widget.TextInputLayout>

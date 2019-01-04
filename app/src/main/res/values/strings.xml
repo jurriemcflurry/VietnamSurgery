@@ -4,6 +4,9 @@
     <string name="password">Password</string>
     <string name="password2">password</string>
     <string name="login">Login</string>
+    <string name="loginCaps">LOGIN</string>
+    <string name="home">Home</string>
+    <string name="homeCaps">HOME</string>
     <string name="not_logged_in">Not logged in</string>
     <string name="logout">Log out</string>
     <string name="forms">Forms</string>
@@ -22,4 +25,7 @@
     <string name="newPassword">New Password</string>
     <string name="confirmNewPassword">Confirm New Password</string>
     <string name="changePassword">Change Password</string>
+    <string name="passwordChanged">Password is changed, please login again</string>
+    <string name="userAdded">User successfully added</string>
+    <string name="loggedIn">Successfully logged in</string>
 </resources>
