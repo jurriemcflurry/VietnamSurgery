@@ -5,10 +5,17 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Environment;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
@@ -26,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import toning.juriaan.vietnamsurgery.MainActivity;
 import toning.juriaan.vietnamsurgery.R;
 import toning.juriaan.vietnamsurgery.adapter.FormListAdapter;
 import toning.juriaan.vietnamsurgery.model.Field;
@@ -37,6 +45,9 @@ public class FormListActivity extends AppCompatActivity {
     FormTemplate form = new FormTemplate();
     private List<Section> sections = new ArrayList<>();
     private ArrayList<FormTemplate> formList = new ArrayList<>();
+    Toolbar toolbar;
+    private ActionBar ab;
+    private DrawerLayout mDrawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +55,58 @@ public class FormListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form_list);
 
+        setupFields();
+        setupToolbar();
+        setupNavigation();
         chooseExcelFile();
+    }
+
+    private void setupFields(){
+        toolbar = findViewById(R.id.form_toolbar);
+    }
+
+    private void setupToolbar() {
+        setSupportActionBar(toolbar);
+        ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+        ab.setTitle(R.string.filled_in_forms_name);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void setupNavigation(){
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        Menu menu = navigationView.getMenu();
+        menu.findItem(R.id.filled_in_forms).setVisible(false);
+
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        // close drawer when item is tapped
+
+                        switch(menuItem.getItemId()){
+                            case R.id.main_activity:
+                                Intent mainActivity = new Intent(FormListActivity.this, MainActivity.class);
+                                startActivity(mainActivity);
+                                finish();
+                                break;
+                            default: break;
+                        }
+
+                        return true;
+                    }
+                });
     }
 
     private void chooseExcelFile() {
@@ -302,4 +364,10 @@ public class FormListActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent mainActivity = new Intent(FormListActivity.this, MainActivity.class);
+        startActivity(mainActivity);
+        finish();
+    }
 }

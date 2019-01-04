@@ -5,14 +5,21 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Environment;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.poi.ss.usermodel.Row;
@@ -25,7 +32,6 @@ import java.util.List;
 
 import toning.juriaan.vietnamsurgery.activity.FormActivity;
 import toning.juriaan.vietnamsurgery.activity.FormListActivity;
-import toning.juriaan.vietnamsurgery.adapter.FormListAdapter;
 import toning.juriaan.vietnamsurgery.model.Field;
 import toning.juriaan.vietnamsurgery.model.FormTemplate;
 import toning.juriaan.vietnamsurgery.model.Section;
@@ -36,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MyActivity";
     private FormTemplate form = new FormTemplate();
     private List<Section> sections = new ArrayList<>();
+    Toolbar toolbar;
+    private ActionBar ab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,39 +52,25 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        LinearLayout layout = findViewById(R.id.linLayout);
-        // Choose a file
-            Button newBtn = new Button(this);
-            newBtn.setText("test");
-            layout.addView(newBtn);
-            newBtn.setOnClickListener((View v) -> {
-                Intent i = new Intent(this, FormListActivity.class);
-                startActivity(i);
-            });
-
-        //setupNavigation();
-
-        /*Button OpenCamera = findViewById(R.id.ToCamera);
-        OpenCamera.setOnClickListener((View v) -> {
-            Intent toCamera = new Intent(MainActivity.this, CameraActivity.class);
-            startActivity(toCamera);
-        });*/
-
-        /*Button toFormActivityButton = findViewById(R.id.toFormActivity);
-        toFormActivityButton.setOnClickListener((View v) -> {
-            Intent toFormActivityIntent = new Intent(MainActivity.this, FormActivity.class);
-            startActivity(toFormActivityIntent);
-        });*/
-
-        /*Button readExcel = findViewById(R.id.toReadExcel);
-        readExcel.setOnClickListener((View v) -> {
-            chooseExcelFile();
-        });*/
-
+        setupFields();
+        setupToolbar();
+        setupNavigation();
         chooseExcelFile();
     }
 
-    /*@Override
+    private void setupFields(){
+        toolbar = findViewById(R.id.form_toolbar);
+    }
+
+    private void setupToolbar() {
+        setSupportActionBar(toolbar);
+        ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+        ab.setTitle(R.string.main_title_name);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -89,48 +83,29 @@ public class MainActivity extends AppCompatActivity {
     private void setupNavigation(){
         mDrawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
-        View headerView = navigationView.getHeaderView(0);
-        LinearLayout header = (LinearLayout) headerView.findViewById(R.id.headerlayout);
-        final TextView login = (TextView) header.findViewById(R.id.Logintext);
-        final TextView loggedInUser = (TextView) header.findViewById(R.id.LoggedinUser);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionbar = getSupportActionBar();
-        actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
+        Menu menu = navigationView.getMenu();
+        menu.findItem(R.id.main_activity).setVisible(false);
 
-        login.setOnClickListener((View v) -> {
-                // ga naar pagina om in te loggen
-                Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(loginIntent);
+        navigationView.setNavigationItemSelectedListener(
+            new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(MenuItem menuItem) {
+                    // close drawer when item is tapped
+                    mDrawerLayout.closeDrawers();
 
-                loggedInUser.setText("Ingelogde Gebruiker"); //set text to logged in username
-                login.setText("Log out"); //change text when logging in/out
-        });
+                    switch(menuItem.getItemId()){
+                        case R.id.filled_in_forms:
+                            Intent formOverview = new Intent(MainActivity.this, FormListActivity.class);
+                            startActivity(formOverview);
+                            finish();
+                            break;
+                        default: break;
+                    }
 
-        navigationView.setNavigationItemSelectedListener((MenuItem menuItem) -> {
-            // set item as selected to persist highlight
-            menuItem.setChecked(true);
-            // close drawer when item is tapped
-            mDrawerLayout.closeDrawers();
-
-            // Add code here to update the UI based on the item selected
-            // For example, swap UI fragments here
-
-            switch(menuItem.getItemId()){
-                case 2131230828: //Bovenste Item
-                    break;
-                case 2131230829: //2e item
-                    break;
-                case 2131230830: //3e item
-                    break;
-                case 2131230831: //4e item
-                    break;
-                default: break;
-            }
-            return true;
-        });
-    }*/
+                    return true;
+                }
+            });
+    }
 
     // Get all the files with xlsx extension
     private List<File> getListFiles(File parentDir) {
@@ -296,7 +271,6 @@ public class MainActivity extends AppCompatActivity {
             Log.e("TESTT", ex.getMessage() + " -- " + ex.getCause());
         }
     }
-
 
     // Storage Permissions
     private static final int REQUEST_EXTERNAL_STORAGE = 1;

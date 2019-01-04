@@ -10,17 +10,10 @@
     android:gravity="bottom">
 
     <TextView
-        android:id="@+id/LoggedinUser"
+        android:id="@+id/appName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Anonymous"
+        android:text="Child Surgery Vietnam"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
-
-    <TextView
-        android:id="@+id/Logintext"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Log in"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
 </LinearLayout>

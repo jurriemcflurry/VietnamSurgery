@@ -2,12 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_1"
-            android:icon="@drawable/placeholder"
-            android:title="Forms" />
-        <item
-            android:id="@+id/nav_2"
+            android:id="@+id/filled_in_forms"
             android:icon="@drawable/placeholder"
             android:title="Filled in forms" />
+        <item
+            android:id="@+id/main_activity"
+            android:icon="@drawable/placeholder"
+            android:title="Home screen" />
     </group>
 </menu>
