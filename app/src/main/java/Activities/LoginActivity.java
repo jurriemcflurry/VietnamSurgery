@@ -1,6 +1,5 @@
 package Activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,8 +13,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -31,7 +30,7 @@ import toning.juriaan.Models.Helper;
 import toning.juriaan.Models.R;
 
 
-public class LoginActivity extends AppCompatActivity implements Callback<LoginResponse> {
+public class LoginActivity extends BaseActivity implements Callback<LoginResponse> {
 
     private DrawerLayout mDrawerLayout;
     private TextInputEditText userName;
@@ -44,9 +43,10 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login_activity);
+
+        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
+        getLayoutInflater().inflate(R.layout.login_activity, contentFrameLayout);
         setupLayoutControls();
-        setupNavigation();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(getString(R.string.baseURL))
@@ -54,70 +54,6 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
                 .build();
 
         userWebInterface = retrofit.create(UserWebInterface.class);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                mDrawerLayout.openDrawer(GravityCompat.START);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void setupNavigation(){
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.login_drawer_layout);
-        NavigationView navigationView = findViewById(R.id.login_nav_view);
-        View headerView = navigationView.getHeaderView(0);
-        LinearLayout header = (LinearLayout) headerView.findViewById(R.id.headerlayout);
-        final TextView login = (TextView) header.findViewById(R.id.Logintext);
-        final TextView loggedInUser = (TextView) header.findViewById(R.id.LoggedinUser);
-        Toolbar toolbar = findViewById(R.id.login_toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionbar = getSupportActionBar();
-        actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
-
-        if(AccessToken.access_token != null){
-            login.setText(getString(R.string.logout));
-            loggedInUser.setText(AccessToken.userName);
-            loggedInUser.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent toChangePassword = new Intent(LoginActivity.this, ChangePasswordActivity.class);
-                    startActivity(toChangePassword);
-                }
-            });
-        }
-
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        // set item as selected to persist highlight
-                        menuItem.setChecked(true);
-                        // close drawer when item is tapped
-                        mDrawerLayout.closeDrawers();
-
-                        // Add code here to update the UI based on the item selected
-                        // For example, swap UI fragments here
-
-                        switch(menuItem.getItemId()){
-                            case 2131230828: //Bovenste Item
-                                break;
-                            case 2131230829: //2e item
-                                break;
-                            case 2131230830: //3e item
-                                break;
-                            case 2131230831: //4e item
-                                break;
-                            default: break;
-                        }
-
-                        return true;
-                    }
-                });
     }
 
     private void setupLayoutControls(){

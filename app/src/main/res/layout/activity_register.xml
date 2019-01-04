@@ -1,26 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/register_drawer_layout">
-
-    <FrameLayout
-        android:id="@+id/register_frame_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/login_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:title="@string/register"
-            >
-        </android.support.v7.widget.Toolbar>
+    android:id="@+id/register_frame_layout">
 
         <LinearLayout
             android:id="@+id/register_linear_layout"
@@ -105,16 +90,3 @@
                 android:text="@string/register"/>
         </LinearLayout>
     </FrameLayout>
-
-    <android.support.design.widget.NavigationView
-        android:id="@+id/register_nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:menu="@menu/drawer_view"
-        app:headerLayout="@layout/header_layout"
-        >
-
-    </android.support.design.widget.NavigationView>
-</android.support.v4.widget.DrawerLayout>

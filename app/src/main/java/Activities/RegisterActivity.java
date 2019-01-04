@@ -11,11 +11,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
-
-import org.w3c.dom.Text;
 
 import ResponseModels.RegisterResponse;
 import WebInterfaces.UserWebInterface;
@@ -28,7 +25,7 @@ import toning.juriaan.Models.Helper;
 import toning.juriaan.Models.R;
 import toning.juriaan.Models.RegisterObject;
 
-public class RegisterActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, Callback<RegisterResponse> {
+public class RegisterActivity extends BaseActivity implements AdapterView.OnItemSelectedListener, Callback<RegisterResponse> {
 
     private UserWebInterface userWebInterface;
     private TextInputEditText username;
@@ -44,7 +41,9 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+
+        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
+        getLayoutInflater().inflate(R.layout.activity_register, contentFrameLayout);
         setupLayout();
 
         Retrofit retrofit = new Retrofit.Builder()

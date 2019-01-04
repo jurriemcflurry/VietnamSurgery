@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -32,8 +33,7 @@ import toning.juriaan.Models.User;
 import toning.juriaan.Models.UserAdapter;
 import toning.juriaan.Models.AccessToken;
 
-public class UsersActivity extends AppCompatActivity implements Callback<List<User>> {
-    private DrawerLayout mDrawerLayout;
+public class UsersActivity extends BaseActivity implements Callback<List<User>> {
     private UserWebInterface userWebInterface;
     private List<User> mContent;
     private RecyclerView list;
@@ -46,7 +46,9 @@ public class UsersActivity extends AppCompatActivity implements Callback<List<Us
         //thema moet altijd worden gezet naar AppTheme, zodat de Launcher van het splashscreen niet bij elke actie wordt getoond
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_users);
+
+        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
+        getLayoutInflater().inflate(R.layout.activity_users, contentFrameLayout);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(getString(R.string.baseURL))
@@ -55,7 +57,6 @@ public class UsersActivity extends AppCompatActivity implements Callback<List<Us
 
         userWebInterface = retrofit.create(UserWebInterface.class);
 
-        setupNavigation();
 
         list = (RecyclerView) findViewById(R.id.users_list);
         mLinearLayoutManager = new LinearLayoutManager(this);
@@ -85,101 +86,12 @@ public class UsersActivity extends AppCompatActivity implements Callback<List<Us
         });
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                mDrawerLayout.openDrawer(GravityCompat.START);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     private void getUsers(){
         if(AccessToken.access_token == null){
             return;
         }
 
         userWebInterface.getUsers(AccessToken.access_token).enqueue(this);
-    }
-
-    private void setupNavigation(){
-        mDrawerLayout = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        View headerView = navigationView.getHeaderView(0);
-        LinearLayout header = (LinearLayout) headerView.findViewById(R.id.headerlayout);
-        final TextView login = (TextView) header.findViewById(R.id.Logintext);
-        final TextView loggedInUser = (TextView) header.findViewById(R.id.LoggedinUser);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionbar = getSupportActionBar();
-        actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
-
-        if(AccessToken.access_token != null){
-            login.setText(getString(R.string.logout));
-            loggedInUser.setText(AccessToken.userName);
-            loggedInUser.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent toChangePassword = new Intent(UsersActivity.this, ChangePasswordActivity.class);
-                    startActivity(toChangePassword);
-                }
-            });
-        }
-        else{
-            login.setText(getString(R.string.login));
-            loggedInUser.setText(getString(R.string.not_logged_in));
-        }
-
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if(login.getText().equals(getString(R.string.logout))){
-                    AccessToken.access_token = null;
-                    AccessToken.userName = null;
-                    login.setText(getString(R.string.login));
-                    loggedInUser.setText(getString(R.string.not_logged_in));
-                    mDrawerLayout.closeDrawers();
-                }
-                else{
-                    // ga naar pagina om in te loggen
-                    Intent loginIntent = new Intent(UsersActivity.this, LoginActivity.class);
-                    startActivity(loginIntent);
-                }
-            }
-        });
-
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        // set item as selected to persist highlight
-                        menuItem.setChecked(true);
-                        // close drawer when item is tapped
-                        mDrawerLayout.closeDrawers();
-
-                        // Add code here to update the UI based on the item selected
-                        // For example, swap UI fragments here
-
-                        switch(menuItem.getItemId()){
-                            case R.id.nav_1: //Bovenste Item
-                                Intent naarForms = new Intent(UsersActivity.this, FormActivity.class);
-                                startActivity(naarForms);
-                                break;
-                            case R.id.nav_2: //2e item
-                                break;
-                            case R.id.nav_3: //3e item
-                                break;
-                            case R.id.nav_4: //4e item
-                                break;
-                            default: break;
-                        }
-
-                        return true;
-                    }
-                });
     }
 
     @Override
