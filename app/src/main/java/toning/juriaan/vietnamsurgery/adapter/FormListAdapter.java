@@ -1,6 +1,7 @@
 package toning.juriaan.vietnamsurgery.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,23 @@ public class FormListAdapter extends BaseAdapter {
             gridView = inflater.inflate(R.layout.form_list_grid_view_item, null);
 
             // set image based on selected text
+            TextView name = gridView.findViewById(R.id.grid_item_nameTxt);
+            name.setText(formList.get(position).getSections().get(0).getFields().get(1).getAnswer());
+
+            TextView district = gridView.findViewById(R.id.grid_item_districtAnswerTxt);
+            district.setText(formList.get(position).getSections().get(1).getFields().get(2).getAnswer());
+
+            TextView photoCount = gridView.findViewById(R.id.grid_item_photoAnswerTxt);
+            photoCount.setText("0");
+
+            TextView formName = gridView.findViewById(R.id.grid_item_formNameAnswerTxt);
+            formName.setText(formList.get(position).getFormName());
+
+            TextView created = gridView.findViewById(R.id.grid_item_createdAnswerTxt);
+            created.setText("");
+            TextView createdLabel = gridView.findViewById(R.id.grid_item_createdTxt);
+            createdLabel.setText("");
+
 
         } else {
             gridView = convertView;

@@ -1,17 +1,42 @@
 package toning.juriaan.vietnamsurgery.activity;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.GridView;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import toning.juriaan.vietnamsurgery.R;
 import toning.juriaan.vietnamsurgery.adapter.FormListAdapter;
+import toning.juriaan.vietnamsurgery.model.Field;
 import toning.juriaan.vietnamsurgery.model.FormTemplate;
+import toning.juriaan.vietnamsurgery.model.Section;
 
 public class FormListActivity extends AppCompatActivity {
+
+    FormTemplate form = new FormTemplate();
+    private List<Section> sections = new ArrayList<>();
+    private ArrayList<FormTemplate> formList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,15 +44,262 @@ public class FormListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form_list);
 
-        FormTemplate form = new FormTemplate();
-        GridView gridView = findViewById(R.id.form_list_grid_view);
-        ArrayList<FormTemplate> list = new ArrayList<>();
+        chooseExcelFile();
+    }
 
-        for (int i = 0; i < 10; i++) {
-            list.add(new FormTemplate());
+    private void chooseExcelFile() {
+        File root = new File(Environment.getExternalStorageDirectory().toString() + "/LenTab/lentab-susanne");
+        try{
+            List<File> files = getListFiles(root);
+
+            // Check if there are more than 1 file, if so, show clickables for all files. If not: load the first one directly
+            if(files.size() > 1) {
+                LinearLayout layout = findViewById(R.id.linLayout);
+                // Choose a file
+                for (File f : files) {
+                    Button newBtn = new Button(this);
+                    newBtn.setText(f.getName());
+                    layout.addView(newBtn);
+                    newBtn.setOnClickListener((View v) -> {
+                        String fileName = ((Button) v).getText().toString();
+                        form.setFileName(fileName);
+                        form.setFormName(fileName.substring(0, fileName.lastIndexOf('.')));
+                        createExcelWorkbook(new File(root, fileName));
+                    });
+                }
+            } else {
+                form.setFileName(files.get(0).getName());
+                form.setFormName(files.get(0).getName().substring(0, files.get(0).getName().lastIndexOf('.')));
+                createExcelWorkbook(new File(root, files.get(0).getName()));
+            }
+        } catch (Exception ex) {
+            Toast.makeText(this, "There was an error: " + ex.getMessage() + " -- Searched in directory: " + root.getPath(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
+    public static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
+    }
+
+    private List<File> getListFiles(File parentDir) {
+        // Check if we can read/write to the storage. If so, continue; if not; prompt the user
+        verifyStoragePermissions(this);
+
+        ArrayList<File> inFiles = new ArrayList<>();
+        File[] files = parentDir.listFiles();
+
+        for( File file : files) {
+            if(file.getName().substring(file.getName().lastIndexOf('.') + 1).equals("xlsx")) {
+                inFiles.add(file);
+            }
         }
 
-        gridView.setAdapter(new FormListAdapter(this, list));
-
+        return inFiles;
     }
+
+    private void createExcelWorkbook(File file) {
+        try {
+            // Create a workbook object
+            XSSFWorkbook workbook = new XSSFWorkbook(file);
+
+            chooseExcelSheet(workbook);
+        } catch (Exception ex) {
+            Log.i("TESTT", "Error" + " " + ex.getMessage() + " " + ex.getCause());
+            Log.i("TESTT", "Error" + " " + ex.toString());
+        }
+    }
+
+    private void chooseExcelSheet(XSSFWorkbook workbook) {
+        LinearLayout layout = findViewById(R.id.linLayout);
+
+        LinearLayout row = new LinearLayout(this);
+        row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+        if(workbook.getNumberOfSheets() == 1) {
+            readExcelFile(workbook.getSheetAt(0));
+        } else {
+            for( int sheetNumber = 0; sheetNumber < workbook.getNumberOfSheets(); sheetNumber++) {
+                Button newBtn = new Button(this);
+                newBtn.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                newBtn.setText(workbook.getSheetAt(sheetNumber).getSheetName());
+                newBtn.setOnClickListener((View v) -> {
+                    formList.clear();
+                    readExcelFile(workbook.getSheet(((Button) v).getText().toString()));
+                        }
+                );
+                row.addView(newBtn);
+            }
+            layout.addView(row);
+        }
+    }
+
+    private void readExcelFile(XSSFSheet sheet) {
+        try {
+            form.setSheetName(sheet.getSheetName());
+
+            int firstRowNum = sheet.getFirstRowNum();
+            int lastRowNum = 4;
+
+            List<List<String>> rows = new ArrayList<>();
+
+            for(int i = firstRowNum; i <= lastRowNum; i++)
+            {
+                Row row = sheet.getRow(i);
+
+                int firstCellNum = row.getFirstCellNum();
+                int lastCellNum = row.getLastCellNum();
+
+                List<String> rowDataList = new ArrayList<>();
+                for(int j = firstCellNum; j < lastCellNum; j++)
+                {
+                    String cellValue = row.getCell(j).getStringCellValue();
+                    rowDataList.add(cellValue);
+                }
+                rows.add(rowDataList);
+            }
+
+            // Get the name of the different parts of the form
+            List<String> stringsWithSections = rows.get(2);
+            List<String> firstFieldRow = rows.get(3);
+            List<String> secondFieldRow = rows.get(4);
+
+            Section section = null;
+            List<Field> fields = null;
+
+            int sectionCounter = 1;
+            for (int column = 0; column < stringsWithSections.size(); column++) {
+                if(!stringsWithSections.get(column).isEmpty()) {
+                    if(section != null) {
+                        section.setFields(fields);
+                        sections.add(section);
+                    }
+                    section = new Section();
+                    section.setSectionName(stringsWithSections.get(column));
+                    section.setNumber(sectionCounter);
+                    section.setColumn(column);
+                    fields = new ArrayList<>();
+                    sectionCounter++;
+                }
+
+                if(fields != null && column < firstFieldRow.size() && !firstFieldRow.get(column).isEmpty()) {
+                    Field field = new Field();
+                    field.setFieldName(firstFieldRow.get(column));
+                    field.setColumn(column);
+                    field.setRow(3);
+                    fields.add(field);
+                }
+
+                if(fields != null && column < secondFieldRow.size() && !secondFieldRow.get(column).isEmpty()) {
+                    Field field = new Field();
+                    field.setFieldName(secondFieldRow.get(column));
+                    field.setColumn(column);
+                    field.setRow(4);
+                    fields.add(field);
+                }
+
+                if(column == stringsWithSections.size()-1 && section != null) {
+                    section.setFields(fields);
+                    sections.add(section);
+                }
+            }
+
+            form.setSections(sections);
+
+            putAnswers(sheet);
+            XSSFWorkbook wb = sheet.getWorkbook();
+            wb.close();
+        } catch (Exception ex) {
+            Log.e("TESTT", ex.getMessage() + " -- " + ex.getCause());
+        }
+    }
+
+    private void putAnswers(Sheet sheet) {
+
+        int firstRowNum = 5;
+        int lastRowNum = sheet.getLastRowNum();
+
+        for(int i = firstRowNum; i <= lastRowNum; i++)
+        {
+            Row row = sheet.getRow(i);
+            if(!isRowEmpty(row)) {
+                FormTemplate tempForm = new FormTemplate();
+                tempForm.setFileName(form.getFileName());
+                tempForm.setSheetName(form.getSheetName());
+                tempForm.setFormName(form.getFormName());
+
+                tempForm.setSections(createDeepCopyOfSections());
+
+                for (Section sec : tempForm.getSections()) {
+                    for (Field f : sec.getFields()) {
+                        String answer;
+                        if (row.getCell(f.getColumn()) != null) {
+                            answer = row.getCell(f.getColumn()).getStringCellValue();
+                        } else {
+                            answer = "";
+                        }
+
+                        f.setAnswer(answer);
+                    }
+                }
+                formList.add(tempForm);
+            }
+        }
+
+        if(formList.size() == 0) {
+            Toast.makeText(this, "There are no filled in forms yet", Toast.LENGTH_LONG).show();
+        }
+
+        GridView gridView = findViewById(R.id.form_list_grid_view);
+        gridView.setAdapter(new FormListAdapter(this, formList));
+    }
+
+    private List<Section> createDeepCopyOfSections() {
+        List<Section> l = new ArrayList<>();
+
+        for(int k = 0; k < form.getSections().size(); k++) {
+            Section s = new Section();
+            s.setSectionName(form.getSections().get(k).getSectionName());
+            s.setNumber(form.getSections().get(k).getNumber());
+            s.setColumn(form.getSections().get(k).getColumn());
+            List<Field> fields = new ArrayList<>();
+            for(int counter = 0; counter < form.getSections().get(k).getFields().size(); counter++) {
+                Field field = new Field();
+                field.setColumn(form.getSections().get(k).getFields().get(counter).getColumn());
+                field.setFieldName(form.getSections().get(k).getFields().get(counter).getFieldName());
+                field.setRow(form.getSections().get(k).getFields().get(counter).getRow());
+                fields.add(field);
+            }
+            s.setFields(fields);
+            l.add(s);
+        }
+
+        return l;
+    }
+
+    public static boolean isRowEmpty(Row row) {
+        for (int c = row.getFirstCellNum(); c < row.getLastCellNum(); c++) {
+            Cell cell = row.getCell(c);
+            if (cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

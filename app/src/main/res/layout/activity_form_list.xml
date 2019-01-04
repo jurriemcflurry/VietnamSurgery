@@ -12,10 +12,19 @@
 
         <include layout="@layout/toolbar_actionbar" />
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/SectionView"
+            android:id="@+id/linLayout"
+            android:orientation="horizontal">
+
+        </LinearLayout>
+
         <GridView
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
-            android:layout_below="@id/form_toolbar"
+            android:layout_below="@id/linLayout"
             android:scrollbars="none"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
