@@ -319,6 +319,7 @@ public class FormListActivity extends AppCompatActivity {
                         f.setAnswer(answer);
                     }
                 }
+                tempForm.setPictures(getListOfPictures(tempForm));
                 formList.add(tempForm);
             }
         }
@@ -362,6 +363,30 @@ public class FormListActivity extends AppCompatActivity {
             }
         }
         return true;
+    }
+
+    private List<String> getListOfPictures(FormTemplate patientForm) {
+        List<String> pictures = new ArrayList<>();
+
+        File storageDir = new File(Environment.getExternalStorageDirectory().toString() + "/LenTab/lentab-susanne/VietnamSurgery");
+        File[] files = storageDir.listFiles();
+
+        String patientName = patientForm.getSections().get(0).getFields().get(1).getAnswer();
+        String birthYear;
+        if(patientForm.getSections().get(0).getFields().get(3).getAnswer().isEmpty()) {
+            birthYear = patientForm.getSections().get(0).getFields().get(4).getAnswer();
+        } else {
+            birthYear = patientForm.getSections().get(0).getFields().get(3).getAnswer();
+        }
+
+        for( File file : files) {
+            // Todo: NAME OF PICTURES!
+            if(file.getName().contains( patientName + "_" + birthYear + "_" )) {
+                pictures.add(file.getAbsolutePath());
+            }
+        }
+
+        return pictures;
     }
 
     @Override

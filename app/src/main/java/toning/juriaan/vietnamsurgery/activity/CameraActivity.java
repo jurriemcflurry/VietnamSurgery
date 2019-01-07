@@ -52,7 +52,7 @@ public class CameraActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.camera_activity);
+        setContentView(R.layout.activity_camera);
 
         loadIntent();
         setupFields();

@@ -47,10 +47,12 @@ public class FormListAdapter extends BaseAdapter {
             district.setText(formList.get(position).getSections().get(1).getFields().get(2).getAnswer());
 
             TextView photoCount = gridView.findViewById(R.id.grid_item_photoAnswerTxt);
-            photoCount.setText("0");
+            photoCount.setText(Integer.toString(formList.get(position).getPictures().size()));
 
             TextView formName = gridView.findViewById(R.id.grid_item_formNameAnswerTxt);
-            formName.setText(formList.get(position).getFormName());
+            formName.setText("");
+            TextView formNameLabel = gridView.findViewById(R.id.grid_item_formNameTxt);
+            formNameLabel.setText("");
 
             TextView created = gridView.findViewById(R.id.grid_item_createdAnswerTxt);
             created.setText("");
