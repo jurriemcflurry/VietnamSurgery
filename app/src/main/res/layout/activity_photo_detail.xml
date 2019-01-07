@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:id="@+id/form_frame_layout"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content">
+
+<LinearLayout
+    android:id="@+id/section_view"
+    style="@style/SectionView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/photoDetailLinearLayout"
+        android:orientation="vertical"
+        android:layout_marginEnd="50dp"
+        android:layout_marginStart="50dp">
+
+        <ImageView
+            android:id="@+id/photo_detail_iv"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:adjustViewBounds="true"
+            android:layout_marginBottom="90dp"
+            android:scaleType="fitXY">
+        </ImageView>
+
+    </LinearLayout>
+</LinearLayout>
+<RelativeLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="bottom">
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/delete_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_delete"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="20dp"
+        />
+
+</RelativeLayout>
+</FrameLayout>

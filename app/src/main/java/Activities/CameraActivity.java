@@ -3,6 +3,7 @@ package Activities;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
@@ -13,6 +14,7 @@ import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 
@@ -24,6 +26,7 @@ public class CameraActivity extends AppCompatActivity {
     private GridLayout gridLayout1;
     private Button saveImagesButton;
     private ArrayList<Bitmap> mImages = new ArrayList<>();
+    private int counter = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,11 +67,32 @@ public class CameraActivity extends AppCompatActivity {
             mImageBitmap = (Bitmap) extras.get("data");
             ImageView imageView = new ImageView(CameraActivity.this);
             imageView.setImageBitmap(mImageBitmap);
-            gridLayout1.addView(imageView);
+            while(!mImages.isEmpty() && mImages.size() <= counter){
+                counter++;
+            }
+            mImages.add(counter, mImageBitmap);
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent photoDetail = new Intent(CameraActivity.this, PhotoDetailActivity.class);
+                    photoDetail.putExtra("image", mImageBitmap);
+                    photoDetail.putExtra("id", counter);
+                    startActivityForResult(photoDetail, 0);
+                }
+            });
+            gridLayout1.addView(imageView, counter);
             imageView.getLayoutParams().height = (getDisplayMetrics().heightPixels)/2;
             imageView.getLayoutParams().width = (getDisplayMetrics().widthPixels)/2;
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-            mImages.add(mImageBitmap);
+        }
+        else if(requestCode == 0){
+            //return from deletebutton from photodetailpage
+            // remove image from contentlist and imageview from gridlayout
+            int removeableObject = data.getIntExtra("imageid", 0);
+            System.out.println(removeableObject);
+            mImages.remove(removeableObject);
+            gridLayout1.removeViewAt(removeableObject);
+            gridLayout1.requestLayout();
         }
     }
 

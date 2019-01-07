@@ -29,6 +29,7 @@
         <activity android:name="Activities.UserDetailActivity"></activity>
         <activity android:name="Activities.ChangePasswordActivity"></activity>
         <activity android:name="Activities.BaseActivity"></activity>
+        <activity android:name="Activities.PhotoDetailActivity"></activity>
     </application>
 
 
