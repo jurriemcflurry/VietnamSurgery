@@ -1,10 +1,13 @@
 package Activities;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -35,11 +38,27 @@ public class PhotoDetailActivity extends BaseActivity {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    getIntent().putExtra("imageid", imageId);
-                    setResult(0, getIntent());
-                    finish();
+                new AlertDialog.Builder(PhotoDetailActivity.this)
+                        .setTitle("Delete picture?")
+                        .setMessage("Are you sure you want to delete this picture?")
+                        .setNegativeButton("No", null)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                getIntent().putExtra("imageid", imageId);
+                                setResult(0, getIntent());
+                                finish();
+                            }
+                        }).create().show();
             }
         });
+    }
 
+    @Override
+    public void onBackPressed(){
+        int imageid = 9999;
+        getIntent().putExtra("imageid", imageid);
+        setResult(0, getIntent());
+        finish();
     }
 }
