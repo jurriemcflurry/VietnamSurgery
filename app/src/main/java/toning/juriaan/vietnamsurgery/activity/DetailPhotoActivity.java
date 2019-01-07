@@ -1,15 +1,18 @@
 package toning.juriaan.vietnamsurgery.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,6 +23,7 @@ import toning.juriaan.vietnamsurgery.R;
 
 public class DetailPhotoActivity extends AppCompatActivity {
 
+    final static int REQUEST_DELETE_IMAGE = 2;
     Toolbar toolbar;
     FormTemplate form;
     TextView sectionNameTv;
@@ -48,15 +52,33 @@ public class DetailPhotoActivity extends AppCompatActivity {
         photoUrl = i.getStringExtra("photoUrl");
     }
 
-    private void setupFields(){
+    private void setupFields() {
         sectionNameTv = findViewById(R.id.section_name);
         sectionNameTv.setText(R.string.section_name_photo_detail);
         noOfSections = form.getSections().size();
         stepCounter = findViewById(R.id.step_counter);
-        stepCounter.setText(getString(R.string.step_text, noOfSections+1, noOfSections+1));
+        stepCounter.setText(getString(R.string.step_text, noOfSections + 1, noOfSections + 1));
         toolbar = findViewById(R.id.form_toolbar);
         imageView = findViewById(R.id.photo_detail_iv);
         fab = findViewById(R.id.delete_btn);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(DetailPhotoActivity.this)
+                        // Todo: Hardcoded strings
+                        .setTitle("Delete photo?")
+                        .setMessage("Are you sure you want to delete this photo?")
+                        .setNegativeButton("No", null)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                getIntent().putExtra("photoUrl", photoUrl);
+                                setResult(RESULT_OK, getIntent());
+                                finish();
+                            }
+                        }).create().show();
+            }
+        });
     }
 
     private void setupToolbar() {
@@ -65,6 +87,7 @@ public class DetailPhotoActivity extends AppCompatActivity {
         ab.setDisplayHomeAsUpEnabled(true);
         String name = form.getSections().get(0).getFields().get(1).getAnswer();
         String birthYear = form.getSections().get(0).getFields().get(2).getAnswer();
+        // Todo: Name of form
         ab.setTitle(getString(R.string.form_name, form.getFormName(), name, birthYear));
     }
 

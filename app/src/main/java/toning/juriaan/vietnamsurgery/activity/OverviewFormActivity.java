@@ -31,6 +31,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.List;
 
 import toning.juriaan.vietnamsurgery.model.Field;
 import toning.juriaan.vietnamsurgery.model.FormTemplate;
@@ -39,12 +40,14 @@ import toning.juriaan.vietnamsurgery.model.Section;
 
 public class OverviewFormActivity extends AppCompatActivity {
 
+    static final int REQUEST_DELETE_IMAGE = 2;
     private Toolbar toolbar;
     private FormTemplate form;
     private LinearLayout layout;
     private LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
     LinearLayout mFormOverview;
     LayoutInflater mInflator;
+    private File storageDirPng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +70,8 @@ public class OverviewFormActivity extends AppCompatActivity {
         mFormOverview = findViewById(R.id.formLayout);
         mInflator = getLayoutInflater();
         toolbar = findViewById(R.id.form_toolbar);
+        String rootDir = Environment.getExternalStorageDirectory().toString();
+        storageDirPng = new File(rootDir + File.separator + "/LenTab/lentab-susanne/VietnamSurgery/thumbs");
     }
 
     private void setupToolbar() {
@@ -120,7 +125,12 @@ public class OverviewFormActivity extends AppCompatActivity {
 
         mFormOverview.addView(headerView);
 
+        putPicturesInGallery();
+    }
+
+    private void putPicturesInGallery(){
         LinearLayout mGallery = findViewById(R.id.photo_gallery);
+        mGallery.removeAllViews();
         LayoutInflater mInflator = getLayoutInflater();
         int index = 0;
         for( String pathToFile : form.getThumbImages()) {
@@ -227,7 +237,7 @@ public class OverviewFormActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DetailPhotoActivity.class);
         intent.putExtra("obj_form", form);
         intent.putExtra("photoUrl", photoFile.getAbsolutePath());
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_DELETE_IMAGE);
     }
 
     private void goBackToForm(int step) {
@@ -243,6 +253,42 @@ public class OverviewFormActivity extends AppCompatActivity {
             formIntent.putExtra("step", step);
             startActivity(formIntent);
             finish();
+        }
+    }
+
+    private boolean deletePhoto(String photoUrl) {
+        File jpgFile = new File(photoUrl);
+        if(jpgFile.exists() && jpgFile.delete()) {
+            List<String> pics = form.getPictures();
+            pics.remove(photoUrl);
+            form.setPictures(pics);
+            File pngFile = new File(storageDirPng, jpgFile.getName().replace("jpg", "png"));
+            if(pngFile.exists() && pngFile.delete()){
+                List<String> thumbs = form.getThumbImages();
+                thumbs.remove(pngFile.getAbsolutePath());
+                form.setThumbImages(thumbs);
+                return true;
+            } else {
+                Log.e("TESTT", "error1");
+                return false;
+            }
+        }
+        else {
+            Log.e("TESTT", "eroror 2");
+            return false;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == REQUEST_DELETE_IMAGE && resultCode == RESULT_OK) {
+            String photoUrl = data.getStringExtra("photoUrl");
+            if(deletePhoto(photoUrl)) {
+                putPicturesInGallery();
+            } else {
+                // Todo: Errormessage
+                Toast.makeText(this, "Delete fail", Toast.LENGTH_LONG).show();
+            }
         }
     }
 

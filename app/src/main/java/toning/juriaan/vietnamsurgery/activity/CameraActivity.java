@@ -25,23 +25,31 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import toning.juriaan.vietnamsurgery.model.FormTemplate;
 import toning.juriaan.vietnamsurgery.R;
 
 public class CameraActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int REQUEST_DELETE_IMAGE = 2;
     private GridLayout gridLayout1;
     private ArrayList<Bitmap> mImages = new ArrayList<>();
     private FormTemplate form;
     private int noOfSections;
     private Toolbar toolbar;
 
+    String photoName;
+    String rootDir;
+    File storageDirJpg;
+    File storageDirPng;
     String mCurrentPhotoPath;
     TextView sectionNameTv;
     TextView stepCounter;
@@ -74,6 +82,9 @@ public class CameraActivity extends AppCompatActivity {
         sectionNameTv = findViewById(R.id.section_name);
         sectionNameTv.setText(R.string.section_name_photos);
         toolbar = findViewById(R.id.form_toolbar);
+        rootDir = Environment.getExternalStorageDirectory().toString();
+        storageDirJpg = new File( rootDir + "/LenTab/lentab-susanne/VietnamSurgery");
+        storageDirPng = new File(rootDir + File.separator + "/LenTab/lentab-susanne/VietnamSurgery/thumbs");
     }
 
     private void setupToolbar() {
@@ -123,15 +134,16 @@ public class CameraActivity extends AppCompatActivity {
         // Todo: Create a possibility to get a name out of the Excel or let the user choose.
         String patientName = form.getSections().get(0).getFields().get(1).getAnswer();
         String birthYear = form.getSections().get(0).getFields().get(2).getAnswer();
-        String dateStamp = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        String imageFileName;
+        String district = form.getSections().get(1).getFields().get(3).getAnswer();
+        SimpleDateFormat format= new SimpleDateFormat("yyyyMMdd_HH:mm:ss",Locale.getDefault());
+        String myDate = format.format(new Date());
+        String date = myDate.toString();
         if(mImages.size() > 0) {
-            imageFileName = patientName + "_" + birthYear + "_" + "_" + dateStamp + "_" + Integer.toString(mImages.size());
+            photoName = patientName + "_" + birthYear + "_" + district + "_" + date + "_" + Integer.toString(mImages.size());
         } else {
-            imageFileName = patientName + "_" + birthYear + "_" + "_" + dateStamp;
+            photoName = patientName + "_" + birthYear + "_" + district + "_" + date;
         }
-        File storageDir = new File(Environment.getExternalStorageDirectory().toString() + "/LenTab/lentab-susanne/VietnamSurgery");
-        File image = new File(storageDir, imageFileName + ".jpg");
+        File image = new File(storageDirJpg, photoName + ".jpg");
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
@@ -155,23 +167,47 @@ public class CameraActivity extends AppCompatActivity {
                 Log.i("TESTT", "I made a fkup");
             }
         }
+        if(requestCode == REQUEST_DELETE_IMAGE && resultCode == RESULT_OK) {
+            String photoUrl = data.getStringExtra("photoUrl");
+            if(deletePhoto(photoUrl)) {
+                emptyGrid();
+                checkForPictures();
+            } else {
+                // Todo: Error
+                Toast.makeText(this, "Delete fail", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private boolean deletePhoto(String photoUrl) {
+        File jpgFile = new File(photoUrl);
+        if(jpgFile.exists() && jpgFile.delete()) {
+            pictures.remove(photoUrl);
+            form.setPictures(pictures);
+            File pngFile = new File(storageDirPng, jpgFile.getName().replace("jpg", "png"));
+            if(pngFile.exists() && pngFile.delete()){
+                thumbImages.remove(pngFile.getAbsolutePath());
+                form.setThumbImages(thumbImages);
+                return true;
+            } else {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
     }
 
     private void saveThumb(Bitmap thumb) {
-        // Todo: Filename...?
-        String filename = form.getSections().get(0).getFields().get(1).getAnswer();
         try {
-            String newFileName = filename + "_" + String.valueOf(mImages.size());
-            String root = Environment.getExternalStorageDirectory().toString();
-            File myDir = new File(root + File.separator + "/LenTab/lentab-susanne/VietnamSurgery/thumbs");
             File mypath = null;
 
-            if(!myDir.exists()) {
-                if(myDir.mkdirs()){
-                    mypath = new File(myDir, newFileName + ".png");
+            if(!storageDirPng.exists()) {
+                if(storageDirPng.mkdirs()){
+                    mypath = new File(storageDirPng, photoName + ".png");
                 }
             } else {
-                mypath = new File(myDir, newFileName + ".png");
+                mypath = new File(storageDirPng, photoName + ".png");
             }
 
             if(mypath != null) {
@@ -195,8 +231,7 @@ public class CameraActivity extends AppCompatActivity {
             return false;
         }
 
-        mImages.clear();
-        gridLayout1.removeAllViews();
+        emptyGrid();
         return true;
     }
 
@@ -204,7 +239,7 @@ public class CameraActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DetailPhotoActivity.class);
         intent.putExtra("obj_form", form);
         intent.putExtra("photoUrl", photoFile.getAbsolutePath());
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_DELETE_IMAGE);
     }
 
     private void putPictureInGridLayout(Bitmap picture, String path) {
@@ -229,6 +264,11 @@ public class CameraActivity extends AppCompatActivity {
                 index++;
             }
         }
+    }
+
+    private void emptyGrid() {
+        gridLayout1.removeAllViews();
+        mImages.clear();
     }
 
     @Override
@@ -270,8 +310,7 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        gridLayout1.removeAllViews();
-        mImages.clear();
+        emptyGrid();
         pictures = form.getPictures();
         thumbImages = form.getThumbImages();
         checkForPictures();
