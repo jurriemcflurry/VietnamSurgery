@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -40,6 +42,7 @@ public class UsersActivity extends BaseActivity implements Callback<List<User>> 
     private UserAdapter mListAdapter;
     private LinearLayoutManager mLinearLayoutManager;
     public static final String detailpage = String.valueOf(R.string.toUserDetail);
+    private ProgressBar pBar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,13 +54,14 @@ public class UsersActivity extends BaseActivity implements Callback<List<User>> 
         getLayoutInflater().inflate(R.layout.activity_users, contentFrameLayout);
         getSupportActionBar().setTitle(getString(R.string.users));
 
+        pBar = (ProgressBar) findViewById(R.id.pBar_users);
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(getString(R.string.baseURL))
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         userWebInterface = retrofit.create(UserWebInterface.class);
-
 
         list = (RecyclerView) findViewById(R.id.users_list);
         mLinearLayoutManager = new LinearLayoutManager(this);
@@ -96,6 +100,15 @@ public class UsersActivity extends BaseActivity implements Callback<List<User>> 
 
     private void getUsers(){
         if(AccessToken.access_token == null){
+            pBar.setVisibility(View.INVISIBLE);
+            Snackbar.make(findViewById(R.id.users_linearlayout), getString(R.string.noAccess),Snackbar.LENGTH_LONG)
+                    .setAction(getString(R.string.login), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent toLogin = new Intent(UsersActivity.this, LoginActivity.class);
+                            startActivity(toLogin);
+                        }
+                    }).show();
             return;
         }
 
@@ -108,6 +121,7 @@ public class UsersActivity extends BaseActivity implements Callback<List<User>> 
             //fill labels with userinformation
             mContent.addAll(response.body());
             mListAdapter.notifyDataSetChanged();
+            pBar.setVisibility(View.INVISIBLE);
         }
     }
 

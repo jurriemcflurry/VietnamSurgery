@@ -50,5 +50,14 @@
             android:layout_below="@+id/detailpage_role"
             android:layout_marginTop="10dp"/>
 
+        <ProgressBar
+            android:id="@+id/pBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true">
+        </ProgressBar>
+
     </RelativeLayout>
+
 </ScrollView>

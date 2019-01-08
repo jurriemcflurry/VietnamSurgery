@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import ResponseModels.LoginResponse;
@@ -33,12 +34,12 @@ import toning.juriaan.Models.R;
 
 public class LoginActivity extends BaseActivity implements Callback<LoginResponse> {
 
-    private DrawerLayout mDrawerLayout;
     private TextInputEditText userName;
     private TextInputEditText password;
     private Button loginButton;
     private UserWebInterface userWebInterface;
     private Helper helper;
+    private ProgressBar pBar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,15 +64,20 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
         userName = (TextInputEditText) findViewById(R.id.userName);
         password = (TextInputEditText) findViewById(R.id.password);
         loginButton = (Button) findViewById(R.id.login_button);
+        pBar = (ProgressBar) findViewById(R.id.pBar);
+        pBar.setVisibility(View.INVISIBLE);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(userName.getText() == null || password.getText() == null){
+                if(userName.getText().toString().isEmpty() || password.getText().toString().isEmpty()){
+                    Snackbar.make(findViewById(R.id.login_linear_layout), getString(R.string.emptyFields),Snackbar.LENGTH_LONG)
+                            .show();
                     return;
                 }
 
                 //call om in te loggen
+                pBar.setVisibility(View.VISIBLE);
                 login();
             }
         });
@@ -92,6 +98,7 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
         //set headertexts goed
         //terug naar home
         helper.hideKeyboard(this);
+        pBar.setVisibility(View.INVISIBLE);
 
         if(response.isSuccessful() && response.body() != null){
             Snackbar.make(findViewById(R.id.login_linear_layout),getString(R.string.loggedIn), Snackbar.LENGTH_INDEFINITE)
@@ -107,15 +114,21 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 public void run() {
-                    // Actions to do after 2 seconds
+                    // Actions to do after 1,5 seconds
                     Intent backToHome = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(backToHome);
                 }
-            }, 2000);
+            }, 1500);
         }
         else{
-            Snackbar.make(findViewById(R.id.login_linear_layout), response.message(),Snackbar.LENGTH_LONG)
-                    .show();
+            if(response.message().equals("Bad Request")){
+                Snackbar.make(findViewById(R.id.login_linear_layout), getString(R.string.failedLogin),Snackbar.LENGTH_LONG)
+                        .show();
+            }
+            else{
+                Snackbar.make(findViewById(R.id.login_linear_layout), response.message(),Snackbar.LENGTH_LONG)
+                        .show();
+            }
         }
     }
 

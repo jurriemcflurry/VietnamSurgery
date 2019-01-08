@@ -1,13 +1,18 @@
 package Activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import java.io.EOFException;
 
 import ResponseModels.DeleteResponse;
 import WebInterfaces.UserWebInterface;
@@ -28,6 +33,7 @@ public class UserDetailActivity extends BaseActivity implements Callback<DeleteR
     private User user;
     private UserWebInterface userWebInterface;
     private Button deleteUser;
+    private ProgressBar pBar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,6 +51,9 @@ public class UserDetailActivity extends BaseActivity implements Callback<DeleteR
 
         userWebInterface = retrofit.create(UserWebInterface.class);
 
+        pBar = (ProgressBar) findViewById(R.id.pBar);
+        pBar.setVisibility(View.INVISIBLE);
+
         Intent fromUser = getIntent();
         user = fromUser.getParcelableExtra(UsersActivity.detailpage);
 
@@ -60,6 +69,7 @@ public class UserDetailActivity extends BaseActivity implements Callback<DeleteR
         String roleId = user.roles.get(0).getRoleId();
 
         final String userId = user.getId();
+        System.out.println(userId);
 
         role = (TextView) findViewById(R.id.detailpage_role);
         if(roleId.equals("1")){
@@ -74,9 +84,27 @@ public class UserDetailActivity extends BaseActivity implements Callback<DeleteR
             @Override
             public void onClick(View v) {
                 if(AccessToken.userrole.equals("Admin")){
-                    deleteUserCall(userId);
+                    new AlertDialog.Builder(UserDetailActivity.this)
+                            .setTitle("Delete user?")
+                            .setMessage("Are you sure you want to delete user " + username.toString())
+                            .setNegativeButton("Cancel", null)
+                            .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    pBar.setVisibility(View.VISIBLE);
+                                    deleteUserCall(userId);
+                                }
+                            }).create().show();
                 }
                 else{
+                    Snackbar.make(findViewById(R.id.detailpage), getString(R.string.noAccess), Snackbar.LENGTH_LONG)
+                            .setAction(getString(R.string.login), new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent toLogin = new Intent(UserDetailActivity.this, LoginActivity.class);
+                                    startActivity(toLogin);
+                                }
+                            }).show();
                     return;
                 }
             }
@@ -89,14 +117,21 @@ public class UserDetailActivity extends BaseActivity implements Callback<DeleteR
 
     @Override
     public void onResponse(Call<DeleteResponse> call, Response<DeleteResponse> response) {
-        if(response.isSuccessful()){
+            pBar.setVisibility(View.INVISIBLE);
+            Snackbar.make(findViewById(R.id.detailpage), getString(R.string.userDeleted), Snackbar.LENGTH_LONG)
+                    .show();
             Intent returnIntent = new Intent(UserDetailActivity.this, UsersActivity.class);
             startActivity(returnIntent);
-        }
+
     }
 
     @Override
     public void onFailure(Call<DeleteResponse> call, Throwable t) {
         t.printStackTrace();
+        pBar.setVisibility(View.INVISIBLE);
+        Snackbar.make(findViewById(R.id.detailpage), getString(R.string.userDeleted), Snackbar.LENGTH_LONG)
+                .show();
+        Intent returnIntent = new Intent(UserDetailActivity.this, UsersActivity.class);
+        startActivity(returnIntent);
     }
 }

@@ -12,7 +12,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import ResponseModels.RegisterResponse;
 import WebInterfaces.UserWebInterface;
@@ -36,6 +40,7 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
     private Button register;
     private FrameLayout frameLayout;
     private Helper helper;
+    private ProgressBar pBar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,10 +80,13 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
         confirmPassword = (TextInputEditText) findViewById(R.id.registerconfirmpasswordEditText);
         email = (TextInputEditText) findViewById(R.id.registeremailEditText);
         register = (Button) findViewById(R.id.register_button);
+        pBar = (ProgressBar) findViewById(R.id.pBar);
+        pBar.setVisibility(View.INVISIBLE);
 
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                pBar.setVisibility(View.VISIBLE);
                 registerNewUser();
             }
         });
@@ -91,11 +99,24 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
         String registerEmail = email.getText().toString();
         String registerUserRole = userrole.getSelectedItem().toString();
 
-        if(registerUsername == null || registerPassword == null || registerConfirmPassword == null || registerEmail == null || registerUserRole == null){
+        if(registerUsername.isEmpty() || registerPassword.isEmpty() || registerConfirmPassword.isEmpty() || registerEmail.isEmpty() || registerUserRole.isEmpty()){
+            pBar.setVisibility(View.INVISIBLE);
+            Snackbar.make(findViewById(R.id.register_linear_layout), getString(R.string.emptyFields),Snackbar.LENGTH_LONG)
+                    .show();
             return;
         }
 
         if(!registerPassword.equals(registerConfirmPassword)){
+            pBar.setVisibility(View.INVISIBLE);
+            Snackbar.make(findViewById(R.id.register_linear_layout), getString(R.string.passwordError),Snackbar.LENGTH_LONG)
+                    .show();
+            return;
+        }
+
+        if(!isEmailValid(registerEmail)){
+            pBar.setVisibility(View.INVISIBLE);
+            Snackbar.make(findViewById(R.id.register_linear_layout), getString(R.string.wrongEmailFormat),Snackbar.LENGTH_LONG)
+                    .show();
             return;
         }
 
@@ -115,9 +136,32 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
         // Another interface callback
     }
 
+    public boolean isEmailValid(String email)
+    {
+        String regExpn =
+                "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@"
+                        +"((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+                        +"[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\."
+                        +"([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+                        +"[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
+                        +"([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$";
+
+        CharSequence inputStr = email;
+
+        Pattern pattern = Pattern.compile(regExpn,Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(inputStr);
+
+        if(matcher.matches())
+            return true;
+        else
+            return false;
+    }
+
     @Override
     public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
         helper.hideKeyboard(this);
+        pBar.setVisibility(View.INVISIBLE);
+
         if(response.isSuccessful() && response.body() != null){
             Snackbar.make(findViewById(R.id.register_linear_layout), getString(R.string.userAdded), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getString(R.string.homeCaps), new View.OnClickListener() {
@@ -129,8 +173,14 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
                     });
         }
         else{
-            Snackbar.make(findViewById(R.id.register_linear_layout), response.message(),Snackbar.LENGTH_LONG)
-                    .show();
+            if(response.message().equals("Bad Request")){
+                Snackbar.make(findViewById(R.id.register_linear_layout), getString(R.string.passwordFormatError),Snackbar.LENGTH_LONG)
+                        .show();
+            }
+            else {
+                Snackbar.make(findViewById(R.id.register_linear_layout), response.message(), Snackbar.LENGTH_LONG)
+                        .show();
+            }
         }
     }
 
