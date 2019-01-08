@@ -40,14 +40,13 @@ import toning.juriaan.Models.R;
 import toning.juriaan.Models.Storage;
 
 
-public class MainActivity extends AppCompatActivity implements FormAdapter.FormListener {
+public class MainActivity extends BaseActivity implements FormAdapter.FormListener {
 
     private DrawerLayout mDrawerLayout;
     private RecyclerView recyclerView;
     private FormAdapter formAdapter;
     private ArrayList<Form> forms;
     private Context context = this;
-    private Form form;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,10 +63,10 @@ public class MainActivity extends AppCompatActivity implements FormAdapter.FormL
 
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_main, contentFrameLayout);
-        getSupportActionBar().setTitle(getString(R.string.home));
-
-        form = Form.getDummyForm();
-        form.setFormName("MainActivity form");
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(getString(R.string.home));
+        }
 
         Button OpenCamera = (Button) findViewById(R.id.ToCamera);
         OpenCamera.setOnClickListener(new View.OnClickListener() {

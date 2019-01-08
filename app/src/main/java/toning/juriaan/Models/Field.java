@@ -28,7 +28,6 @@ public class Field {
         this.fieldName = fieldName;
         this.type = type;
         this.required = false;
-        Helper.log(this.type);
     }
 
     public String[] getOptions() throws Exception {
