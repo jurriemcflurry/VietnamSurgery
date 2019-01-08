@@ -48,6 +48,7 @@ public class OverviewFormActivity extends AppCompatActivity {
     LinearLayout mFormOverview;
     LayoutInflater mInflator;
     private File storageDirPng;
+    LinearLayout mGallery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +73,7 @@ public class OverviewFormActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.form_toolbar);
         String rootDir = Environment.getExternalStorageDirectory().toString();
         storageDirPng = new File(rootDir + File.separator + "/LenTab/lentab-susanne/VietnamSurgery/thumbs");
+        mGallery = findViewById(R.id.photo_gallery);
     }
 
     private void setupToolbar() {
@@ -129,7 +131,6 @@ public class OverviewFormActivity extends AppCompatActivity {
     }
 
     private void putPicturesInGallery(){
-        LinearLayout mGallery = findViewById(R.id.photo_gallery);
         mGallery.removeAllViews();
         LayoutInflater mInflator = getLayoutInflater();
         int index = 0;
@@ -269,6 +270,7 @@ public class OverviewFormActivity extends AppCompatActivity {
                 form.setThumbImages(thumbs);
                 return true;
             } else {
+                // Todo: ErrorMsg
                 Log.e("TESTT", "error1");
                 return false;
             }
@@ -299,17 +301,22 @@ public class OverviewFormActivity extends AppCompatActivity {
                 onBackPressed();
                 return true;
             case R.id.action_next:
-                new AlertDialog.Builder(OverviewFormActivity.this)
-                        .setTitle("Confirm")
-                        .setMessage("Are you sure you want to save the form?")
-                        .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                saveForm(form);
-                            }
-                        })
-                        .setNegativeButton(R.string.dialog_cancel, null).show();
-                return true;
+                if(mGallery.getChildCount() == 0) {
+                    Toast.makeText(getApplicationContext(), "Make at least one picture", Toast.LENGTH_LONG).show();
+                    return true;
+                } else {
+                    new AlertDialog.Builder(OverviewFormActivity.this)
+                            .setTitle("Confirm")
+                            .setMessage("Are you sure you want to save the form?")
+                            .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    saveForm(form);
+                                }
+                            })
+                            .setNegativeButton(R.string.dialog_cancel, null).show();
+                    return true;
+                }
             default:
                 return super.onOptionsItemSelected(item);
         }
