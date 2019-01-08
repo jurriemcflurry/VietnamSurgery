@@ -1,8 +1,15 @@
 package toning.juriaan.Models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class Section {
+    @Expose
+    @SerializedName("Name")
     private String sectionName;
 
+    @Expose
+    @SerializedName("Fields")
     private Field[] fields;
 
     public Section(){}

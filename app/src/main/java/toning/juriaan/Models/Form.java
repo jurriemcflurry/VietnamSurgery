@@ -1,23 +1,53 @@
 package toning.juriaan.Models;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
+import ResponseModels.FormulierenResponse;
+
 public class Form {
+    @Expose
+    @SerializedName("Id")
     private int id;
+
+    @Expose
+    @SerializedName("Name")
     private String formName;
+
+    @Expose
+    @SerializedName("Region")
     private String region;
-    private FormTemplate formTemplate;
-    private FormContent formContent;
+
+    @Expose
+    @SerializedName("FormTemplate")
+    private String formTemplateJson;
+
+    @Expose
+    @SerializedName("FormContent")
+    private FormContent[] formContent;
 
     public Form() {
     }
 
-    public Form(String formName, String region, FormTemplate formTemplate, FormContent formContent) {
+    public Form(FormulierenResponse response) {
+        id = response.getId();
+        formName = response.getName();
+        region = response.getRegion();
+        formTemplateJson = response.getFormTemplate();
+    }
+
+    private FormTemplate parseResponseTemplate(String templateJson) {
+        return FormTemplate.fromJson(templateJson);
+    }
+
+    public Form(String formName, String region, FormTemplate formTemplate, FormContent[] formContent) {
         this.formName = formName;
         this.region = region;
-        this.formTemplate = formTemplate;
+        this.formTemplateJson = formTemplate.toJson();
         this.formContent = formContent;
     }
 
@@ -49,35 +79,46 @@ public class Form {
         this.region = region;
     }
 
+    public String getFormTemplateJson() {
+        return formTemplateJson;
+    }
+
+    public void setFormTemplateJson(String formTemplateJson) {
+        this.formTemplateJson = formTemplateJson;
+    }
+
     public FormTemplate getFormTemplate() {
-        return formTemplate;
+        return FormTemplate.fromJson(formTemplateJson);
     }
 
     public void setFormTemplate(FormTemplate formTemplate) {
-        this.formTemplate = formTemplate;
+        setFormTemplateJson(formTemplate.toJson());
     }
 
-    public FormContent getFormContent() {
+    public FormContent[] getFormContent() {
         return formContent;
     }
 
-    public void setFormContent(FormContent formContent) {
+    public void setFormContent(FormContent[] formContent) {
         this.formContent = formContent;
     }
 
     public static Form fromJson(String jsonString) {
-        Gson gson = new Gson();
-        Form form = gson.fromJson(jsonString, Form.class);
+        Form form = Form.getGson().fromJson(jsonString, Form.class);
         return form;
     }
 
     public String toJson() {
-        return new Gson().toJson(this);
+        return Form.getGson().toJson(this);
+    }
+
+    public static Gson getGson() {
+        return new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
     }
 
     public static Form getDummyForm() {
         FormTemplate formTemplate = getDummyFormTemplate();
-        FormContent formContent = getDummyFormContent(formTemplate);
+        FormContent[] formContent = {getDummyFormContent(formTemplate)};
 
         return new Form("Dummy form", "Dummy region", formTemplate, formContent);
     }
@@ -93,14 +134,14 @@ public class Form {
 
     private static FormTemplate getDummyFormTemplate() {
         ArrayList<Field> fields = new ArrayList<>();
-        fields.add(new Field("TextFieldName", FieldType.text.toString()));
+        fields.add(new Field("TextFieldName", FieldType.String.toString()));
 
-        fields.add(new Field("NumberFieldName", FieldType.number.toString()));
+        fields.add(new Field("NumberFieldName", FieldType.Number.toString()));
         ArrayList<String> options = new ArrayList<>();
         for (int i = 1; i <= 3; i++) {
             options.add("Option " + i);
         }
-        fields.add(new Field("DropDownFieldName", FieldType.choice.toString()));
+        fields.add(new Field("DropDownFieldName", FieldType.Choice.toString()));
         try {
             fields.get(fields.size() - 1).setOptions(options.toArray(new String[0]));
         } catch (Exception e) {

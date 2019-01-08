@@ -1,11 +1,24 @@
 package toning.juriaan.Models;
 
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class Field {
+    @Expose
+    @SerializedName("Name")
     private String fieldName;
+
+    @Expose
+    @SerializedName("Required")
     private Boolean required;
+
+    @Expose
+    @SerializedName("Type")
     private String type;
 
+    @Expose
+    @SerializedName("Options")
     private String[] options;
 
     public Field() {
@@ -19,14 +32,14 @@ public class Field {
     }
 
     public String[] getOptions() throws Exception {
-        if (!type.equals(FieldType.choice.toString())) {
+        if (!type.equals(FieldType.Choice.toString())) {
             throw new Exception("This is not a dropdown field.");
         }
         return options;
     }
 
     public void setOptions(String[] options) throws Exception {
-        if (!type.equals(FieldType.choice.toString())) {
+        if (!type.equals(FieldType.Choice.toString())) {
             throw new Exception("This is not a dropdown field.");
         }
         this.options = options;

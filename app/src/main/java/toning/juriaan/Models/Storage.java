@@ -8,11 +8,39 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 
 public class Storage {
-    public static Form getFormTemplate(String formattedFormName, Context context) {
+    public static Form getForm(String formattedFormName, Context context) {
         try {
             File file = Storage.getFormTemplateFile(formattedFormName, context);
+            return readForm(file);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static ArrayList<Form> getForms(Context context) {
+        try {
+            ArrayList<Form> forms = new ArrayList<>();
+
+            File templateDir = getFormTemplateDir(context);
+            File[] templates = templateDir.listFiles();
+
+            for (int i = 0; i < templates.length; i++) {
+                Form form = readForm(templates[i]);
+                forms.add(form);
+            }
+
+            return forms;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static Form readForm(File file) {
+        try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 
             StringBuilder stringBuilder = new StringBuilder();
@@ -22,7 +50,7 @@ public class Storage {
             }
             reader.close();
             return Form.fromJson(stringBuilder.toString());
-        } catch (Exception  e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -52,9 +80,8 @@ public class Storage {
         Boolean success = false;
 
         try {
-            File file  = getFormContentFile(formContent.getFields()[0].getValue() +
+            File file = getFormContentFile(formContent.getFields()[0].getValue() +
                     "_" + formContent.getFields()[1].getValue(), context);
-
 
 
             success = true;

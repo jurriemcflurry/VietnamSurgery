@@ -18,12 +18,12 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import toning.juriaan.Models.Answer;
 import toning.juriaan.Models.Field;
-import toning.juriaan.Models.FieldContent;
 import toning.juriaan.Models.FieldType;
+import toning.juriaan.Models.Helper;
 import toning.juriaan.Models.R;
 import toning.juriaan.Models.Form;
-import toning.juriaan.Models.Helper;
 import toning.juriaan.Models.Section;
 import toning.juriaan.Models.SectionAdapter;
 import toning.juriaan.Models.Storage;
@@ -39,6 +39,7 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
     private RecyclerView fieldsView;
     private SectionAdapter sectionAdapter;
     private ArrayList<Pair> dropDownValues;
+    private ArrayList<Answer> answers;
 
     private int sectionIndex;
     private Form form;
@@ -50,8 +51,11 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
         setContentView(R.layout.activity_form);
 
         Intent intent = getIntent();
-        form = Storage.getFormTemplate(intent.getStringExtra(FORM), this);
+        String name = intent.getStringExtra(FORM);
+        form = Storage.getForm(name, this);
+        Helper.log("FormActivity.onCreate() " + (form != null ? form.getFormName() : "null"));
         dropDownValues = new ArrayList<>();
+        answers = new ArrayList<>();
 
         toolbar = findViewById(R.id.form_toolbar);
         setSupportActionBar(toolbar);
@@ -70,7 +74,6 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
         toolbar.setTitle(form.getFormName());
         sectionNameView.setText(section.getSectionName());
         sectionAdapter.setFields(section.getFields());
-
     }
 
     @Override
@@ -93,7 +96,6 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
     private void nextSection() {
         //TODO if index is higher than or equal to sections.size() goto camera
         saveAnswers();
-        Storage.saveForm(form, this);
         if (sectionIndex < form.getFormTemplate().getSections().length - 1) {
             sectionIndex++;
             updateView();
@@ -106,12 +108,12 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
         Field[] fields = form.getFormTemplate().getSections()[sectionIndex].getFields();
         for (int i = 0; i < fields.length; i++) {
             Field field = fields[i];
-            if (field.getType().equals(FieldType.text.toString()) || field.getType().equals(FieldType.number.toString())) {
+            if (field.getType().equals(FieldType.String.toString()) || field.getType().equals(FieldType.Number.toString())) {
                 EditText textField = findViewById(i);
                 String fieldValue = textField.getText().toString();
                 saveAnswer(field.getFieldName(), fieldValue);
                 textField.setText("");
-            } else if (field.getType().equals(FieldType.choice.toString())) {
+            } else if (field.getType().equals(FieldType.Choice.toString())) {
                 Spinner spinner = findViewById(i);
                 String fieldValue = getDropDownValueAt(i);
                 saveAnswer(field.getFieldName(), fieldValue);
@@ -120,11 +122,18 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void saveAnswer(String fieldName, String fieldValue) {
-        for (FieldContent field : form.getFormContent().getFields()) {
-            if (field.getName().equals(fieldName)) {
-                field.setValue(fieldValue);
-                return;
+        boolean add = true;
+
+        for (Answer a : answers) {
+            if (a.getFieldName().equals(fieldName)) {
+                a.setFieldValue(fieldValue);
+                add = false;
+                break;
             }
+        }
+
+        if (add) {
+            answers.add(new Answer(fieldName, fieldValue));
         }
     }
 

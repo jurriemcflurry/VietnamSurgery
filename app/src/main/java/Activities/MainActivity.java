@@ -1,5 +1,6 @@
 package Activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -7,6 +8,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +17,11 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.text.MessageFormat;
+import java.time.format.FormatStyle;
+import java.util.ArrayList;
+
+import ResponseModels.FormulierenResponse;
 import WebInterfaces.FormWebInterface;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -22,16 +30,21 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import toning.juriaan.Models.AccessToken;
 import toning.juriaan.Models.Form;
+//import toning.juriaan.Models.FormTemplateObject;
+import toning.juriaan.Models.FormAdapter;
 import toning.juriaan.Models.FormTemplateObject;
 import toning.juriaan.Models.Helper;
 import toning.juriaan.Models.R;
 import toning.juriaan.Models.Storage;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FormAdapter.FormListener {
 
     private DrawerLayout mDrawerLayout;
-    private Form form;
+    private RecyclerView recyclerView;
+    private FormAdapter formAdapter;
+    private ArrayList<Form> forms;
+    private Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +52,12 @@ public class MainActivity extends AppCompatActivity {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        form = Form.getDummyForm();
-        form.setFormName("MainActivity form");
+
+        forms = new ArrayList<>();
+        recyclerView = findViewById(R.id.form_recycler);
+        formAdapter = new FormAdapter(forms, this);
+        recyclerView.setAdapter(formAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         setupNavigation();
 
@@ -53,25 +70,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button toFormActivityButton = findViewById(R.id.toFormActivity);
-        toFormActivityButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Storage.saveForm(form, MainActivity.this);
-
-                Intent toFormActivityIntent = new Intent(MainActivity.this, FormActivity.class);
-                toFormActivityIntent.putExtra(FormActivity.FORM, form.getFormattedFormName());
-                startActivity(toFormActivityIntent);
-            }
-        });
-
-        final Button postForm = findViewById(R.id.postForm);
-        postForm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                postForm();
-            }
-        });
+        getForms();
     }
 
     private void postForm() {
@@ -81,19 +80,55 @@ public class MainActivity extends AppCompatActivity {
 
         Retrofit retrofit = builder.build();
         FormWebInterface client = retrofit.create(FormWebInterface.class);
-        Call<Void> call = client.postFormTemplate(new FormTemplateObject(form.getFormTemplate()));
+//        Call<Void> call = client.postFormTemplate(new FormTemplateObject(form.getFormTemplate()));
+//
+//        call.enqueue(new Callback<Void>() {
+//            @Override
+//            public void onResponse(Call<Void> call, Response<Void> response) {
+//                Helper.log("postForm.onResponse() " + response.code());
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Void> call, Throwable t) {
+//                Helper.log("postForm.onFailure()");
+//            }
+//        });
+    }
 
-        call.enqueue(new Callback<Void>() {
+    private void getForms() {
+        Retrofit.Builder builder = new Retrofit.Builder()
+                .baseUrl(getString(R.string.baseURL))
+                .addConverterFactory(GsonConverterFactory.create());
+
+        Retrofit retrofit = builder.build();
+        FormWebInterface client = retrofit.create(FormWebInterface.class);
+        Call<FormulierenResponse[]> call = client.getFormTemplates();
+
+        call.enqueue(new Callback<FormulierenResponse[]>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                Helper.log("onResponse() " + response.code());
+            public void onResponse(Call<FormulierenResponse[]> call, Response<FormulierenResponse[]> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().length > 0) {
+                    forms.clear();
+                    for (FormulierenResponse formResponse : response.body()) {
+                        Form form = new Form(formResponse);
+                        Storage.saveForm(form, MainActivity.this);
+                    }
+                    forms = Storage.getForms(context);
+                    updateView();
+                }
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Helper.log("onFailure()");
+            public void onFailure(Call<FormulierenResponse[]> call, Throwable t) {
+                Helper.log("onFailure() " + t.getMessage());
+                t.printStackTrace();
             }
         });
+    }
+
+    public void updateView() {
+        formAdapter.setForms(forms);
+        formAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -106,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void setupNavigation(){
+    private void setupNavigation() {
         mDrawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         View headerView = navigationView.getHeaderView(0);
@@ -119,11 +154,10 @@ public class MainActivity extends AppCompatActivity {
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
-        if(AccessToken.access_token != null){
+        if (AccessToken.access_token != null) {
             login.setText(getString(R.string.logout));
             loggedInUser.setText(AccessToken.userName);
-        }
-        else{
+        } else {
             login.setText(getString(R.string.login));
             loggedInUser.setText(getString(R.string.not_logged_in));
         }
@@ -132,14 +166,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if(login.getText().equals(getString(R.string.logout))){
+                if (login.getText().equals(getString(R.string.logout))) {
                     AccessToken.access_token = null;
                     AccessToken.userName = null;
                     login.setText(getString(R.string.login));
                     loggedInUser.setText(getString(R.string.not_logged_in));
                     mDrawerLayout.closeDrawers();
-                }
-                else{
+                } else {
                     // ga naar pagina om in te loggen
                     Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
                     startActivity(loginIntent);
@@ -159,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
                         // Add code here to update the UI based on the item selected
                         // For example, swap UI fragments here
 
-                        switch(menuItem.getItemId()){
+                        switch (menuItem.getItemId()) {
                             case R.id.nav_1: //Bovenste Item
                                 Intent naarForms = new Intent(MainActivity.this, FormActivity.class);
                                 startActivity(naarForms);
@@ -172,11 +205,19 @@ public class MainActivity extends AppCompatActivity {
                                 break;
                             case R.id.nav_4: //4e item
                                 break;
-                            default: break;
+                            default:
+                                break;
                         }
 
                         return true;
                     }
                 });
+    }
+
+    @Override
+    public void onItemClick(Form form) {
+        Intent toFormActivityIntent = new Intent(MainActivity.this, FormActivity.class);
+        toFormActivityIntent.putExtra(FormActivity.FORM, form.getFormattedFormName());
+        startActivity(toFormActivityIntent);
     }
 }

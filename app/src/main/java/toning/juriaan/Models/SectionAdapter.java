@@ -1,18 +1,14 @@
 package toning.juriaan.Models;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import java.nio.charset.Charset;
 
 import Activities.FormActivity;
 
@@ -36,9 +32,10 @@ public class SectionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public int getItemViewType(int position) {
         Field field = fields[position];
-        if (field.getType().equals(FieldType.text.toString()) || field.getType().equals(FieldType.number.toString())) {
+        if (field.getType().toLowerCase().equals(FieldType.String.toString().toLowerCase()) ||
+                field.getType().toLowerCase().equals(FieldType.Number.toString().toLowerCase())) {
             return TEXT;
-        } else if (field.getType().equals(FieldType.choice.toString())) {
+        } else if (field.getType().toLowerCase().equals(FieldType.Choice.toString().toLowerCase())) {
             return DROP_DOWN;
         } else {
             return -1;
@@ -76,10 +73,9 @@ public class SectionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private void onBindViewHolder(@NonNull DropDownFieldViewHolder dropDownFieldViewHolder, int i) {
         Field field = fields[i];
-        if (field.getType().equals(FieldType.choice.toString())) {
+        if (field.getType().equals(FieldType.Choice.toString())) {
             dropDownFieldViewHolder.fieldLabel.setText(field.getFieldName());
             dropDownFieldViewHolder.optionsDropDown.setId(i);
-            Helper.log("spinner id set to: " + i);
             try {
                 ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(context, android.R.layout.simple_spinner_dropdown_item, field.getOptions());
                 dropDownFieldViewHolder.optionsDropDown.setAdapter(adapter);

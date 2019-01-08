@@ -9,6 +9,7 @@
     <string name="forms">Forms</string>
     <string name="users">Users</string>
     <string name="camera_title">Pictures</string>
+    <string name="refresh">Refresh</string>
     <string name="next">next</string>
     <string name="baseURL">http://vietnamcloudapi.azurewebsites.net</string>
     <string name="register">Register new user</string>
