@@ -4,14 +4,19 @@ package Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import ResponseModels.RegisterResponse;
 import WebInterfaces.UserWebInterface;
@@ -20,25 +25,32 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import toning.juriaan.Models.Helper;
 import toning.juriaan.Models.R;
 import toning.juriaan.Models.RegisterObject;
 
-public class RegisterActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, Callback<RegisterResponse> {
+public class RegisterActivity extends BaseActivity implements AdapterView.OnItemSelectedListener, Callback<RegisterResponse> {
 
     private UserWebInterface userWebInterface;
-    private EditText username;
-    private EditText password;
-    private EditText confirmPassword;
+    private TextInputEditText username;
+    private TextInputEditText password;
+    private TextInputEditText confirmPassword;
     private Spinner userrole;
-    private EditText email;
+    private TextInputEditText email;
     private Button register;
     private FrameLayout frameLayout;
+    private Helper helper;
+    private ProgressBar pBar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+
+        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
+        getLayoutInflater().inflate(R.layout.activity_register, contentFrameLayout);
+        getSupportActionBar().setTitle(getString(R.string.register));
+
         setupLayout();
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -63,15 +75,18 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
 
         userrole.setOnItemSelectedListener(this);
 
-        username = (EditText) findViewById(R.id.registeruserNameEditText);
-        password = (EditText) findViewById(R.id.registerpasswordEditText);
-        confirmPassword = (EditText) findViewById(R.id.registerconfirmpasswordEditText);
-        email = (EditText) findViewById(R.id.registeremailEditText);
+        username = (TextInputEditText) findViewById(R.id.registeruserNameEditText);
+        password = (TextInputEditText) findViewById(R.id.registerpasswordEditText);
+        confirmPassword = (TextInputEditText) findViewById(R.id.registerconfirmpasswordEditText);
+        email = (TextInputEditText) findViewById(R.id.registeremailEditText);
         register = (Button) findViewById(R.id.register_button);
+        pBar = (ProgressBar) findViewById(R.id.pBar);
+        pBar.setVisibility(View.INVISIBLE);
 
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                pBar.setVisibility(View.VISIBLE);
                 registerNewUser();
             }
         });
@@ -84,11 +99,24 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
         String registerEmail = email.getText().toString();
         String registerUserRole = userrole.getSelectedItem().toString();
 
-        if(registerUsername == null || registerPassword == null || registerConfirmPassword == null || registerEmail == null || registerUserRole == null){
+        if(registerUsername.isEmpty() || registerPassword.isEmpty() || registerConfirmPassword.isEmpty() || registerEmail.isEmpty() || registerUserRole.isEmpty()){
+            pBar.setVisibility(View.INVISIBLE);
+            Snackbar.make(findViewById(R.id.register_linear_layout), getString(R.string.emptyFields),Snackbar.LENGTH_LONG)
+                    .show();
             return;
         }
 
         if(!registerPassword.equals(registerConfirmPassword)){
+            pBar.setVisibility(View.INVISIBLE);
+            Snackbar.make(findViewById(R.id.register_linear_layout), getString(R.string.passwordError),Snackbar.LENGTH_LONG)
+                    .show();
+            return;
+        }
+
+        if(!isEmailValid(registerEmail)){
+            pBar.setVisibility(View.INVISIBLE);
+            Snackbar.make(findViewById(R.id.register_linear_layout), getString(R.string.wrongEmailFormat),Snackbar.LENGTH_LONG)
+                    .show();
             return;
         }
 
@@ -108,12 +136,51 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
         // Another interface callback
     }
 
+    public boolean isEmailValid(String email)
+    {
+        String regExpn =
+                "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@"
+                        +"((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+                        +"[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\."
+                        +"([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+                        +"[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
+                        +"([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$";
+
+        CharSequence inputStr = email;
+
+        Pattern pattern = Pattern.compile(regExpn,Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(inputStr);
+
+        if(matcher.matches())
+            return true;
+        else
+            return false;
+    }
+
     @Override
     public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
-        System.out.println(response.message());
+        helper.hideKeyboard(this);
+        pBar.setVisibility(View.INVISIBLE);
+
         if(response.isSuccessful() && response.body() != null){
-            Intent backHome = new Intent(RegisterActivity.this, MainActivity.class);
-            startActivity(backHome);
+            Snackbar.make(findViewById(R.id.register_linear_layout), getString(R.string.userAdded), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getString(R.string.homeCaps), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent backHome = new Intent(RegisterActivity.this, MainActivity.class);
+                            startActivity(backHome);
+                        }
+                    });
+        }
+        else{
+            if(response.message().equals("Bad Request")){
+                Snackbar.make(findViewById(R.id.register_linear_layout), getString(R.string.passwordFormatError),Snackbar.LENGTH_LONG)
+                        .show();
+            }
+            else {
+                Snackbar.make(findViewById(R.id.register_linear_layout), response.message(), Snackbar.LENGTH_LONG)
+                        .show();
+            }
         }
     }
 

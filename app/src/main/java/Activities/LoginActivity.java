@@ -1,10 +1,12 @@
 package Activities;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -13,8 +15,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import ResponseModels.LoginResponse;
@@ -25,26 +28,29 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import toning.juriaan.Models.AccessToken;
+import toning.juriaan.Models.Helper;
 import toning.juriaan.Models.R;
 
 
-public class LoginActivity extends AppCompatActivity implements Callback<LoginResponse> {
+public class LoginActivity extends BaseActivity implements Callback<LoginResponse> {
 
-    private DrawerLayout mDrawerLayout;
-    private TextView userNameTextView;
-    private EditText userNameEditText;
-    private TextView passwordTextView;
-    private EditText passwordEditText;
+    private TextInputEditText userName;
+    private TextInputEditText password;
     private Button loginButton;
     private UserWebInterface userWebInterface;
+    private Helper helper;
+    private ProgressBar pBar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login_activity);
+
+        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
+        getLayoutInflater().inflate(R.layout.login_activity, contentFrameLayout);
+        getSupportActionBar().setTitle(getString(R.string.login));
+
         setupLayoutControls();
-        setupNavigation();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(getString(R.string.baseURL))
@@ -54,110 +60,36 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
         userWebInterface = retrofit.create(UserWebInterface.class);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                mDrawerLayout.openDrawer(GravityCompat.START);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void setupNavigation(){
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.login_drawer_layout);
-        NavigationView navigationView = findViewById(R.id.login_nav_view);
-        View headerView = navigationView.getHeaderView(0);
-        LinearLayout header = (LinearLayout) headerView.findViewById(R.id.headerlayout);
-        final TextView login = (TextView) header.findViewById(R.id.Logintext);
-        final TextView loggedInUser = (TextView) header.findViewById(R.id.LoggedinUser);
-        Toolbar toolbar = findViewById(R.id.login_toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionbar = getSupportActionBar();
-        actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
-
-        if(AccessToken.access_token != null){
-            login.setText(getString(R.string.logout));
-            loggedInUser.setText(AccessToken.userName);
-        }
-
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        // set item as selected to persist highlight
-                        menuItem.setChecked(true);
-                        // close drawer when item is tapped
-                        mDrawerLayout.closeDrawers();
-
-                        // Add code here to update the UI based on the item selected
-                        // For example, swap UI fragments here
-
-                        switch(menuItem.getItemId()){
-                            case 2131230828: //Bovenste Item
-                                break;
-                            case 2131230829: //2e item
-                                break;
-                            case 2131230830: //3e item
-                                break;
-                            case 2131230831: //4e item
-                                break;
-                            default: break;
-                        }
-
-                        return true;
-                    }
-                });
-    }
-
     private void setupLayoutControls(){
-        userNameEditText = (EditText) findViewById(R.id.userNameEditText);
-        userNameTextView = (TextView) findViewById(R.id.userNameTextView);
-        passwordEditText = (EditText) findViewById(R.id.passwordEditText);
-        passwordTextView = (TextView) findViewById(R.id.passwordTextView);
+        userName = (TextInputEditText) findViewById(R.id.userName);
+        password = (TextInputEditText) findViewById(R.id.password);
         loginButton = (Button) findViewById(R.id.login_button);
-
-        userNameEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                userNameTextView.setVisibility(View.VISIBLE);
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                lp.setMargins(0, dpToPx(20), 0,0 );
-                userNameEditText.setLayoutParams(lp);
-            }
-        });
-
-        passwordEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                passwordTextView.setVisibility(View.VISIBLE);
-            }
-        });
+        pBar = (ProgressBar) findViewById(R.id.pBar);
+        pBar.setVisibility(View.INVISIBLE);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(userName.getText().toString().isEmpty() || password.getText().toString().isEmpty()){
+                    Snackbar.make(findViewById(R.id.login_linear_layout), getString(R.string.emptyFields),Snackbar.LENGTH_LONG)
+                            .show();
+                    return;
+                }
+
                 //call om in te loggen
+                pBar.setVisibility(View.VISIBLE);
                 login();
             }
         });
     }
 
     private void login(){
-        if(userNameEditText.getText() == null || passwordEditText.getText() == null){
-            return;
-        }
 
-        String username = userNameEditText.getText().toString();
-        String password = passwordEditText.getText().toString();
+        String username = userName.getText().toString();
+        String passWord = password.getText().toString();
         String granttype = getString(R.string.password2);
 
-        userWebInterface.login(username, password, granttype).enqueue(this);
-    }
-
-    public static int dpToPx(int dp){
-        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+        userWebInterface.login(username, passWord, granttype).enqueue(this);
     }
 
     @Override
@@ -165,16 +97,38 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
         //sla token op
         //set headertexts goed
         //terug naar home
+        helper.hideKeyboard(this);
+        pBar.setVisibility(View.INVISIBLE);
 
         if(response.isSuccessful() && response.body() != null){
-            AccessToken.access_token = "Bearer " + response.body().accesstoken;
+            Snackbar.make(findViewById(R.id.login_linear_layout),getString(R.string.loggedIn), Snackbar.LENGTH_INDEFINITE)
+                    .show();
+            AccessToken.access_token = response.body().token_type + " " + response.body().accesstoken;
             AccessToken.userName = response.body().userName;
+            AccessToken.userrole = response.body().role;
             TextView loginText = (TextView) findViewById(R.id.Logintext);
             TextView loggedInUser = (TextView) findViewById(R.id.LoggedinUser);
             loginText.setText(getString(R.string.logout));
             loggedInUser.setText(AccessToken.userName);
-            Intent backToHome = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(backToHome);
+
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    // Actions to do after 1,5 seconds
+                    Intent backToHome = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(backToHome);
+                }
+            }, 1500);
+        }
+        else{
+            if(response.message().equals("Bad Request")){
+                Snackbar.make(findViewById(R.id.login_linear_layout), getString(R.string.failedLogin),Snackbar.LENGTH_LONG)
+                        .show();
+            }
+            else{
+                Snackbar.make(findViewById(R.id.login_linear_layout), response.message(),Snackbar.LENGTH_LONG)
+                        .show();
+            }
         }
     }
 

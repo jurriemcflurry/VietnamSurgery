@@ -12,8 +12,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements FormAdapter.FormL
     private FormAdapter formAdapter;
     private ArrayList<Form> forms;
     private Context context = this;
+    private Form form;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +62,12 @@ public class MainActivity extends AppCompatActivity implements FormAdapter.FormL
         recyclerView.setAdapter(formAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        setupNavigation();
+        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
+        getLayoutInflater().inflate(R.layout.activity_main, contentFrameLayout);
+        getSupportActionBar().setTitle(getString(R.string.home));
+
+        form = Form.getDummyForm();
+        form.setFormName("MainActivity form");
 
         Button OpenCamera = (Button) findViewById(R.id.ToCamera);
         OpenCamera.setOnClickListener(new View.OnClickListener() {
@@ -197,14 +205,14 @@ public class MainActivity extends AppCompatActivity implements FormAdapter.FormL
                                 Intent naarForms = new Intent(MainActivity.this, FormActivity.class);
                                 startActivity(naarForms);
                                 break;
-                            case R.id.nav_2: //2e item
-                                Intent naarUsers = new Intent(MainActivity.this, UsersActivity.class);
-                                startActivity(naarUsers);
-                                break;
-                            case R.id.nav_3: //3e item
-                                break;
-                            case R.id.nav_4: //4e item
-                                break;
+//                            case R.id.nav_2: //2e item
+//                                Intent naarUsers = new Intent(MainActivity.this, UsersActivity.class);
+//                                startActivity(naarUsers);
+//                                break;
+//                            case R.id.nav_3: //3e item
+//                                break;
+//                            case R.id.nav_4: //4e item
+//                                break;
                             default:
                                 break;
                         }

@@ -1,92 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/register_drawer_layout">
-
-    <FrameLayout
-        android:id="@+id/register_frame_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/login_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:title="@string/register"
-            >
-        </android.support.v7.widget.Toolbar>
+    android:id="@+id/register_frame_layout">
 
         <LinearLayout
             android:id="@+id/register_linear_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="?attr/actionBarSize"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal">
 
-            <EditText
-                android:id="@+id/registeruserNameEditText"
-                android:layout_width="150dp"
-                android:layout_height="20dp"
-                android:background="@null"
-                android:hint="@string/username" />
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
 
-            <EditText
-                android:id="@+id/registerpasswordEditText"
-                android:layout_width="150dp"
-                android:layout_height="20dp"
-                android:layout_marginTop="20dp"
-                android:background="@null"
-                android:inputType="textPassword"
-                android:hint="@string/password"/>
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/registeruserNameEditText"
+                    android:layout_width="150dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@null"
+                    android:inputType="text"
+                    android:hint="@string/username" />
 
-            <EditText
-                android:id="@+id/registerconfirmpasswordEditText"
-                android:layout_width="150dp"
-                android:layout_height="20dp"
-                android:layout_marginTop="20dp"
-                android:background="@null"
-                android:inputType="textPassword"
-                android:hint="@string/confirmpassword"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/registerpasswordEditText"
+                    android:layout_width="150dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@null"
+                    android:inputType="textPassword"
+                    android:hint="@string/password"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/registerconfirmpasswordEditText"
+                    android:layout_width="150dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@null"
+                    android:inputType="textPassword"
+                    android:hint="@string/confirmpassword"/>
+
+            </android.support.design.widget.TextInputLayout>
 
             <Spinner
             android:id="@+id/spinner1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:drawable/btn_dropdown"
-            android:spinnerMode="dropdown"/>
+            android:spinnerMode="dropdown"
+                android:layout_marginTop="20dp"/>
 
-            <EditText
-                android:id="@+id/registeremailEditText"
-                android:layout_width="150dp"
-                android:layout_height="20dp"
-                android:layout_marginTop="20dp"
-                android:background="@null"
-                android:hint="@string/email"/>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/registeremailEditText"
+                    android:layout_width="150dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@null"
+                    android:inputType="textEmailAddress"
+                    android:hint="@string/email"/>
+
+            </android.support.design.widget.TextInputLayout>
 
             <Button
                 android:id="@+id/register_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
+                android:background="@drawable/mybutton"
                 android:text="@string/register"/>
         </LinearLayout>
-    </FrameLayout>
 
-    <android.support.design.widget.NavigationView
-        android:id="@+id/register_nav_view"
+    <ProgressBar
+        android:id="@+id/pBar"
+        style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:menu="@menu/drawer_view"
-        app:headerLayout="@layout/header_layout"
-        >
-
-    </android.support.design.widget.NavigationView>
-</android.support.v4.widget.DrawerLayout>
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+    </ProgressBar>
+    </FrameLayout>
