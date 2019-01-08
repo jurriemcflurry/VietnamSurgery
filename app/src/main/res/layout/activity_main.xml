@@ -4,17 +4,10 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:app="http://schemas.android.com/apk/res-auto"
 xmlns:tools="http://schemas.android.com/tools"
 tools:context="Activities.MainActivity"
-android:id="@+id/drawer_layout"
+android:id="@+id/main_frame_layout"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
 android:fitsSystemWindows="true">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -49,16 +42,4 @@ android:fitsSystemWindows="true">
             </RelativeLayout>
 
         </LinearLayout>
-
-
-    <android.support.design.widget.NavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:headerLayout="@layout/header_layout"
-        app:menu="@menu/drawer_view">
-
-    </android.support.design.widget.NavigationView>
 </FrameLayout>
