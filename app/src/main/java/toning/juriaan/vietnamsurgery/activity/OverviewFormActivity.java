@@ -236,7 +236,8 @@ public class OverviewFormActivity extends AppCompatActivity {
         }
     }
 
-    private void renamePictureFiles() { //FOTONAAM!!!!!!
+    private void renamePictureFiles() {
+        // Todo: renameTo voor foutmelding!
         String patientName = form.getSections().get(0).getFields().get(1).getAnswer();
         String birthYear = form.getSections().get(0).getFields().get(2).getAnswer();
         String district = form.getSections().get(1).getFields().get(3).getAnswer();
