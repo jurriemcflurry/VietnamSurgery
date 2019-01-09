@@ -41,6 +41,7 @@ import toning.juriaan.vietnamsurgery.model.Section;
 public class OverviewFormActivity extends AppCompatActivity {
 
     static final int REQUEST_DELETE_IMAGE = 2;
+    static final int REQUEST_ADJUST_FORM = 3;
     private Toolbar toolbar;
     private FormTemplate form;
     private LinearLayout layout;
@@ -49,6 +50,7 @@ public class OverviewFormActivity extends AppCompatActivity {
     LayoutInflater mInflator;
     private File storageDirPng;
     LinearLayout mGallery;
+    int requestCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,7 @@ public class OverviewFormActivity extends AppCompatActivity {
     private void loadIntent(){
         Intent i = getIntent();
         form = i.getParcelableExtra("obj_form");
+        requestCode = i.getIntExtra("requestCode", 0);
     }
     private void setupFields() {
         mFormOverview = findViewById(R.id.formLayout);
@@ -163,26 +166,51 @@ public class OverviewFormActivity extends AppCompatActivity {
             int firstRowNum = 5;
             int lastRowNum = getLastRowNum(firstRowNum, s);
 
-            Row r = s.createRow(lastRowNum);
-            int lastColumn = 0;
-            String birthYear = "";
+            if (form.getRowNumber() > 0) {
+                Row r = s.getRow(form.getRowNumber());
+                int lastColumn = 0;
+                String birthYear = "";
 
-            for (Section sec : form.getSections()) {
-                for (Field f : sec.getFields()) {
-                    if(!f.getAnswer().isEmpty() && f.getRow() == 3) {
-                        r.createCell(f.getColumn()).setCellValue(f.getAnswer());
-                    }
-                    if(f.getColumn() == lastColumn && lastColumn != 0) {
-                        birthYear = sec.getFields().get(f.getColumn()).getAnswer();
-                    }
-                    if(f.getRow() == 4) {
-                        if(f.getAnswer().equals("true")) {
-                            r.createCell(f.getColumn()).setCellValue(birthYear);
-                        } else {
-                            r.createCell(f.getColumn()).setCellValue("");
+                for (Section sec : form.getSections()) {
+                    for (Field f : sec.getFields()) {
+                        if(!f.getAnswer().isEmpty() && f.getRow() == 3) {
+                            r.getCell(f.getColumn()).setCellValue(f.getAnswer());
                         }
+                        if(f.getColumn() == lastColumn && lastColumn != 0) {
+                            birthYear = sec.getFields().get(f.getColumn()).getAnswer();
+                        }
+                        if(f.getRow() == 4) {
+                            if(f.getAnswer().equals("true")) {
+                                r.getCell(f.getColumn()).setCellValue(birthYear);
+                            } else {
+                                r.getCell(f.getColumn()).setCellValue("");
+                            }
+                        }
+                        lastColumn = f.getColumn();
                     }
-                    lastColumn = f.getColumn();
+                }
+            } else {
+                Row r = s.createRow(lastRowNum);
+                int lastColumn = 0;
+                String birthYear = "";
+
+                for (Section sec : form.getSections()) {
+                    for (Field f : sec.getFields()) {
+                        if(!f.getAnswer().isEmpty() && f.getRow() == 3) {
+                            r.createCell(f.getColumn()).setCellValue(f.getAnswer());
+                        }
+                        if(f.getColumn() == lastColumn && lastColumn != 0) {
+                            birthYear = sec.getFields().get(f.getColumn()).getAnswer();
+                        }
+                        if(f.getRow() == 4) {
+                            if(f.getAnswer().equals("true")) {
+                                r.createCell(f.getColumn()).setCellValue(birthYear);
+                            } else {
+                                r.createCell(f.getColumn()).setCellValue("");
+                            }
+                        }
+                        lastColumn = f.getColumn();
+                    }
                 }
             }
 
@@ -194,9 +222,48 @@ public class OverviewFormActivity extends AppCompatActivity {
             wb.close();
             out.flush();
             out.close();
-            goToTheStart();
+            if(form.getRowNumber() > 0) {
+                renamePictureFiles();
+                Intent formListActivity = new Intent(this, FormListActivity.class);
+                formListActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivityIfNeeded(formListActivity, REQUEST_ADJUST_FORM);
+                finish();
+            } else {
+                goToTheStart();
+            }
         } catch (Exception ex) {
             Log.i("TESTT", ex.getMessage() + " -- " + ex.getCause());
+        }
+    }
+
+    private void renamePictureFiles() { //FOTONAAM!!!!!!
+        String patientName = form.getSections().get(0).getFields().get(1).getAnswer();
+        String birthYear = form.getSections().get(0).getFields().get(2).getAnswer();
+        String district = form.getSections().get(1).getFields().get(3).getAnswer();
+        int picIndex = 0;
+        for(String pFile : form.getPictures()) {
+            File oldFile = new File(pFile);
+            int endIndex = oldFile.getName().indexOf("_", oldFile.getName().indexOf("_", oldFile.getName().indexOf("_") + 1) + 1 );
+            String endName = oldFile.getName().substring(endIndex);
+            String newFileName = patientName + "_" + birthYear + "_" + district + endName;
+            File newFile = new File(oldFile.getParentFile(), newFileName);
+            oldFile.renameTo(newFile);
+            form.getPictures().set(picIndex, newFile.getAbsolutePath());
+            picIndex++;
+        }
+
+        int thumbIndex = 0;
+        for(String tFile : form.getThumbImages()) {
+            File oldFile = new File(tFile);
+            int endIndex = oldFile.getName().indexOf("_", oldFile.getName().indexOf("_", oldFile.getName().indexOf("_") + 1) + 1 );
+            String endName = oldFile.getName().substring(endIndex);
+            String newFileName = patientName + "_" + birthYear + "_" + district + endName;
+            File newFile = new File(oldFile.getParentFile(), newFileName);
+            oldFile.renameTo(newFile);
+            form.getPictures().set(thumbIndex, newFile.getAbsolutePath());
+            Log.e("TESTT", oldFile.getName() + " --- PNGFILE");
+            Log.e("TESTT", endName + " --- PNGFILE");
+            thumbIndex++;
         }
     }
 
@@ -231,7 +298,8 @@ public class OverviewFormActivity extends AppCompatActivity {
     }
 
     public void goToTheStart() {
-        // Todo: Make it work?
+        Toast.makeText(OverviewFormActivity.this, "Form saved successfully.", Toast.LENGTH_LONG).show();
+        // Todo: Go back to start
     }
 
     private void goToDetailPage(File photoFile) {
@@ -331,9 +399,14 @@ public class OverviewFormActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Intent cameraActivity = new Intent(getApplicationContext(), CameraActivity.class);
-        cameraActivity.putExtra("obj_form", form);
-        startActivity(cameraActivity);
+        if(requestCode == REQUEST_ADJUST_FORM) {
+            setResult(RESULT_OK, getIntent());
+            finish();
+        } else {
+            Intent cameraActivity = new Intent(getApplicationContext(), CameraActivity.class);
+            cameraActivity.putExtra("obj_form", form);
+            startActivity(cameraActivity);
+        }
     }
 
 }

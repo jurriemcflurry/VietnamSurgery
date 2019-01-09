@@ -13,6 +13,7 @@ public class FormTemplate implements Parcelable {
     private List<Section> sections;
     private List<String> pictures;
     private List<String> thumbImages;
+    private int rowNumber;
 
     public String getFormName() {
         return formName;
@@ -56,6 +57,13 @@ public class FormTemplate implements Parcelable {
         this.thumbImages = thumbImages;
     }
 
+    public int getRowNumber() {
+        return rowNumber;
+    }
+    public void setRowNumber(int rowNumber) {
+        this.rowNumber = rowNumber;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -69,6 +77,7 @@ public class FormTemplate implements Parcelable {
         out.writeList(sections);
         out.writeList(pictures);
         out.writeList(thumbImages);
+        out.writeInt(rowNumber);
     }
 
     public static final Creator<FormTemplate> CREATOR = new Creator<FormTemplate>() {
@@ -95,6 +104,7 @@ public class FormTemplate implements Parcelable {
         in.readList(pictures, String.class.getClassLoader());
         thumbImages = new ArrayList<>();
         in.readList(thumbImages, String.class.getClassLoader());
+        rowNumber = in.readInt();
     }
 
     @Override

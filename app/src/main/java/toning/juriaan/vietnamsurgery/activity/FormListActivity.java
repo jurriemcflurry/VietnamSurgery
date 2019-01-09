@@ -2,8 +2,12 @@ package toning.juriaan.vietnamsurgery.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
 import android.os.Environment;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -14,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import toning.juriaan.vietnamsurgery.FormListListener;
 import toning.juriaan.vietnamsurgery.MainActivity;
 import toning.juriaan.vietnamsurgery.R;
 import toning.juriaan.vietnamsurgery.adapter.FormListAdapter;
@@ -40,14 +46,16 @@ import toning.juriaan.vietnamsurgery.model.Field;
 import toning.juriaan.vietnamsurgery.model.FormTemplate;
 import toning.juriaan.vietnamsurgery.model.Section;
 
-public class FormListActivity extends AppCompatActivity {
+public class FormListActivity extends AppCompatActivity implements FormListListener {
 
-    FormTemplate form = new FormTemplate();
+    final static int REQUEST_ADJUST_FORM = 3;
+    FormTemplate form;
     private List<Section> sections = new ArrayList<>();
     private ArrayList<FormTemplate> formList = new ArrayList<>();
     Toolbar toolbar;
     private ActionBar ab;
     private DrawerLayout mDrawerLayout;
+    final private File root =  new File(Environment.getExternalStorageDirectory().toString() + "/LenTab/lentab-susanne");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +71,7 @@ public class FormListActivity extends AppCompatActivity {
 
     private void setupFields(){
         toolbar = findViewById(R.id.form_toolbar);
+        form = new FormTemplate();
     }
 
     private void setupToolbar() {
@@ -110,7 +119,6 @@ public class FormListActivity extends AppCompatActivity {
     }
 
     private void chooseExcelFile() {
-        File root = new File(Environment.getExternalStorageDirectory().toString() + "/LenTab/lentab-susanne");
         try{
             List<File> files = getListFiles(root);
 
@@ -281,6 +289,7 @@ public class FormListActivity extends AppCompatActivity {
                 }
             }
 
+
             form.setSections(sections);
 
             putAnswers(sheet);
@@ -306,12 +315,22 @@ public class FormListActivity extends AppCompatActivity {
                 tempForm.setFormName(form.getFormName());
 
                 tempForm.setSections(createDeepCopyOfSections());
+                tempForm.setRowNumber(row.getRowNum());
+                String birthYear = "";
 
                 for (Section sec : tempForm.getSections()) {
                     for (Field f : sec.getFields()) {
                         String answer;
                         if (row.getCell(f.getColumn()) != null) {
                             answer = row.getCell(f.getColumn()).getStringCellValue();
+                            if(f.getRow() == 4 && f.getColumn() == 2 && !row.getCell(f.getColumn()).getStringCellValue().isEmpty()) {
+                                birthYear = answer;
+                                answer = "true";
+                            }
+                            if(f.getRow() == 4 && f.getColumn() == 3 && !row.getCell(f.getColumn()).getStringCellValue().isEmpty()) {
+                                birthYear = answer;
+                                answer = "true";
+                            }
                         } else {
                             answer = "";
                         }
@@ -319,7 +338,8 @@ public class FormListActivity extends AppCompatActivity {
                         f.setAnswer(answer);
                     }
                 }
-                tempForm.setPictures(getListOfPictures(tempForm));
+                tempForm.getSections().get(0).getFields().get(2).setAnswer(birthYear);
+                tempForm = setListOfPicturesAndThumbs(tempForm);
                 formList.add(tempForm);
             }
         }
@@ -329,7 +349,7 @@ public class FormListActivity extends AppCompatActivity {
         }
 
         GridView gridView = findViewById(R.id.form_list_grid_view);
-        gridView.setAdapter(new FormListAdapter(this, formList));
+        gridView.setAdapter(new FormListAdapter(this, formList, this));
     }
 
     private List<Section> createDeepCopyOfSections() {
@@ -365,28 +385,51 @@ public class FormListActivity extends AppCompatActivity {
         return true;
     }
 
-    private List<String> getListOfPictures(FormTemplate patientForm) {
+    private FormTemplate setListOfPicturesAndThumbs(FormTemplate patientForm) {
         List<String> pictures = new ArrayList<>();
+        List<String> thumbs = new ArrayList<>();
 
         File storageDir = new File(Environment.getExternalStorageDirectory().toString() + "/LenTab/lentab-susanne/VietnamSurgery");
         File[] files = storageDir.listFiles();
 
         String patientName = patientForm.getSections().get(0).getFields().get(1).getAnswer();
-        String birthYear;
-        if(patientForm.getSections().get(0).getFields().get(3).getAnswer().isEmpty()) {
-            birthYear = patientForm.getSections().get(0).getFields().get(4).getAnswer();
-        } else {
-            birthYear = patientForm.getSections().get(0).getFields().get(3).getAnswer();
-        }
+        String birthYear = patientForm.getSections().get(0).getFields().get(2).getAnswer();
 
         for( File file : files) {
             // Todo: NAME OF PICTURES!
             if(file.getName().contains( patientName + "_" + birthYear + "_" )) {
                 pictures.add(file.getAbsolutePath());
+                File pngFile = new File(Environment.getExternalStorageDirectory().toString() + "/LenTab/lentab-susanne/VietnamSurgery/thumbs", file.getName().replace("jpg", "png"));
+                thumbs.add(pngFile.getAbsolutePath());
             }
         }
 
-        return pictures;
+        patientForm.setThumbImages(thumbs);
+        patientForm.setPictures(pictures);
+
+        return patientForm;
+    }
+
+    private void reloadList() {
+        try {
+            XSSFWorkbook wb = new XSSFWorkbook(new File(root, form.getFileName()));
+            XSSFSheet sheet = wb.getSheet(form.getSheetName());
+            formList.clear();
+            sections = new ArrayList<>();
+            readExcelFile(sheet);
+        } catch (Exception ex) {
+            // Todo: Error & Make sure the error won't get show by first opening this activity
+            Log.e("TESTT", "oops. Something went wrong");
+        }
+
+    }
+
+    @Override
+    public void onItemClick(FormTemplate form) {
+        Intent intent = new Intent(this, OverviewFormActivity.class);
+        intent.putExtra("obj_form", form);
+        intent.putExtra("requestCode", REQUEST_ADJUST_FORM);
+        startActivityForResult(intent, REQUEST_ADJUST_FORM);
     }
 
     @Override
@@ -394,5 +437,11 @@ public class FormListActivity extends AppCompatActivity {
         Intent mainActivity = new Intent(FormListActivity.this, MainActivity.class);
         startActivity(mainActivity);
         finish();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        reloadList();
     }
 }
