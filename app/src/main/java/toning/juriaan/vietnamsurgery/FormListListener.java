@@ -1,7 +1,9 @@
 package toning.juriaan.vietnamsurgery;
 
+import android.view.View;
+
 import toning.juriaan.vietnamsurgery.model.FormTemplate;
 
 public interface FormListListener {
-    void onItemClick(FormTemplate form);
+    void onItemClick(View view, FormTemplate form);
 }

@@ -9,6 +9,7 @@
     app:cardElevation="2dp"
     app:cardPreventCornerOverlap="false"
     app:contentPadding="0dp"
+    android:layout_marginBottom="10dp"
     >
 
     <RelativeLayout
@@ -41,6 +42,7 @@
             android:id="@+id/firstLinearLayout"
             android:layout_below="@id/grid_item_line"
             android:orientation="horizontal"
+            android:layout_marginBottom="10dp"
             >
             <TextView
                 android:layout_width="0dp"
@@ -82,56 +84,6 @@
                 android:text="3"
                 />
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/secondLinearLayout"
-            android:layout_below="@id/firstLinearLayout"
-            android:orientation="horizontal"
-            android:layout_marginBottom="10dp"
-            >
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:id="@+id/grid_item_formNameTxt"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/black"
-                android:text="Form name:"
-                />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:id="@+id/grid_item_formNameAnswerTxt"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/colorPrimaryDark"
-                android:text="placeholder"
-                />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:id="@+id/grid_item_createdTxt"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/black"
-                android:text="Created:"
-                />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:id="@+id/grid_item_createdAnswerTxt"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/colorPrimaryDark"
-                android:text="timeStamp"
-                />
-        </LinearLayout>
-
     </RelativeLayout>
 
 

@@ -2,6 +2,7 @@ package toning.juriaan.vietnamsurgery.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +15,11 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.lang.reflect.Array;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 import toning.juriaan.vietnamsurgery.FormListListener;
 import toning.juriaan.vietnamsurgery.R;
@@ -23,11 +28,11 @@ import toning.juriaan.vietnamsurgery.activity.FormListActivity;
 import toning.juriaan.vietnamsurgery.activity.OverviewFormActivity;
 import toning.juriaan.vietnamsurgery.model.FormTemplate;
 
-public class FormListAdapter extends BaseAdapter {
+public class FormListAdapter extends RecyclerView.Adapter<FormListAdapter.FormListViewHolder> {
 
     private final FormListListener mListener;
-    private Context context;
-    private ArrayList<FormTemplate> formList = new ArrayList<>();
+    private final Context context;
+    private final ArrayList<FormTemplate> formList;
 
     public FormListAdapter(Context context, ArrayList<FormTemplate> formList, FormListListener listener) {
         this.context = context;
@@ -35,65 +40,54 @@ public class FormListAdapter extends BaseAdapter {
         this.mListener = listener;
     }
 
-    public View getView(int position, View convertView, ViewGroup parent) {
-
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        View gridView;
-
-        if (convertView == null) {
-
-            gridView = new View(context);
-
-            // get layout from mobile.xml
-            gridView = inflater.inflate(R.layout.form_list_grid_view_item, null);
-
-            // set image based on selected text
-            TextView name = gridView.findViewById(R.id.grid_item_nameTxt);
-            name.setText(formList.get(position).getSections().get(0).getFields().get(1).getAnswer());
-
-            TextView district = gridView.findViewById(R.id.grid_item_districtAnswerTxt);
-            district.setText(formList.get(position).getSections().get(1).getFields().get(3).getAnswer());
-
-            TextView photoCount = gridView.findViewById(R.id.grid_item_photoAnswerTxt);
-            photoCount.setText(Integer.toString(formList.get(position).getPictures().size()));
-
-            TextView formName = gridView.findViewById(R.id.grid_item_formNameAnswerTxt);
-            formName.setText("");
-            TextView formNameLabel = gridView.findViewById(R.id.grid_item_formNameTxt);
-            formNameLabel.setText("");
-
-            TextView created = gridView.findViewById(R.id.grid_item_createdAnswerTxt);
-            created.setText("");
-            TextView createdLabel = gridView.findViewById(R.id.grid_item_createdTxt);
-            createdLabel.setText("");
-
-            gridView.setOnClickListener((View v) -> {
-                FormTemplate form = (FormTemplate)getItem(position);
-                mListener.onItemClick(form);
-            });
-
-
-        } else {
-            gridView = convertView;
-        }
-
-        return gridView;
+    @Override
+    public FormListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new FormListViewHolder(
+                LayoutInflater.from(parent.getContext()).inflate(R.layout.form_list_grid_view_item, parent, false));
     }
 
     @Override
-    public int getCount() {
-        return formList.size();
-    }
+    public void onBindViewHolder(final FormListViewHolder holder, int position) {
+        // Get the item for current position
+        final FormTemplate node = getItem(position);
 
-    @Override
-    public Object getItem(int position) {
-        return formList.get(position);
+        // Fill the views in the VH with the content for the current position
+        holder.name.setText(node.getSections().get(0).getFields().get(1).getAnswer());
+        holder.district.setText(node.getSections().get(1).getFields().get(3).getAnswer());
+        holder.photoCount.setText(Integer.toString(formList.get(position).getPictures().size()));
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onItemClick(holder.itemView, node);
+            }
+        });
     }
 
     @Override
     public long getItemId(int position) {
         return position;
+    }
+
+    @Override
+    public int getItemCount() {
+        return formList.size();
+    }
+
+    private FormTemplate getItem(int position) {
+        return formList.get(position);
+    }
+
+    public class FormListViewHolder extends RecyclerView.ViewHolder {
+        TextView name;
+        TextView district;
+        TextView photoCount;
+
+        FormListViewHolder(View itemView){
+            super(itemView);
+            name = itemView.findViewById(R.id.grid_item_nameTxt);
+            district = itemView.findViewById(R.id.grid_item_districtAnswerTxt);
+            photoCount = itemView.findViewById(R.id.grid_item_photoAnswerTxt);
+        }
     }
 }

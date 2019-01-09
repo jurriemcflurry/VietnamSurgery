@@ -16,6 +16,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.Pair;
@@ -348,8 +351,13 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
             Toast.makeText(this, "There are no filled in forms yet", Toast.LENGTH_LONG).show();
         }
 
-        GridView gridView = findViewById(R.id.form_list_grid_view);
-        gridView.setAdapter(new FormListAdapter(this, formList, this));
+        RecyclerView mRecyclerView = findViewById(R.id.form_list_grid_view);
+        LinearLayoutManager mLayoutManager = new GridLayoutManager(this, 1);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        FormListAdapter mAdapter = new FormListAdapter(this, formList, this);
+        mRecyclerView.setAdapter(mAdapter);
+        //GridView gridView = findViewById(R.id.form_list_grid_view);
+        //gridView.setAdapter(new FormListAdapter(this, formList, this));
     }
 
     private List<Section> createDeepCopyOfSections() {
@@ -425,7 +433,7 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
     }
 
     @Override
-    public void onItemClick(FormTemplate form) {
+    public void onItemClick(View view, FormTemplate form) {
         Intent intent = new Intent(this, OverviewFormActivity.class);
         intent.putExtra("obj_form", form);
         intent.putExtra("requestCode", REQUEST_ADJUST_FORM);
