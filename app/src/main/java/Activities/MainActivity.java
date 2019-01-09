@@ -76,26 +76,26 @@ public class MainActivity extends BaseActivity implements FormAdapter.FormListen
         getForms();
     }
 
-    private void postForm() {
+    private void postForm(Form form) {
         Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl(getString(R.string.baseURL))
                 .addConverterFactory(GsonConverterFactory.create());
 
         Retrofit retrofit = builder.build();
         FormWebInterface client = retrofit.create(FormWebInterface.class);
-//        Call<Void> call = client.postFormTemplate(new FormTemplateObject(form.getFormTemplate()));
-//
-//        call.enqueue(new Callback<Void>() {
-//            @Override
-//            public void onResponse(Call<Void> call, Response<Void> response) {
-//                Helper.log("postForm.onResponse() " + response.code());
-//            }
-//
-//            @Override
-//            public void onFailure(Call<Void> call, Throwable t) {
-//                Helper.log("postForm.onFailure()");
-//            }
-//        });
+        Call<Void> call = client.postFormTemplate(new FormTemplateObject(form.getFormTemplate()));
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                Helper.log("postForm.onResponse() " + response.code());
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Helper.log("postForm.onFailure()");
+            }
+        });
     }
 
     private void getForms() {

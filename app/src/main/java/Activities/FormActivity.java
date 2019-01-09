@@ -18,7 +18,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import toning.juriaan.Models.Answer;
 import toning.juriaan.Models.Field;
 import toning.juriaan.Models.FieldType;
 import toning.juriaan.Models.Helper;
@@ -39,7 +38,6 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
     private RecyclerView fieldsView;
     private SectionAdapter sectionAdapter;
     private ArrayList<Pair> dropDownValues;
-    private ArrayList<Answer> answers;
 
     private int sectionIndex;
     private Form form;
@@ -55,7 +53,6 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
         form = Storage.getForm(name, this);
         Helper.log("FormActivity.onCreate() " + (form != null ? form.getFormName() : "null"));
         dropDownValues = new ArrayList<>();
-        answers = new ArrayList<>();
 
         toolbar = findViewById(R.id.form_toolbar);
         setSupportActionBar(toolbar);
@@ -99,7 +96,7 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
         if (sectionIndex < form.getFormTemplate().getSections().length - 1) {
             sectionIndex++;
             updateView();
-        } else {
+        } else if (sectionIndex > form.getFormTemplate().getSections().length - 1) {
 
         }
     }
@@ -124,17 +121,17 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
     private void saveAnswer(String fieldName, String fieldValue) {
         boolean add = true;
 
-        for (Answer a : answers) {
-            if (a.getFieldName().equals(fieldName)) {
-                a.setFieldValue(fieldValue);
-                add = false;
-                break;
-            }
-        }
-
-        if (add) {
-            answers.add(new Answer(fieldName, fieldValue));
-        }
+//        for (Answer a : answers) {
+//            if (a.getFieldName().equals(fieldName)) {
+//                a.setFieldValue(fieldValue);
+//                add = false;
+//                break;
+//            }
+//        }
+//
+//        if (add) {
+//            answers.add(new Answer(fieldName, fieldValue));
+//        }
     }
 
     private void previousSection() {
