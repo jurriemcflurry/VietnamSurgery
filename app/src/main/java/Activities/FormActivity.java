@@ -3,20 +3,23 @@ package Activities;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import toning.juriaan.Models.Field;
 import toning.juriaan.Models.FieldType;
@@ -25,7 +28,6 @@ import toning.juriaan.Models.Helper;
 import toning.juriaan.Models.R;
 import toning.juriaan.Models.Form;
 import toning.juriaan.Models.Section;
-import toning.juriaan.Models.SectionAdapter;
 import toning.juriaan.Models.Storage;
 
 
@@ -36,8 +38,7 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private Toolbar toolbar;
     private TextView sectionNameView;
-    private RecyclerView fieldsView;
-    private SectionAdapter sectionAdapter;
+    private LinearLayout fieldsView;
     private ArrayList<Pair> dropDownValues;
     private FormContent formContent;
 
@@ -63,10 +64,7 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
         toolbar = findViewById(R.id.form_toolbar);
         setSupportActionBar(toolbar);
         sectionNameView = findViewById(R.id.section_name);
-        fieldsView = findViewById(R.id.fields_recycler_view);
-        sectionAdapter = new SectionAdapter(this);
-        fieldsView.setLayoutManager(new LinearLayoutManager(this));
-        fieldsView.setAdapter(sectionAdapter);
+        fieldsView = findViewById(R.id.fields_linear_view);
 
         sectionIndex = 0;
         updateView();
@@ -74,9 +72,89 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private void updateView() {
         Section section = form.getFormTemplate().getSections()[sectionIndex];
+        Field[] fields = section.getFields();
         toolbar.setTitle(form.getFormName());
         sectionNameView.setText(section.getSectionName());
-        sectionAdapter.setFields(section.getFields());
+        fieldsView.removeAllViews();
+        for (int i = 0; i < fields.length; i++) {
+            fieldsView.addView(createViewFromField(fields[i], i));
+        }
+    }
+
+    private View createViewFromField(Field field, int i) {
+        if (field.getType().equals(FieldType.String.toString()) || field.getType().equals(FieldType.Number.toString())) {
+            return createTextField(field, i);
+        } else if (field.getType().equals(FieldType.Choice.toString())) {
+            return createDropDownField(field, i);
+        } else {
+            return null;
+        }
+    }
+
+    private TextInputLayout createTextField(Field field, int i) {
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        TextInputLayout textInputLayout = new TextInputLayout(this);
+        textInputLayout.setLayoutParams(layoutParams);
+
+        EditText editText = new EditText(this);
+        editText.setLayoutParams(layoutParams);
+        editText.setHint(field.getFieldName());
+        editText.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+
+        String value = getFieldValue(field);
+        if (value != null) {
+            editText.setText(value);
+        }
+        editText.setId(i);
+
+        textInputLayout.addView(editText);
+
+        return textInputLayout;
+    }
+
+    private LinearLayout createDropDownField(Field field, int i) {
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        layoutParams.setMargins(10, 0, 0, 0);
+
+        LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setLayoutParams(layoutParams);
+        linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+
+        TextView textView = new TextView(this);
+        String labelText = field.getFieldName() + ": ";
+        textView.setText(labelText);
+        textView.setTextSize(17);
+
+        Spinner spinner = new Spinner(this);
+        spinner.setLayoutParams(layoutParams);
+        spinner.setId(i);
+
+        try {
+            ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(
+                    this, android.R.layout.simple_spinner_dropdown_item, field.getOptions());
+            spinner.setAdapter(adapter);
+            spinner.setOnItemSelectedListener(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        linearLayout.addView(textView);
+        linearLayout.addView(spinner);
+
+        return linearLayout;
+    }
+
+    private String getFieldValue(Field field) {
+        for (Map.Entry<String, String> entry : formContent.getFormContent().entrySet()) {
+            if (entry.getKey().equals(field.getFieldName())) {
+                return entry.getValue();
+            }
+        }
+        return null;
     }
 
     @Override
@@ -102,14 +180,15 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
         if (sectionIndex < form.getFormTemplate().getSections().length - 1) {
             sectionIndex++;
             updateView();
-        } else if (sectionIndex > form.getFormTemplate().getSections().length - 1) {
+        } else if (sectionIndex >= form.getFormTemplate().getSections().length - 1) {
             storeFormContent();
-            finish();
+
         }
     }
 
     private void storeFormContent() {
-        Helper.log("hey");
+        formContent.setFormContentName(getFieldNames(), this);
+        Storage.saveFormContent(formContent, this);
     }
 
     private void saveAnswers() {
@@ -121,12 +200,10 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
             if (field.getType().equals(FieldType.String.toString()) || field.getType().equals(FieldType.Number.toString())) {
                 EditText textField = findViewById(i);
                 fieldValue = textField.getText().toString();
-                Helper.log("FormActivity.saveAnswers() " + i + " " + field.getFieldName() + " " + fieldValue);
                 textField.setText("");
             } else if (field.getType().equals(FieldType.Choice.toString())) {
                 Spinner spinner = findViewById(i);
                 fieldValue = getDropDownValueAt(i);
-                Helper.log("FormActivity.saveAnswers() " + i + " " + field.getFieldName() + " " + fieldValue);
             } else {
                 continue;
             }

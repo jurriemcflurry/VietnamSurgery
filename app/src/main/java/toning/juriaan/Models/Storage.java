@@ -60,10 +60,8 @@ public class Storage {
         Boolean success = false;
 
         try {
-            File file = Storage.getFormTemplateFile(form.getFormattedFormName(), context);
-            FileOutputStream fOut = new FileOutputStream(file, false);
-
-            OutputStreamWriter writer = new OutputStreamWriter(fOut);
+            File file = getFormTemplateFile(form.getFormattedFormName(), context);
+            OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file, false));
 
             writer.write(form.toJson());
             writer.flush();
@@ -80,16 +78,63 @@ public class Storage {
         Boolean success = false;
 
         try {
-//            File file = getFormContentFile(form.getFormContent()[0].getFields()[0].getValue() +
-//                    "_" + form.getFormContent()[0].getFields()[1].getValue(), context);
+            File file = getFormContentFile(formContent.getFormContentName(), context);
+            OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file, false));
 
-
+            writer.write(formContent.toJson());
+            writer.flush();
+            writer.close();
             success = true;
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return success;
+    }
+
+    public static Form getFormById(int formId, Context context) {
+        try {
+            ArrayList<Form> forms = getForms(context);
+            if (forms != null) {
+                for (Form form : forms) {
+                    if (form.getId() == formId) {
+                        return form;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static int getFormContentAmount(String formContentName, Context context) {
+        try {
+            File[] files = getFormContentDir(context).listFiles();
+            int counter = 0;
+            for (File file : files) {
+                String name = file.getName();
+                name = name.split(".json")[0];
+                String[] splitName = name.split("_");
+                String[] splitFormContentName = formContentName.split("_");
+                boolean same = true;
+                for (int i = 0; i < splitFormContentName.length; i++) {
+                    if (!splitName[i].equals(splitFormContentName[i])) {
+                        same = false;
+                        break;
+                    }
+                }
+                if (same) {
+                    counter++;
+                }
+                Helper.log(name);
+            }
+
+            return counter;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
     }
 
     private static File getFormContentFile(String formattedName, Context context) throws Exception {
@@ -124,11 +169,11 @@ public class Storage {
     }
 
     private static File getFormTemplateDir(Context context) throws Exception {
-        return getDir("FormTemplates", context);
+        return getDir("form_template", context);
     }
 
     private static File getFormContentDir(Context context) throws Exception {
-        return getDir("FormContent", context);
+        return getDir("form_content", context);
     }
 
     private static File getDir(String dirName, Context context) throws Exception {

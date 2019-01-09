@@ -94,16 +94,12 @@ public class Form {
     }
 
     public static Form fromJson(String jsonString) {
-        Form form = Form.getGson().fromJson(jsonString, Form.class);
+        Form form = Helper.getGson().fromJson(jsonString, Form.class);
         return form;
     }
 
     public String toJson() {
-        return Form.getGson().toJson(this);
-    }
-
-    public static Gson getGson() {
-        return new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        return Helper.getGson().toJson(this);
     }
 
     public static Form getDummyForm() {
