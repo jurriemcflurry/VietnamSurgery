@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import toning.juriaan.Models.Field;
 import toning.juriaan.Models.FieldType;
+import toning.juriaan.Models.FormContent;
 import toning.juriaan.Models.Helper;
 import toning.juriaan.Models.R;
 import toning.juriaan.Models.Form;
@@ -38,6 +39,7 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
     private RecyclerView fieldsView;
     private SectionAdapter sectionAdapter;
     private ArrayList<Pair> dropDownValues;
+    private FormContent formContent;
 
     private int sectionIndex;
     private Form form;
@@ -51,7 +53,11 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
         Intent intent = getIntent();
         String name = intent.getStringExtra(FORM);
         form = Storage.getForm(name, this);
-        Helper.log("FormActivity.onCreate() " + (form != null ? form.getFormName() : "null"));
+        if (form == null) {
+            finish();
+        }
+
+        formContent = new FormContent(form.getId());
         dropDownValues = new ArrayList<>();
 
         toolbar = findViewById(R.id.form_toolbar);
@@ -97,41 +103,36 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
             sectionIndex++;
             updateView();
         } else if (sectionIndex > form.getFormTemplate().getSections().length - 1) {
-
+            storeFormContent();
+            finish();
         }
+    }
+
+    private void storeFormContent() {
+        Helper.log("hey");
     }
 
     private void saveAnswers() {
         Field[] fields = form.getFormTemplate().getSections()[sectionIndex].getFields();
         for (int i = 0; i < fields.length; i++) {
             Field field = fields[i];
+            String fieldName = field.getFieldName();
+            String fieldValue = "";
             if (field.getType().equals(FieldType.String.toString()) || field.getType().equals(FieldType.Number.toString())) {
                 EditText textField = findViewById(i);
-                String fieldValue = textField.getText().toString();
-                saveAnswer(field.getFieldName(), fieldValue);
+                fieldValue = textField.getText().toString();
+                Helper.log("FormActivity.saveAnswers() " + i + " " + field.getFieldName() + " " + fieldValue);
                 textField.setText("");
             } else if (field.getType().equals(FieldType.Choice.toString())) {
                 Spinner spinner = findViewById(i);
-                String fieldValue = getDropDownValueAt(i);
-                saveAnswer(field.getFieldName(), fieldValue);
+                fieldValue = getDropDownValueAt(i);
+                Helper.log("FormActivity.saveAnswers() " + i + " " + field.getFieldName() + " " + fieldValue);
+            } else {
+                continue;
             }
+
+            formContent.addAnswer(fieldName, fieldValue);
         }
-    }
-
-    private void saveAnswer(String fieldName, String fieldValue) {
-        boolean add = true;
-
-//        for (Answer a : answers) {
-//            if (a.getFieldName().equals(fieldName)) {
-//                a.setFieldValue(fieldValue);
-//                add = false;
-//                break;
-//            }
-//        }
-//
-//        if (add) {
-//            answers.add(new Answer(fieldName, fieldValue));
-//        }
     }
 
     private void previousSection() {
@@ -167,6 +168,13 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         }
         return null;
+    }
+
+    public String[] getFieldNames() {
+        String[] fieldNames = {getString(R.string.name),
+                getString(R.string.district),
+                getString(R.string.birthYear)};
+        return fieldNames;
     }
 
     @Override

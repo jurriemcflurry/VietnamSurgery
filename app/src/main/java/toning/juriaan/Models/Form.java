@@ -1,5 +1,7 @@
 package toning.juriaan.Models;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
@@ -45,6 +47,7 @@ public class Form {
         this.region = region;
         this.formTemplateJson = formTemplate.toJson();
     }
+
 
     public int getId() {
         return id;

@@ -76,7 +76,7 @@ public class Storage {
         return success;
     }
 
-    public static boolean saveFormContent(Form form, Context context) {
+    public static boolean saveFormContent(FormContent formContent, Context context) {
         Boolean success = false;
 
         try {
