@@ -1,5 +1,7 @@
 package toning.juriaan.vietnamsurgery.activity;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
@@ -9,7 +11,12 @@ import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -55,6 +62,9 @@ public class FormActivity extends AppCompatActivity {
             generateForm(form.getSections().get(tempNoOfSec-1), layout);
         }
 
+        View view = findViewById(R.id.form_frame_layout);
+        setupUI(view);
+
     }
 
     private void loadIntent(){
@@ -76,6 +86,27 @@ public class FormActivity extends AppCompatActivity {
         ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setTitle(getString(R.string.new_form_name, form.getFormName()));
+    }
+
+    public void setupUI(View view) {
+
+        // Set up touch listener for non-text box views to hide keyboard.
+        if (!(view instanceof EditText)) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    hideKeyboard(FormActivity.this);
+                    return false;
+                }
+            });
+        }
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View innerView = ((ViewGroup) view).getChildAt(i);
+                setupUI(innerView);
+            }
+        }
     }
 
     private void emptyForm(FormTemplate form, LinearLayout layout) {
@@ -166,6 +197,17 @@ public class FormActivity extends AppCompatActivity {
         return rb;
     }
 
+    private void hideKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) activity.getSystemService(
+                        Activity.INPUT_METHOD_SERVICE);
+        if(inputMethodManager != null && activity.getCurrentFocus() != null) {
+            inputMethodManager.hideSoftInputFromWindow(
+                    activity.getCurrentFocus().getWindowToken(), 0);
+        }
+        getWindow().getDecorView().clearFocus();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -173,6 +215,7 @@ public class FormActivity extends AppCompatActivity {
                 onBackPressed();
                 return true;
             case R.id.action_next:
+                hideKeyboard(this);
                 emptyForm(form, layout);
                 noOfThisSection++;
                 if(noOfThisSection > noOfSections) {
@@ -200,12 +243,14 @@ public class FormActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         // this takes the user 'back', as if they pressed the left-facing
-        noOfThisSection--;
-        if(noOfThisSection == 0) {
+        hideKeyboard(this);
+        if(noOfThisSection-1 == 0) {
+            noOfThisSection--;
             // Todo: Make sure user can go back to first screen!
             noOfThisSection = 1;
         } else {
             emptyForm(form, layout);
+            noOfThisSection--;
             generateForm(form.getSections().get(noOfThisSection - 1), layout);
         }
     }
