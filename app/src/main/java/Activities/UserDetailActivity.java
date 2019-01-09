@@ -11,9 +11,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import java.io.EOFException;
-
 import ResponseModels.DeleteResponse;
 import WebInterfaces.UserWebInterface;
 import retrofit2.Call;
@@ -51,7 +48,7 @@ public class UserDetailActivity extends BaseActivity implements Callback<DeleteR
 
         userWebInterface = retrofit.create(UserWebInterface.class);
 
-        pBar = (ProgressBar) findViewById(R.id.pBar);
+        pBar = findViewById(R.id.pBar);
         pBar.setVisibility(View.INVISIBLE);
 
         Intent fromUser = getIntent();
@@ -59,10 +56,10 @@ public class UserDetailActivity extends BaseActivity implements Callback<DeleteR
 
         getSupportActionBar().setTitle(user.username);
 
-        username = (TextView) findViewById(R.id.detailpage_username);
+        username = findViewById(R.id.detailpage_username);
         username.setText(user.username);
 
-        email = (TextView) findViewById(R.id.detailpage_email);
+        email = findViewById(R.id.detailpage_email);
         email.setText(user.email);
 
         String roleUserId = user.roles.get(0).getUserId();
@@ -71,7 +68,7 @@ public class UserDetailActivity extends BaseActivity implements Callback<DeleteR
         final String userId = user.getId();
         System.out.println(userId);
 
-        role = (TextView) findViewById(R.id.detailpage_role);
+        role = findViewById(R.id.detailpage_role);
         if(roleId.equals("1")){
             role.setText(getString(R.string.admin));
         }
@@ -86,7 +83,7 @@ public class UserDetailActivity extends BaseActivity implements Callback<DeleteR
                 if(AccessToken.userrole.equals("Admin")){
                     new AlertDialog.Builder(UserDetailActivity.this)
                             .setTitle("Delete user?")
-                            .setMessage("Are you sure you want to delete user " + username.toString())
+                            .setMessage("Are you sure you want to delete user " + user.username)
                             .setNegativeButton("Cancel", null)
                             .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                                 @Override
@@ -122,6 +119,7 @@ public class UserDetailActivity extends BaseActivity implements Callback<DeleteR
                     .show();
             Intent returnIntent = new Intent(UserDetailActivity.this, UsersActivity.class);
             startActivity(returnIntent);
+            finish();
 
     }
 
@@ -133,5 +131,6 @@ public class UserDetailActivity extends BaseActivity implements Callback<DeleteR
                 .show();
         Intent returnIntent = new Intent(UserDetailActivity.this, UsersActivity.class);
         startActivity(returnIntent);
+        finish();
     }
 }
