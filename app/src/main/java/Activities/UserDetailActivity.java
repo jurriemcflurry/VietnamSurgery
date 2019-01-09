@@ -83,7 +83,7 @@ public class UserDetailActivity extends BaseActivity implements Callback<DeleteR
                 if(AccessToken.userrole.equals("Admin")){
                     new AlertDialog.Builder(UserDetailActivity.this)
                             .setTitle("Delete user?")
-                            .setMessage("Are you sure you want to delete user " + user.username)
+                            .setMessage("Are you sure you want to delete user " + user.username + "?")
                             .setNegativeButton("Cancel", null)
                             .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                                 @Override

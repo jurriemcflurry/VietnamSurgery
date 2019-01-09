@@ -120,12 +120,12 @@ public class CameraActivity extends AppCompatActivity {
 
         for(Bitmap image : mImages){
             try {
-                filename += String.valueOf(i);
-                FileOutputStream fos = this.openFileOutput(filename, Context.MODE_PRIVATE);
+               filename += String.valueOf(i);
+               FileOutputStream fos = this.openFileOutput(filename, Context.MODE_PRIVATE);
 
-                image.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                fos.close();
-                i++;
+               image.compress(Bitmap.CompressFormat.PNG, 100, fos);
+               fos.close();
+               i++;
             }
             catch(Exception e){
                 e.printStackTrace();

@@ -11,6 +11,7 @@
     <string name="logout">Log out</string>
     <string name="forms">Forms</string>
     <string name="users">Users</string>
+    <string name="userOverview">User Overview</string>
     <string name="userdetail">User Details</string>
     <string name="camera_title">Pictures</string>
     <string name="refresh">Refresh</string>

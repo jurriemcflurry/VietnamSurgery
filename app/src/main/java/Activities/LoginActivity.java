@@ -34,7 +34,7 @@ import toning.juriaan.Models.R;
 
 public class LoginActivity extends BaseActivity implements Callback<LoginResponse> {
 
-    private TextInputEditText userName;
+    private TextInputEditText email;
     private TextInputEditText password;
     private Button loginButton;
     private UserWebInterface userWebInterface;
@@ -61,7 +61,7 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
     }
 
     private void setupLayoutControls(){
-        userName = (TextInputEditText) findViewById(R.id.userName);
+        email = (TextInputEditText) findViewById(R.id.login_email);
         password = (TextInputEditText) findViewById(R.id.password);
         loginButton = (Button) findViewById(R.id.login_button);
         pBar = (ProgressBar) findViewById(R.id.pBar);
@@ -70,7 +70,7 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(userName.getText().toString().isEmpty() || password.getText().toString().isEmpty()){
+                if(email.getText().toString().isEmpty() || password.getText().toString().isEmpty()){
                     Snackbar.make(findViewById(R.id.login_linear_layout), getString(R.string.emptyFields),Snackbar.LENGTH_LONG)
                             .show();
                     return;
@@ -85,7 +85,7 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
 
     private void login(){
 
-        String username = userName.getText().toString();
+        String username = email.getText().toString();
         String passWord = password.getText().toString();
         String granttype = getString(R.string.password2);
 
