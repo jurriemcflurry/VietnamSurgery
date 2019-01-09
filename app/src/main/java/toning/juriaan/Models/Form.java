@@ -26,10 +26,6 @@ public class Form {
     @SerializedName("FormTemplate")
     private String formTemplateJson;
 
-    @Expose
-    @SerializedName("FormContent")
-    private FormContent[] formContent;
-
     public Form() {
     }
 
@@ -44,11 +40,10 @@ public class Form {
         return FormTemplate.fromJson(templateJson);
     }
 
-    public Form(String formName, String region, FormTemplate formTemplate, FormContent[] formContent) {
+    public Form(String formName, String region, FormTemplate formTemplate) {
         this.formName = formName;
         this.region = region;
         this.formTemplateJson = formTemplate.toJson();
-        this.formContent = formContent;
     }
 
     public int getId() {
@@ -95,14 +90,6 @@ public class Form {
         setFormTemplateJson(formTemplate.toJson());
     }
 
-    public FormContent[] getFormContent() {
-        return formContent;
-    }
-
-    public void setFormContent(FormContent[] formContent) {
-        this.formContent = formContent;
-    }
-
     public static Form fromJson(String jsonString) {
         Form form = Form.getGson().fromJson(jsonString, Form.class);
         return form;
@@ -118,18 +105,8 @@ public class Form {
 
     public static Form getDummyForm() {
         FormTemplate formTemplate = getDummyFormTemplate();
-        FormContent[] formContent = {getDummyFormContent(formTemplate)};
 
-        return new Form("Dummy form", "Dummy region", formTemplate, formContent);
-    }
-
-    private static FormContent getDummyFormContent(FormTemplate formTemplate) {
-        ArrayList<FieldContent> contents = new ArrayList<>();
-        for (Section section : formTemplate.getSections())
-            for (Field field : section.getFields())
-                contents.add(new FieldContent(field.getFieldName()));
-
-        return new FormContent(contents.toArray(new FieldContent[0]));
+        return new Form("Dummy form", "Dummy region", formTemplate);
     }
 
     private static FormTemplate getDummyFormTemplate() {

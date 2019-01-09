@@ -1,25 +1,60 @@
 package toning.juriaan.Models;
 
-import com.google.gson.Gson;
+import android.util.Pair;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+import java.util.ArrayList;
 
 public class FormContent {
-    private FieldContent[] fields;
+    @Expose
+    @SerializedName("FormId")
+    private int formId;
 
-    public FormContent() { }
+    @Expose
+    @SerializedName("FormContent")
+    private Pair<String, String> formContent;
 
-    public FormContent(FieldContent[] fields) {
-        this.fields = fields;
+    @Expose
+    @SerializedName("Images")
+    private ArrayList<Byte[]> images;
+
+    private ArrayList<String> imagePaths;
+
+    public FormContent(int formId) {
+        this.formId = formId;
     }
 
-    public FieldContent[] getFields() {
-        return fields;
+    public int getFormId() {
+        return formId;
     }
 
-    public void setFields(FieldContent[] fields) {
-        this.fields = fields;
+    public void setFormId(int formId) {
+        this.formId = formId;
     }
 
-    public String toJson() {
-        return new Gson().toJson(this);
+    public Pair<String, String> getFormContent() {
+        return formContent;
+    }
+
+    public void setFormContent(Pair<String, String> formContent) {
+        this.formContent = formContent;
+    }
+
+    public ArrayList<Byte[]> getImages() {
+        return images;
+    }
+
+    public void setImages(ArrayList<Byte[]> images) {
+        this.images = images;
+    }
+
+    public ArrayList<String> getImagePaths() {
+        return imagePaths;
+    }
+
+    public void setImagePaths(ArrayList<String> imagePaths) {
+        this.imagePaths = imagePaths;
     }
 }

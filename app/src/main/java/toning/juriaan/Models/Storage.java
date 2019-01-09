@@ -76,12 +76,12 @@ public class Storage {
         return success;
     }
 
-    public static boolean saveFormContent(FormContent formContent, Context context) {
+    public static boolean saveFormContent(Form form, Context context) {
         Boolean success = false;
 
         try {
-            File file = getFormContentFile(formContent.getFields()[0].getValue() +
-                    "_" + formContent.getFields()[1].getValue(), context);
+//            File file = getFormContentFile(form.getFormContent()[0].getFields()[0].getValue() +
+//                    "_" + form.getFormContent()[0].getFields()[1].getValue(), context);
 
 
             success = true;
