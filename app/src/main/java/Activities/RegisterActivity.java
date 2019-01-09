@@ -1,6 +1,5 @@
 package Activities;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -64,13 +63,11 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
         //get the spinner from the xml.
         userrole = findViewById(R.id.spinner1);
         //create a list of items for the spinner.
-        String[] items = new String[]{"Admin", "User"};
-        //create an adapter to describe how the items are displayed, adapters are used in several places in android.
-        //There are multiple variations of this, but this is the basic variant.
+        String[] items = new String[]{getString(R.string.admin), getString(R.string.user)};
+        //create an adapter to describe how the items are displayed
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
         //set the spinners adapter to the previously created one.
         userrole.setAdapter(adapter);
-
         userrole.setOnItemSelectedListener(this);
 
         password = (TextInputEditText) findViewById(R.id.registerpasswordEditText);

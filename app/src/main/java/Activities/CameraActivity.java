@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
@@ -16,8 +15,6 @@ import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
-
-import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 
@@ -56,7 +53,7 @@ public class CameraActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 saveImages();
-                Toast.makeText(CameraActivity.this, "Images succesfully saved!", Toast.LENGTH_LONG ).show();
+                Toast.makeText(CameraActivity.this, getString(R.string.imagesSaved), Toast.LENGTH_LONG ).show();
             }
         });
     }
@@ -140,10 +137,10 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     public void onBackPressed(){
         new AlertDialog.Builder(this)
-                .setTitle("Exit?")
-                .setMessage("Going back without saving erases the pictures")
-                .setNegativeButton("Cancel", null)
-                .setPositiveButton("Exit Photos", new DialogInterface.OnClickListener() {
+                .setTitle(getString(R.string.exitTitle))
+                .setMessage(getString(R.string.imageLoss))
+                .setNegativeButton(getString(R.string.cancel), null)
+                .setPositiveButton(getString(R.string.exitPhotos), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         CameraActivity.super.onBackPressed();

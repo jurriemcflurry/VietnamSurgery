@@ -2,27 +2,13 @@ package Activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import java.text.MessageFormat;
-import java.time.format.FormatStyle;
 import java.util.ArrayList;
-
 import ResponseModels.FormulierenResponse;
 import WebInterfaces.FormWebInterface;
 import retrofit2.Call;
@@ -30,9 +16,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import toning.juriaan.Models.AccessToken;
 import toning.juriaan.Models.Form;
-//import toning.juriaan.Models.FormTemplateObject;
 import toning.juriaan.Models.FormAdapter;
 import toning.juriaan.Models.FormTemplateObject;
 import toning.juriaan.Models.Helper;

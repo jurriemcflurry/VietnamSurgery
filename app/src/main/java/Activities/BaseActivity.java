@@ -30,8 +30,8 @@ public class BaseActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.nav_view);
         Menu menu = navigationView.getMenu();
 
-        if(AccessToken.userrole != null && AccessToken.userrole.equals("Admin")){
-            menu.add("Users").setIcon(R.drawable.user_menu_icon_black).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        if(AccessToken.userrole != null && AccessToken.userrole.equals(getString(R.string.admin))){
+            menu.add(getString(R.string.users)).setIcon(R.drawable.user_menu_icon_black).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     Intent naarUsers = new Intent(getApplicationContext(), UsersActivity.class);

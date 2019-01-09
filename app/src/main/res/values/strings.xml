@@ -11,6 +11,7 @@
     <string name="logout">Log out</string>
     <string name="forms">Forms</string>
     <string name="users">Users</string>
+    <string name="user">User</string>
     <string name="userOverview">User Overview</string>
     <string name="userdetail">User Details</string>
     <string name="camera_title">Pictures</string>
@@ -39,4 +40,10 @@
     <string name="passwordFormatError">Password must contain at least one capital, one number, and one special character</string>
     <string name="noAccess">You have no access to this area. Login as admin to view this page</string>
     <string name="userDeleted">User successfully deleted, returning to Userpage</string>
+    <string name="imagesSaved">Images successfully saved!</string>
+    <string name="exitTitle">Exit?</string>
+    <string name="imageLoss">Going back without saving erases the pictures</string>
+    <string name="exitPhotos">Exit Photos</string>
+    <string name="cancel">Cancel</string>
+    <string name="badRequest">Bad Request</string>
 </resources>

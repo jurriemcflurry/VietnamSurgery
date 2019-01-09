@@ -121,7 +121,7 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
             }, 1500);
         }
         else{
-            if(response.message().equals("Bad Request")){
+            if(response.message().equals(getString(R.string.badRequest))){
                 Snackbar.make(findViewById(R.id.login_linear_layout), getString(R.string.failedLogin),Snackbar.LENGTH_LONG)
                         .show();
             }
