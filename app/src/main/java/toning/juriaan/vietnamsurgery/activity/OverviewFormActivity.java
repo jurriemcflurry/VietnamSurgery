@@ -261,8 +261,6 @@ public class OverviewFormActivity extends AppCompatActivity {
             File newFile = new File(oldFile.getParentFile(), newFileName);
             oldFile.renameTo(newFile);
             form.getPictures().set(thumbIndex, newFile.getAbsolutePath());
-            Log.e("TESTT", oldFile.getName() + " --- PNGFILE");
-            Log.e("TESTT", endName + " --- PNGFILE");
             thumbIndex++;
         }
     }
