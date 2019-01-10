@@ -56,8 +56,6 @@ public class FormOverviewActivity extends AppCompatActivity {
         sectionsView.addView(getImagesView());
     }
 
-<<<<<<< HEAD
-=======
     private LinearLayout getImagesView() {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -78,7 +76,6 @@ public class FormOverviewActivity extends AppCompatActivity {
         return photoGallery;
     }
 
->>>>>>> master
     private LinearLayout getSectionView(Section section) {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);

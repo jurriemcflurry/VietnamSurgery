@@ -16,6 +16,8 @@ import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import java.io.File;
 import java.util.ArrayList;
 
 import toning.juriaan.Models.FormContent;
@@ -76,6 +78,7 @@ public class CameraActivity extends FormBaseActivity {
             mImageBitmap = (Bitmap) extras.get("data");
             ImageView imageView = new ImageView(CameraActivity.this);
             imageView.setImageBitmap(mImageBitmap);
+
             while(!mImages.isEmpty() && mImages.size() <= counter){
                 counter++;
             }
@@ -83,6 +86,7 @@ public class CameraActivity extends FormBaseActivity {
             String imageName = formContent.getFormContentName() + "_image_" + (formContent.getImageNames().size() + 1);
             formContent.addImageName(imageName);
             mImages.add(counter, new Image(imageName, mImageBitmap));
+
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -92,6 +96,7 @@ public class CameraActivity extends FormBaseActivity {
                     startActivityForResult(photoDetail, 0);
                 }
             });
+            saveImages(mImages.get(counter));
             gridLayout1.addView(imageView, counter);
             imageView.getLayoutParams().height = (getDisplayMetrics().heightPixels)/2;
             imageView.getLayoutParams().width = (getDisplayMetrics().widthPixels)/2;
@@ -103,11 +108,20 @@ public class CameraActivity extends FormBaseActivity {
             int removeableObject = data.getIntExtra("imageid", 0);
 
             if(removeableObject != 9999) {
+                deleteImage(removeableObject);
                 mImages.remove(removeableObject);
                 gridLayout1.removeViewAt(removeableObject);
                 gridLayout1.requestLayout();
             }
         }
+    }
+
+    private boolean deleteImage(int removeableObject){
+        String dir = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/images/";
+        String path = dir + mImages.get(removeableObject).getImageName() + ".png";
+        new File(path).delete();
+
+        return true;
     }
 
     //ophalen van de schermafmetingen
@@ -118,17 +132,8 @@ public class CameraActivity extends FormBaseActivity {
     }
 
     //save images to device
-    private boolean saveImages(){
-        if(mImages.size() <= 0){
-            return false;
-        }
-
-        for(Image image : mImages){
-            Storage.saveImage(image, this);
-        }
-
-        mImages.clear();
-        gridLayout1.removeAllViews();
+    private boolean saveImages(Image image){
+        Storage.saveImage(image, this);
         return true;
     }
 
@@ -136,12 +141,19 @@ public class CameraActivity extends FormBaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.next_menu_item:
-                saveImages();
-                Toast.makeText(CameraActivity.this,R.string.imagesSaved, Toast.LENGTH_LONG ).show();
-                Intent formOverviewIntent = new Intent(getApplicationContext(), FormOverviewActivity.class);
-                formOverviewIntent.putExtra(Helper.FORM, formName);
-                formOverviewIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentName());
-                startActivity(formOverviewIntent);
+                if(mImages.isEmpty()){
+                    new AlertDialog.Builder(this)
+                            .setTitle("No images found")
+                            .setMessage("You need to take at least one picture")
+                            .setNegativeButton("Back", null)
+                            .create().show();
+                }
+                else {
+                    Intent formOverviewIntent = new Intent(getApplicationContext(), FormOverviewActivity.class);
+                    formOverviewIntent.putExtra(Helper.FORM, formName);
+                    formOverviewIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentName());
+                    startActivity(formOverviewIntent);
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
