@@ -1,5 +1,7 @@
 package toning.juriaan.Models;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
@@ -46,6 +48,7 @@ public class Form {
         this.formTemplateJson = formTemplate.toJson();
     }
 
+
     public int getId() {
         return id;
     }
@@ -91,16 +94,12 @@ public class Form {
     }
 
     public static Form fromJson(String jsonString) {
-        Form form = Form.getGson().fromJson(jsonString, Form.class);
+        Form form = Helper.getGson().fromJson(jsonString, Form.class);
         return form;
     }
 
     public String toJson() {
-        return Form.getGson().toJson(this);
-    }
-
-    public static Gson getGson() {
-        return new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        return Helper.getGson().toJson(this);
     }
 
     public static Form getDummyForm() {

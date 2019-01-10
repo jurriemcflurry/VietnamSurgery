@@ -23,7 +23,7 @@
 
         <LinearLayout
             android:id="@+id/section_view"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             style="@style/SectionView">
@@ -32,14 +32,16 @@
                 android:id="@+id/section_name"
                 android:textSize="20sp"
                 android:textColor="#000"
-                style="@style/ListItemStyle"/>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/fields_recycler_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+            <LinearLayout
+                android:id="@+id/fields_linear_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-            </android.support.v7.widget.RecyclerView>
+            </LinearLayout>
 
         </LinearLayout>
     </FrameLayout>

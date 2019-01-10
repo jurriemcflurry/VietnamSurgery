@@ -23,6 +23,9 @@
     <string name="email">Email</string>
     <string name="toUserDetail">User to Userdetailpage</string>\
     <string name="role">Role</string>
+    <string name="name">Name</string>
+    <string name="district">District</string>
+    <string name="birthYear">Birth Year</string>
     <string name="roleOverview">(Role)</string>
     <string name="admin">Admin</string>
     <string name="oldPassword">Old Password</string>

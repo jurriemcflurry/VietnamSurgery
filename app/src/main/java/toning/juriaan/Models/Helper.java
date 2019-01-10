@@ -4,7 +4,13 @@ import android.app.Activity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 public class Helper {
+
+    public final static String FORM = "Form";
+    public final static String FORM_CONTENT = "FormContent";
 
     public static void log(String logEntry) {
         System.out.println("-------------- " + logEntry);
@@ -19,5 +25,9 @@ public class Helper {
             view = new View(activity);
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public static Gson getGson() {
+        return new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
     }
 }
