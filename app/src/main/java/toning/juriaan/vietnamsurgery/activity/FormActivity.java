@@ -2,13 +2,16 @@ package toning.juriaan.vietnamsurgery.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -27,6 +30,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import toning.juriaan.vietnamsurgery.MainActivity;
 import toning.juriaan.vietnamsurgery.model.Field;
 import toning.juriaan.vietnamsurgery.model.FormTemplate;
 import toning.juriaan.vietnamsurgery.R;
@@ -245,9 +249,29 @@ public class FormActivity extends AppCompatActivity {
         // this takes the user 'back', as if they pressed the left-facing
         hideKeyboard(this);
         if(noOfThisSection-1 == 0) {
-            noOfThisSection--;
-            // Todo: Make sure user can go back to first screen!
-            noOfThisSection = 1;
+            // Todo: STRINGS!!
+            new AlertDialog.Builder(this)
+                    .setTitle("Confirm")
+                    .setMessage("Are you sure you want to leave this page? Unsaved information will be lost.")
+                    .setPositiveButton("Leave", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if(form.getRowNumber() > 0) {
+                                Intent formOverview = new Intent(getApplicationContext(), FormListActivity.class);
+                                formOverview.putExtra("fileName", form.getFileName());
+                                formOverview.putExtra("sheetName", form.getSheetName());
+                                formOverview.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                                startActivity(formOverview);
+                                finish();
+                            } else {
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+
+                        }
+                    })
+                    .setNegativeButton(R.string.dialog_cancel, null).show();
         } else {
             emptyForm(form, layout);
             noOfThisSection--;

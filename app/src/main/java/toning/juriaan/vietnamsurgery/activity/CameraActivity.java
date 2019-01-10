@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -27,6 +28,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -117,11 +119,18 @@ public class CameraActivity extends AppCompatActivity {
                 // Error occurred while creating the File
             }
 
+            Uri photoURI;
+
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
-                        "toning.juriaan.vietnamsurgery.fileprovider",
-                        photoFile);
+                if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+                    photoURI = Uri.fromFile(photoFile);
+                } else {
+                    photoURI = FileProvider.getUriForFile(this,
+                            "toning.juriaan.vietnamsurgery.fileprovider",
+                            photoFile);
+                }
+
 
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);

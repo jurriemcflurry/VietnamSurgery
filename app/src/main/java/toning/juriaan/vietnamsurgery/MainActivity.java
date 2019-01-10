@@ -267,6 +267,7 @@ public class MainActivity extends AppCompatActivity {
             Intent i = new Intent(this, FormActivity.class);
             i.putExtra("obj_form", form);
             startActivity(i);
+            finish();
         } catch (Exception ex) {
             Log.e("TESTT", ex.getMessage() + " -- " + ex.getCause());
         }

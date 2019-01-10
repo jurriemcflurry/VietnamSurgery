@@ -33,6 +33,7 @@ import android.widget.Toast;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -70,6 +71,23 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
         setupToolbar();
         setupNavigation();
         chooseExcelFile();
+
+    }
+
+    private void loadIntent() {
+        Intent i = getIntent();
+        if(i.hasExtra("fileName") && i.hasExtra("sheetName")) {
+            String wbName = i.getStringExtra("fileName");
+            String sheetName = i.getStringExtra("sheetName");
+            try {
+                XSSFWorkbook workbook = new XSSFWorkbook(new File(root, wbName));
+                readExcelFile(workbook.getSheet(sheetName));
+            } catch (Exception ex) {
+                Log.e("TESTT", ex.getMessage());
+            }
+        } else {
+            chooseExcelFile();
+        }
     }
 
     private void setupFields(){
@@ -106,6 +124,7 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         // close drawer when item is tapped
+                        mDrawerLayout.closeDrawers();
 
                         switch(menuItem.getItemId()){
                             case R.id.main_activity:
@@ -356,8 +375,6 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
         mRecyclerView.setLayoutManager(mLayoutManager);
         FormListAdapter mAdapter = new FormListAdapter(this, formList, this);
         mRecyclerView.setAdapter(mAdapter);
-        //GridView gridView = findViewById(R.id.form_list_grid_view);
-        //gridView.setAdapter(new FormListAdapter(this, formList, this));
     }
 
     private List<Section> createDeepCopyOfSections() {
@@ -421,6 +438,7 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
     private void reloadList() {
         try {
             XSSFWorkbook wb = new XSSFWorkbook(new File(root, form.getFileName()));
+
             XSSFSheet sheet = wb.getSheet(form.getSheetName());
             formList.clear();
             sections = new ArrayList<>();
@@ -450,6 +468,12 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
     @Override
     public void onResume() {
         super.onResume();
-        reloadList();
+        Intent i = getIntent();
+        if(i.hasExtra("fileName") && i.hasExtra("sheetName")) {
+            loadIntent();
+        } else{
+            reloadList();
+        }
+
     }
 }

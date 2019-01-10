@@ -31,8 +31,10 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
+import toning.juriaan.vietnamsurgery.MainActivity;
 import toning.juriaan.vietnamsurgery.model.Field;
 import toning.juriaan.vietnamsurgery.model.FormTemplate;
 import toning.juriaan.vietnamsurgery.R;
@@ -297,8 +299,60 @@ public class OverviewFormActivity extends AppCompatActivity {
     }
 
     public void goToTheStart() {
-        Toast.makeText(OverviewFormActivity.this, "Form saved successfully.", Toast.LENGTH_LONG).show();
-        // Todo: Go back to start
+        // Todo: Strings!
+        String name = form.getSections().get(0).getFields().get(1).getAnswer();
+        String birthYear = form.getSections().get(0).getFields().get(2).getAnswer();
+        new AlertDialog.Builder(OverviewFormActivity.this)
+                .setTitle("Success")
+                .setMessage("form " + getString(R.string.form_name, form.getFormName(), name, birthYear) + " is saved successfully.")
+                .setPositiveButton("Fill in next form", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        FormTemplate tempForm = new FormTemplate();
+                        tempForm.setFileName(form.getFileName());
+                        tempForm.setSheetName(form.getSheetName());
+                        tempForm.setFormName(form.getFileName());
+                        tempForm.setSections(createDeepCopyOfSections());
+
+                        Intent intent = new Intent(getApplicationContext(), FormActivity.class);
+                        intent.putExtra("obj_form", tempForm);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                        finish();
+                    }
+                })
+                .setNegativeButton("Back to start", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                        finish();
+                    }
+                }).show();
+    }
+
+    private List<Section> createDeepCopyOfSections() {
+        List<Section> l = new ArrayList<>();
+
+        for(int k = 0; k < form.getSections().size(); k++) {
+            Section s = new Section();
+            s.setSectionName(form.getSections().get(k).getSectionName());
+            s.setNumber(form.getSections().get(k).getNumber());
+            s.setColumn(form.getSections().get(k).getColumn());
+            List<Field> fields = new ArrayList<>();
+            for(int counter = 0; counter < form.getSections().get(k).getFields().size(); counter++) {
+                Field field = new Field();
+                field.setColumn(form.getSections().get(k).getFields().get(counter).getColumn());
+                field.setFieldName(form.getSections().get(k).getFields().get(counter).getFieldName());
+                field.setRow(form.getSections().get(k).getFields().get(counter).getRow());
+                fields.add(field);
+            }
+            s.setFields(fields);
+            l.add(s);
+        }
+
+        return l;
     }
 
     private void goToDetailPage(File photoFile) {
