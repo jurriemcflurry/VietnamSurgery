@@ -4,6 +4,7 @@
     <item
         android:id="@+id/next_menu_item"
         android:title="@string/next"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom"
+        android:fitsSystemWindows="true"/>
 
 </menu>

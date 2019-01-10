@@ -31,6 +31,7 @@
         <activity android:name="Activities.BaseActivity"></activity>
         <activity android:name="Activities.PhotoDetailActivity"></activity>
         <activity android:name="Activities.FormOverviewActivity"></activity>
+        <activity android:name="Activities.FormBaseActivity"></activity>
     </application>
 
 

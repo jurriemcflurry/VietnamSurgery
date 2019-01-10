@@ -9,8 +9,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -22,7 +24,7 @@ import toning.juriaan.Models.Image;
 import toning.juriaan.Models.R;
 import toning.juriaan.Models.Storage;
 
-public class CameraActivity extends AppCompatActivity {
+public class CameraActivity extends FormBaseActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private Bitmap mImageBitmap;
     private GridLayout gridLayout1;
@@ -36,9 +38,12 @@ public class CameraActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.camera_activity);
+
+        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.formbase_framelayout);
+        getLayoutInflater().inflate(R.layout.camera_activity, contentFrameLayout);
+        getSupportActionBar().setTitle(getString(R.string.camera_title));
+
         gridLayout1 = (GridLayout) findViewById(R.id.gridLayout1);
-        saveImagesButton = (Button) findViewById(R.id.save_images);
         loadIntent();
 
         //onClick opent de native camera van de telefoon
@@ -51,19 +56,6 @@ public class CameraActivity extends AppCompatActivity {
                 if (cameraIntent.resolveActivity(getPackageManager()) != null) {
                     startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
                 }
-            }
-        });
-
-        saveImagesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveImages();
-
-                Toast.makeText(CameraActivity.this,R.string.imagesSaved, Toast.LENGTH_LONG ).show();
-                Intent formOverviewIntent = new Intent(getApplicationContext(), FormOverviewActivity.class);
-                formOverviewIntent.putExtra(Helper.FORM, formName);
-                formOverviewIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentName());
-                startActivity(formOverviewIntent);
             }
         });
     }
@@ -138,6 +130,22 @@ public class CameraActivity extends AppCompatActivity {
         mImages.clear();
         gridLayout1.removeAllViews();
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.next_menu_item:
+                saveImages();
+                Toast.makeText(CameraActivity.this,R.string.imagesSaved, Toast.LENGTH_LONG ).show();
+                Intent formOverviewIntent = new Intent(getApplicationContext(), FormOverviewActivity.class);
+                formOverviewIntent.putExtra(Helper.FORM, formName);
+                formOverviewIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentName());
+                startActivity(formOverviewIntent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override

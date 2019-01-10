@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -32,7 +33,7 @@ import toning.juriaan.Models.Storage;
 
 
 @SuppressLint("Registered")
-public class FormActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class FormActivity extends FormBaseActivity implements AdapterView.OnItemSelectedListener {
 
     private Toolbar toolbar;
     private TextView sectionNameView;
@@ -47,13 +48,14 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_form);
+
+        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.formbase_framelayout);
+        getLayoutInflater().inflate(R.layout.activity_form, contentFrameLayout);
+        getSupportActionBar().setTitle(getString(R.string.forms));
 
         dropDownValues = new ArrayList<>();
         loadForms();
 
-        toolbar = findViewById(R.id.form_toolbar);
-        setSupportActionBar(toolbar);
         sectionNameView = findViewById(R.id.section_name);
         fieldsView = findViewById(R.id.fields_linear_view);
 
@@ -80,7 +82,7 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
     private void updateView() {
         Section section = form.getFormTemplate().getSections()[sectionIndex];
         Field[] fields = section.getFields();
-        toolbar.setTitle(form.getFormName());
+        getSupportActionBar().setTitle(form.getFormName());
         sectionNameView.setText(section.getSectionName());
         fieldsView.removeAllViews();
         for (int i = 0; i < fields.length; i++) {
@@ -164,11 +166,6 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
         return null;
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.form_activity_menu, menu);
-        return super.onPrepareOptionsMenu(menu);
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -179,6 +176,19 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp(){
+        if(sectionIndex > 0){
+            sectionIndex--;
+            updateView();
+        }
+        else{
+            onBackPressed();
+        }
+
+        return true;
     }
 
     private void nextSection() {

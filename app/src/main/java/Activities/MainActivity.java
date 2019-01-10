@@ -52,7 +52,7 @@ public class MainActivity extends BaseActivity implements FormAdapter.FormListen
         OpenCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent toCamera = new Intent(MainActivity.this, CameraActivity.class);
+                Intent toCamera = new Intent(MainActivity.this, FormBaseActivity.class);
                 startActivity(toCamera);
             }
         });
