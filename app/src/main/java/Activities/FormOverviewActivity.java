@@ -52,7 +52,7 @@ public class FormOverviewActivity extends AppCompatActivity {
     }
 
     private LinearLayout getImagesView() {
-        LinearLayout.LayoutParams
+        return null;
     }
 
     private LinearLayout getSectionView(Section section) {
