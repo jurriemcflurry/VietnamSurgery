@@ -52,4 +52,6 @@
 
     <string name="menu_filled_in_forms">Filled in forms</string>
     <string name="menu_home">Home Screen</string>
+
+    <string name="finished_reading_excel">Finished reading Excel</string>
 </resources>

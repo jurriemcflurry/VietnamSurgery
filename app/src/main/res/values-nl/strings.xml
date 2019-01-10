@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">VietnamSurgery</string>
+    <string name="app_nice_name">Child Surgery Vietnam</string>
+    <string name="dialog_cancel">Annuleren</string>
+    <string name="dialog_ok">Oké</string>
+    <string name="save">Opslaan</string>
+    <string name="next_btn_txt">Volgende</string>
+    <string name="step_text">Stap %1$d van %2$d</string>
+    <string name="section_name_photos">Foto\'s</string>
+    <string name="section_name_photo_detail">Detail foto</string>
+
+    <string name="name_placeholder_item_list">((NAAM))</string>
+    <string name="name_district_item_list">Wijk: </string>
+    <string name="name_placeholder_text">placeholder</string>
+    <string name="photo_item_list">Foto\'s:</string>
+
+    <string name="new_form_name">Nieuw formulier %1$s</string>
+    <string name="main_title_name">Kies een formulier</string>
+    <string name="filled_in_forms_name">Ingevulde formulieren</string>
+    <string name="form_name">%1$s - %2$s - %3$s</string>
+
+    <string name="contentDescription">Gedetailleerde foto</string>
+
+    <string name="error">Er is iets foutgegaan. Foutmelding: %1$s"</string>
+    <string name="error_delete">Er is iets foutgegaan tijdens het verwijderen van het bestand.</string>
+    <string name="error_save_thumb">Er is iets foutgegaan tijdens het opslaan van de thumb-foto</string>
+    <string name="error_delete_thumb">Er is iets foutgegaan tijdens het verwijderen van de thumb-foto. Probeer het opnieuw.</string>
+    <string name="error_delete_pic">Er is iets foutgegaan tijdens het verwijderen van de foto. Probeer het opnieuw.</string>
+    <string name="error_not_enough_pics">Je moet ten minste 1 foto maken.</string>
+
+    <string name="dialog_delete_picture_title">Foto verwijderen?</string>
+    <string name="dialog_delete_picture_text">Weet je zeker dat je de foto wilt verwijderen?</string>
+    <string name="dialog_confirm_title">Bevestigen</string>
+    <string name="dialog_confirm_form_text">Weet je zeker dat je deze pagina wilt verlaten? Alle niet opgeslagen gegevens zullen verloren gaan.</string>
+    <string name="dialog_confirm_form_positive">Verlaten</string>
+
+    <string name="error_while_finding_xlsx">Er is een fout opgetreden tijdens het zoeken naar formulieren: %1$s &#8212; Gezocht in de map: %2$s</string>
+    <string name="error_while_opening_xlsx">Er is een fout opgetreden tijdens het openen van het formulier: %1$s</string>
+    <string name="error_while_reading_xlsx">Er is een fout opgetreden tijdens het lezen van het formulier: %1$s</string>
+
+    <string name="no_filled_in_forms">Er zijn nog geen ingevulde formulieren.</string>
+
+    <string name="saving_form">Formulier opslaan. Wacht totdat dit klaar is.</string>
+    <string name="dialog_save_form_title">Succes</string>
+    <string name="dialog_save_form_text">Formulier %1$s is succesvol opgeslagen.</string>
+    <string name="dialog_save_form_positive">Volgende formulier</string>
+    <string name="dialog_save_form_negative">Terug naar het begin</string>
+    <string name="error_default">Bericht: %1$s, oorzaak: %2$s</string>
+
+    <string name="dialog_confirm_save_form_text">Weet je zeker dat je het formulier wilt opslaan?</string>
+    <string name="image_contentDiscription_edit">Bewerk knop</string>
+
+    <string name="menu_filled_in_forms">Ingevulde formulieren</string>
+    <string name="menu_home">Home Scherm</string>
+
+    <string name="finished_reading_excel">Formulier ingeladen</string>
+</resources>

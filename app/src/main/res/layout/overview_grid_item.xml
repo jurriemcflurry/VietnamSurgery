@@ -22,6 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/field_name"
         android:layout_marginTop="5dp"
+        android:layout_marginBottom="20dp"
         android:textSize="16sp"
         android:text="@string/name_placeholder_text"
         android:id="@+id/field_answer"
