@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/grid_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp">
+
+        <TextView
+            android:id="@+id/section_name"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_marginStart="50dp"
+            android:gravity="start"
+            android:layout_weight="1"
+            android:textColor="#000"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textSize="24sp"
+            />
+
+        <ImageButton
+            android:id="@+id/edit_btn"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginEnd="50dp"
+            android:gravity="end"
+            android:contentDescription="@string/image_contentDiscription_edit"
+            android:scaleType="centerCrop"
+            android:background="@drawable/ic_edit"
+            />
+    </LinearLayout>
+
+    <GridLayout
+        android:id="@+id/grid_view"
+        android:layout_below="@id/grid_header"
+        android:layout_marginTop="25dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        android:columnCount="3"
+        />
+
+</RelativeLayout>

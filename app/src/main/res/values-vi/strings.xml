@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">VietnamSurgery</string>
+    <string name="app_nice_name">Child Surgery Vietnam</string>
+    <string name="dialog_cancel">Hủy bỏ</string>
+    <string name="dialog_ok">Được</string>
+    <string name="save">Tiết kiệm</string>
+    <string name="next_btn_txt">Tiếp theo</string>
+    <string name="step_text">Bước %1$d trên %2$d</string>
+    <string name="section_name_photos">Hình ảnh</string>
+    <string name="section_name_photo_detail">Ảnh chi tiết</string>
+
+    <string name="name_placeholder_item_list">((TÊN))</string>
+    <string name="name_district_item_list">Huyện: </string>
+    <string name="name_placeholder_text">giữ chỗ</string>
+    <string name="photo_item_list">Hình ảnh:</string>
+
+    <string name="new_form_name">Hình thức mới %1$s</string>
+    <string name="main_title_name">Chọn một hình thức</string>
+    <string name="filled_in_forms_name">Các hình thức đã hoàn thành</string>
+    <string name="form_name">%1$s - %2$s - %3$s</string>
+
+    <string name="contentDescription">Ảnh chi tiết</string>
+
+    <string name="error">Đã xảy ra lỗi. Thông báo lỗi: %1$s"</string>
+    <string name="error_delete">Đã xảy ra lỗi với việc xóa tệp.</string>
+    <string name="error_save_thumb">Có một lỗi lưu hình ảnh ngón tay cái. Vui lòng thử lại.</string>
+    <string name="error_delete_thumb">Có lỗi khi xóa hình ảnh ngón tay cái. Vui lòng thử lại.</string>
+    <string name="error_delete_pic">Có một lỗi xóa hình ảnh. Vui lòng thử lại.</string>
+    <string name="error_not_enough_pics">Bạn phải làm ít nhất một hình ảnh.</string>
+
+    <string name="dialog_delete_picture_title">Xóa ảnh??</string>
+    <string name="dialog_delete_picture_text">Bạn có chắc chắn muốn xóa ảnh này?</string>
+    <string name="dialog_confirm_title">Xác nhận</string>
+    <string name="dialog_confirm_form_text">Bạn có chắc chắn muốn rời khỏi trang này? Tất cả dữ liệu chưa được lưu sẽ bị mất.</string>
+    <string name="dialog_confirm_form_positive">Rời khỏi</string>
+
+    <string name="error_while_finding_xlsx">Đã xảy ra lỗi trong khi tìm kiếm tệp: %1$s &#8212; Tìm kiếm trong thư mục: %2$s</string>
+    <string name="error_while_opening_xlsx">Có một lỗi mở tập tin: %1$s</string>
+    <string name="error_while_reading_xlsx">Có một lỗi đọc tập tin: %1$s</string>
+
+    <string name="no_filled_in_forms">Không có điền vào mẫu.</string>
+
+    <string name="saving_form">Lưu mẫu. Đợi một lát cho đến khi nó kết thúc.</string>
+    <string name="dialog_save_form_title">Sự thành công</string>
+    <string name="dialog_save_form_text">Mẫu %1$s được lưu thành công.</string>
+    <string name="dialog_save_form_positive">Điền vào mẫu tiếp theo</string>
+    <string name="dialog_save_form_negative">Trở lại từ đầu</string>
+    <string name="error_default">Tin nhắn: %1$s, nguyên nhân: %2$s</string>
+
+    <string name="dialog_confirm_save_form_text">Bạn có chắc chắn muốn lưu biểu mẫu?</string>
+    <string name="image_contentDiscription_edit">nút chỉnh sửa</string>
+
+    <string name="menu_filled_in_forms">Các hình thức hoàn thành</string>
+    <string name="menu_home">Màn hình chính</string>
+
+    <string name="finished_reading_excel">Đang tải xong</string>
+</resources>
