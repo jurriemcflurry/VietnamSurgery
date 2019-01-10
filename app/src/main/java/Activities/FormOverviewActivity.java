@@ -3,7 +3,11 @@ package Activities;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -20,7 +24,7 @@ import toning.juriaan.Models.R;
 import toning.juriaan.Models.Section;
 import toning.juriaan.Models.Storage;
 
-public class FormOverviewActivity extends AppCompatActivity {
+public class FormOverviewActivity extends FormBaseActivity {
 
     private LinearLayout sectionsView;
     private FormContent formContent;
@@ -30,10 +34,15 @@ public class FormOverviewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_form_overview);
+
+        loadForms();
+
+        FrameLayout contentFrameLayout = findViewById(R.id.formbase_framelayout);
+        getLayoutInflater().inflate(R.layout.activity_form_overview, contentFrameLayout);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(formContent.getFormContentName());
 
         sectionsView = findViewById(R.id.overview_content_view);
-        loadForms();
         updateView();
     }
 
@@ -47,8 +56,7 @@ public class FormOverviewActivity extends AppCompatActivity {
     }
 
     private void updateView() {
-        Helper.log("FormOverviewActivity.updateView()");
-        for(Section section : form.getFormTemplate().getSections()) {
+        for (Section section : form.getFormTemplate().getSections()) {
             LinearLayout sectionView = getSectionView(section);
             sectionsView.addView(sectionView);
             Helper.log(section.getSectionName());
@@ -65,7 +73,6 @@ public class FormOverviewActivity extends AppCompatActivity {
 
         ArrayList<Image> images = Storage.getImagesForFormContent(formContent, this);
         for (Image image : images) {
-            Helper.log("parsing image");
             ImageView imageView = new ImageView(this);
             imageView.setMaxWidth(80);
             imageView.setMaxHeight(80);
@@ -103,5 +110,17 @@ public class FormOverviewActivity extends AppCompatActivity {
             sectionView.addView(fieldValueText);
         }
         return sectionView;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.next_menu_item:
+                setResult(Helper.FINISH_CODE);
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

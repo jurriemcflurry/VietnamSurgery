@@ -17,6 +17,7 @@
     <string name="camera_title">Pictures</string>
     <string name="refresh">Refresh</string>
     <string name="next">Next</string>
+    <string name="save">Save</string>
     <string name="baseURL">http://vietnamcloudapi.azurewebsites.net</string>
     <string name="register">Register new user</string>
     <string name="confirmpassword">Confirm password</string>
@@ -25,7 +26,7 @@
     <string name="role">Role</string>
     <string name="name">Name</string>
     <string name="district">District</string>
-    <string name="birthYear">Birth Year</string>
+    <string name="birthYear">Birthyear</string>
     <string name="roleOverview">(Role)</string>
     <string name="admin">Admin</string>
     <string name="oldPassword">Old Password</string>
@@ -49,4 +50,5 @@
     <string name="exitPhotos">Exit Photos</string>
     <string name="cancel">Cancel</string>
     <string name="badRequest">Bad Request</string>
+    <string name="formContent">Filled in forms</string>
 </resources>

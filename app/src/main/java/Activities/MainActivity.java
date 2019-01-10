@@ -48,14 +48,14 @@ public class MainActivity extends BaseActivity implements FormAdapter.FormListen
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
-        Button OpenCamera = (Button) findViewById(R.id.ToCamera);
-        OpenCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent toCamera = new Intent(MainActivity.this, FormBaseActivity.class);
-                startActivity(toCamera);
-            }
-        });
+//        Button OpenCamera = (Button) findViewById(R.id.ToCamera);
+//        OpenCamera.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent toCamera = new Intent(MainActivity.this, FormBaseActivity.class);
+//                startActivity(toCamera);
+//            }
+//        });
 
         getForms();
     }

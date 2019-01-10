@@ -103,9 +103,13 @@ public class BaseActivity extends AppCompatActivity {
 
                         switch(menuItem.getItemId()){
                             case R.id.nav_1: //Bovenste Item
-                                Intent naarHome = new Intent(getApplicationContext(), MainActivity.class);
-                                startActivity(naarHome);
+                                Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
+                                startActivity(homeIntent);
                                 break;
+                            case R.id.nav_2:
+                                Intent toFormContentIntent = new Intent(
+                                        getApplicationContext(), FormListActivity.class);
+                                startActivity(toFormContentIntent);
                             default: break;
                         }
 

@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.widget.FrameLayout;
 
+import toning.juriaan.Models.Helper;
 import toning.juriaan.Models.R;
 
 public class FormBaseActivity extends AppCompatActivity {
@@ -22,6 +23,7 @@ public class FormBaseActivity extends AppCompatActivity {
         android.support.v7.widget.Toolbar toolbar = findViewById(R.id.formbase_toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
+        Helper.log("base");
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
     }

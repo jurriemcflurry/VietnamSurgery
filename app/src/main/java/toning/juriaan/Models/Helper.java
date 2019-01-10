@@ -12,6 +12,10 @@ public class Helper {
     public final static String FORM = "Form";
     public final static String FORM_CONTENT = "FormContent";
 
+    public final static int FORM_ACTIVITY_CODE = 100;
+    public final static int CAMERA_ACTIVITY_CODE = 101;
+    public final static int FINISH_CODE = 200;
+
     public static void log(String logEntry) {
         System.out.println("-------------- " + logEntry);
     }

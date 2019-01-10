@@ -102,6 +102,12 @@ public class CameraActivity extends FormBaseActivity {
             imageView.getLayoutParams().width = (getDisplayMetrics().widthPixels)/2;
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
         }
+        else if (requestCode == Helper.CAMERA_ACTIVITY_CODE) {
+            if (resultCode == Helper.FINISH_CODE){
+                setResult(Helper.FINISH_CODE);
+                finish();
+            }
+        }
         else if(requestCode == 0){
             //return from deletebutton from photodetailpage
             // remove image from contentlist and imageview from gridlayout
@@ -152,7 +158,7 @@ public class CameraActivity extends FormBaseActivity {
                     Intent formOverviewIntent = new Intent(getApplicationContext(), FormOverviewActivity.class);
                     formOverviewIntent.putExtra(Helper.FORM, formName);
                     formOverviewIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentName());
-                    startActivity(formOverviewIntent);
+                    startActivityForResult(formOverviewIntent, Helper.CAMERA_ACTIVITY_CODE);
                 }
                 return true;
             default:

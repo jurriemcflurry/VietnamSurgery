@@ -1,5 +1,6 @@
 package toning.juriaan.Models;
 
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -62,6 +63,10 @@ public class FormAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public FormViewHolder(@NonNull View itemView) {
             super(itemView);
             formName = itemView.findViewById(R.id.form_list_name);
+            formName.setTextSize(15);
+            formName.setTextColor(Color.BLACK);
+            formName.setPadding(0, 10, 0, 0);
+
         }
     }
 }

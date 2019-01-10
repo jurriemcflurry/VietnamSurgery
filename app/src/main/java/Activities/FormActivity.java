@@ -3,12 +3,11 @@ package Activities;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Pair;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -49,12 +48,12 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
 
-        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.formbase_framelayout);
+        FrameLayout contentFrameLayout = findViewById(R.id.formbase_framelayout);
         getLayoutInflater().inflate(R.layout.activity_form, contentFrameLayout);
         getSupportActionBar().setTitle(getString(R.string.forms));
 
         dropDownValues = new ArrayList<>();
-        loadForms();
+        loadForm();
 
         sectionNameView = findViewById(R.id.section_name);
         fieldsView = findViewById(R.id.fields_linear_view);
@@ -63,7 +62,7 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
         updateView();
     }
 
-    protected void loadForms() {
+    protected void loadForm() {
         Intent intent = getIntent();
         String formName = intent.getStringExtra(Helper.FORM);
         String formContentName = intent.getStringExtra(Helper.FORM_CONTENT);
@@ -192,7 +191,6 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
     }
 
     private void nextSection() {
-        //TODO if index is higher than or equal to sections.size() goto camera
         saveAnswers();
         if (sectionIndex < form.getFormTemplate().getSections().length - 1) {
             sectionIndex++;
@@ -203,12 +201,7 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
             Intent cameraIntent = new Intent(getApplicationContext(), CameraActivity.class);
             cameraIntent.putExtra(Helper.FORM, form.getFormattedFormName());
             cameraIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentName());
-            startActivity(cameraIntent);
-
-//            Intent overviewIntent = new Intent(getApplicationContext(), FormOverviewActivity.class);
-//            overviewIntent.putExtra(Helper.FORM, form.getFormattedFormName());
-//            overviewIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentName());
-//            startActivity(overviewIntent);
+            startActivityForResult(cameraIntent, Helper.FORM_ACTIVITY_CODE);
         }
     }
 
@@ -282,5 +275,14 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == Helper.FORM_ACTIVITY_CODE) {
+            if (resultCode == Helper.FINISH_CODE) {
+                finish();
+            }
+        }
     }
 }

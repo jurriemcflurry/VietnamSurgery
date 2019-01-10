@@ -168,6 +168,24 @@ public class Storage {
         return null;
     }
 
+    public static ArrayList<String> getFormContentNames(Context context){
+        ArrayList<String> names = new ArrayList<>();
+
+        try {
+            File[] files = getFormContentDir(context).listFiles();
+            for (File file : files) {
+                names.add(file.getName().split(".json")[0]);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        for(String name : names) {
+            Helper.log(name);
+        }
+        return names;
+    }
+
     public static int getFormContentAmount(String formContentName, Context context) {
         try {
             File[] files = getFormContentDir(context).listFiles();
