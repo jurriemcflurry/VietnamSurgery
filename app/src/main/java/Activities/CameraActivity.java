@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
@@ -17,18 +16,23 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 
+import toning.juriaan.Models.FormContent;
+import toning.juriaan.Models.Helper;
+import toning.juriaan.Models.Image;
 import toning.juriaan.Models.R;
+import toning.juriaan.Models.Storage;
 
 public class CameraActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private Bitmap mImageBitmap;
     private GridLayout gridLayout1;
     private Button saveImagesButton;
-    private ArrayList<Bitmap> mImages = new ArrayList<>();
+    private FormContent formContent;
+    private String formName;
+    private ArrayList<Image> mImages = new ArrayList<>();
     private int counter = 0;
 
     @Override
@@ -38,6 +42,7 @@ public class CameraActivity extends AppCompatActivity {
         setContentView(R.layout.camera_activity);
         gridLayout1 = (GridLayout) findViewById(R.id.gridLayout1);
         saveImagesButton = (Button) findViewById(R.id.save_images);
+        loadIntent();
 
         //onClick opent de native camera van de telefoon
         FloatingActionButton photoButton = (FloatingActionButton) this.findViewById(R.id.fab_camera);
@@ -57,8 +62,18 @@ public class CameraActivity extends AppCompatActivity {
             public void onClick(View v) {
                 saveImages();
                 Toast.makeText(CameraActivity.this, "Images succesfully saved!", Toast.LENGTH_LONG ).show();
+                Intent formOverviewIntent = new Intent(getApplicationContext(), FormOverviewActivity.class);
+                formOverviewIntent.putExtra(Helper.FORM, formName);
+                formOverviewIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentName());
+                startActivity(formOverviewIntent);
             }
         });
+    }
+
+    private void loadIntent() {
+        Intent intent = getIntent();
+        formName = intent.getStringExtra(Helper.FORM);
+        formContent = Storage.getFormContent(intent.getStringExtra(Helper.FORM_CONTENT), this);
     }
 
     //het resultaat van de camera (een foto) wordt hier in een nieuwe ImageView gestopt
@@ -74,7 +89,10 @@ public class CameraActivity extends AppCompatActivity {
             while(!mImages.isEmpty() && mImages.size() <= counter){
                 counter++;
             }
-            mImages.add(counter, mImageBitmap);
+
+            String imageName = formContent.getFormContentName() + "_image_" + (formContent.getImageNames().size() + 1);
+            formContent.addImageName(imageName);
+            mImages.add(counter, new Image(imageName, mImageBitmap));
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -115,22 +133,8 @@ public class CameraActivity extends AppCompatActivity {
             return false;
         }
 
-        String filename = "imageNumber";
-        int i = 0;
-
-        for(Bitmap image : mImages){
-            try {
-                filename += String.valueOf(i);
-                FileOutputStream fos = this.openFileOutput(filename, Context.MODE_PRIVATE);
-
-                image.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                fos.close();
-                i++;
-            }
-            catch(Exception e){
-                e.printStackTrace();
-                return false;
-            }
+        for(Image image : mImages){
+            Storage.saveImage(image, this);
         }
         mImages.clear();
         gridLayout1.removeAllViews();

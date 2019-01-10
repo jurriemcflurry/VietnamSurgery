@@ -9,6 +9,9 @@ import com.google.gson.GsonBuilder;
 
 public class Helper {
 
+    public final static String FORM = "Form";
+    public final static String FORM_CONTENT = "FormContent";
+
     public static void log(String logEntry) {
         System.out.println("-------------- " + logEntry);
     }

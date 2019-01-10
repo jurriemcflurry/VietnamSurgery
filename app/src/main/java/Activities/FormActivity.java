@@ -34,8 +34,6 @@ import toning.juriaan.Models.Storage;
 @SuppressLint("Registered")
 public class FormActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    public final static String FORM = "FormActivity.form1";
-
     private Toolbar toolbar;
     private TextView sectionNameView;
     private LinearLayout fieldsView;
@@ -51,15 +49,8 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form);
 
-        Intent intent = getIntent();
-        String name = intent.getStringExtra(FORM);
-        form = Storage.getForm(name, this);
-        if (form == null) {
-            finish();
-        }
-
-        formContent = new FormContent(form.getId());
         dropDownValues = new ArrayList<>();
+        loadForms();
 
         toolbar = findViewById(R.id.form_toolbar);
         setSupportActionBar(toolbar);
@@ -68,6 +59,22 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
 
         sectionIndex = 0;
         updateView();
+    }
+
+    protected void loadForms() {
+        Intent intent = getIntent();
+        String formName = intent.getStringExtra(Helper.FORM);
+        String formContentName = intent.getStringExtra(Helper.FORM_CONTENT);
+        form = Storage.getForm(formName, this);
+        if (form == null) {
+            finish();
+        }
+
+        if (formContentName != null && !formContentName.equals("")) {
+            formContent = Storage.getFormContent(formContentName, this);
+        } else {
+            formContent = new FormContent(form.getId());
+        }
     }
 
     private void updateView() {
@@ -183,6 +190,15 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
         } else if (sectionIndex >= form.getFormTemplate().getSections().length - 1) {
             storeFormContent();
 
+            Intent cameraIntent = new Intent(getApplicationContext(), CameraActivity.class);
+            cameraIntent.putExtra(Helper.FORM, form.getFormattedFormName());
+            cameraIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentName());
+            startActivity(cameraIntent);
+
+//            Intent overviewIntent = new Intent(getApplicationContext(), FormOverviewActivity.class);
+//            overviewIntent.putExtra(Helper.FORM, form.getFormattedFormName());
+//            overviewIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentName());
+//            startActivity(overviewIntent);
         }
     }
 

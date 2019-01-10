@@ -137,7 +137,7 @@ public class MainActivity extends BaseActivity implements FormAdapter.FormListen
     @Override
     public void onItemClick(Form form) {
         Intent toFormActivityIntent = new Intent(MainActivity.this, FormActivity.class);
-        toFormActivityIntent.putExtra(FormActivity.FORM, form.getFormattedFormName());
+        toFormActivityIntent.putExtra(Helper.FORM, form.getFormattedFormName());
         startActivity(toFormActivityIntent);
     }
 }

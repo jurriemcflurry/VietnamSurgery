@@ -2,8 +2,6 @@ package toning.juriaan.Models;
 
 import android.content.Context;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -22,7 +20,7 @@ public class FormContent {
 
     @Expose
     @SerializedName("ImagePaths")
-    private ArrayList<String> imagePaths;
+    private ArrayList<String> imageNames;
 
     @Expose
     @SerializedName("FormContentName")
@@ -31,6 +29,7 @@ public class FormContent {
     public FormContent(int formId) {
         this.formId = formId;
         formContent = new HashMap<>();
+        imageNames = new ArrayList<>();
     }
 
     public String getFormContentName() {
@@ -53,7 +52,6 @@ public class FormContent {
 
         name += Storage.getFormContentAmount(name, context) + 1;
 
-        Helper.log("FormContent.getFormContentName() " + name);
         this.formContentName = name;
     }
 
@@ -89,15 +87,32 @@ public class FormContent {
         }
     }
 
-    public ArrayList<String> getImagePaths() {
-        return imagePaths;
+    public String getAnswer(String fieldName) {
+        for (Map.Entry<String, String> entry : formContent.entrySet()) {
+            if (entry.getKey().toLowerCase().equals(fieldName.toLowerCase())) {
+                return entry.getValue();
+            }
+        }
+        return "";
     }
 
-    public void setImagePaths(ArrayList<String> imagePaths) {
-        this.imagePaths = imagePaths;
+    public ArrayList<String> getImageNames() {
+        return imageNames;
+    }
+
+    public void setImageNames(ArrayList<String> imageNames) {
+        this.imageNames = imageNames;
+    }
+
+    public void addImageName(String imagePath) {
+        imageNames.add(imagePath);
     }
 
     public String toJson() {
         return Helper.getGson().toJson(this);
+    }
+
+    public static FormContent fromJson(String json) {
+        return Helper.getGson().fromJson(json, FormContent.class);
     }
 }
