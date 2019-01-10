@@ -65,11 +65,10 @@ public class DetailPhotoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 new AlertDialog.Builder(DetailPhotoActivity.this)
-                        // Todo: Hardcoded strings
-                        .setTitle("Delete photo?")
-                        .setMessage("Are you sure you want to delete this photo?")
-                        .setNegativeButton("No", null)
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        .setTitle(R.string.dialog_delete_picture_title)
+                        .setMessage(R.string.dialog_delete_picture_text)
+                        .setNegativeButton(R.string.dialog_cancel, null)
+                        .setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 getIntent().putExtra("photoUrl", photoUrl);

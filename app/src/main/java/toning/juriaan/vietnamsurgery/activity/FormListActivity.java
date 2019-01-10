@@ -2,12 +2,8 @@ package toning.juriaan.vietnamsurgery.activity;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.ThumbnailUtils;
 import android.os.Environment;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -21,28 +17,24 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import toning.juriaan.vietnamsurgery.FormListListener;
+import toning.juriaan.vietnamsurgery.listener.FormListListener;
 import toning.juriaan.vietnamsurgery.MainActivity;
 import toning.juriaan.vietnamsurgery.R;
 import toning.juriaan.vietnamsurgery.adapter.FormListAdapter;
@@ -53,6 +45,7 @@ import toning.juriaan.vietnamsurgery.model.Section;
 public class FormListActivity extends AppCompatActivity implements FormListListener {
 
     final static int REQUEST_ADJUST_FORM = 3;
+    private final String TAG = this.getClass().getSimpleName();
     FormTemplate form;
     private List<Section> sections = new ArrayList<>();
     private ArrayList<FormTemplate> formList = new ArrayList<>();
@@ -83,7 +76,7 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
                 XSSFWorkbook workbook = new XSSFWorkbook(new File(root, wbName));
                 readExcelFile(workbook.getSheet(sheetName));
             } catch (Exception ex) {
-                Log.e("TESTT", ex.getMessage());
+                Log.e(TAG, ex.getMessage());
             }
         } else {
             chooseExcelFile();
@@ -165,7 +158,7 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
                 createExcelWorkbook(new File(root, files.get(0).getName()));
             }
         } catch (Exception ex) {
-            Toast.makeText(this, "There was an error: " + ex.getMessage() + " -- Searched in directory: " + root.getPath(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.error_while_finding_xlsx, ex.getMessage(), root.getPath()), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -212,8 +205,7 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
 
             chooseExcelSheet(workbook);
         } catch (Exception ex) {
-            Log.i("TESTT", "Error" + " " + ex.getMessage() + " " + ex.getCause());
-            Log.i("TESTT", "Error" + " " + ex.toString());
+            Log.i(TAG, getString(R.string.error_while_opening_xlsx, ex.getMessage()));
         }
     }
 
@@ -318,7 +310,7 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
             XSSFWorkbook wb = sheet.getWorkbook();
             wb.close();
         } catch (Exception ex) {
-            Log.e("TESTT", ex.getMessage() + " -- " + ex.getCause());
+            Log.e(TAG, getString(R.string.error_while_reading_xlsx, ex.getMessage()));
         }
     }
 
@@ -367,7 +359,7 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
         }
 
         if(formList.size() == 0) {
-            Toast.makeText(this, "There are no filled in forms yet", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.no_filled_in_forms, Toast.LENGTH_LONG).show();
         }
 
         RecyclerView mRecyclerView = findViewById(R.id.form_list_grid_view);
@@ -444,8 +436,7 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
             sections = new ArrayList<>();
             readExcelFile(sheet);
         } catch (Exception ex) {
-            // Todo: Error & Make sure the error won't get show by first opening this activity
-            Log.e("TESTT", "oops. Something went wrong");
+            Log.e(TAG, getString(R.string.error_while_reading_xlsx, ex.getMessage()));
         }
 
     }
@@ -472,7 +463,9 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
         if(i.hasExtra("fileName") && i.hasExtra("sheetName")) {
             loadIntent();
         } else{
-            reloadList();
+            if(formList.size() != 0) {
+                reloadList();
+            }
         }
 
     }

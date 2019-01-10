@@ -14,6 +14,7 @@
         android:id="@+id/field_name"
         android:textStyle="bold"
         android:textSize="16sp"
+        android:text="@string/name_placeholder_text"
         />
 
     <TextView
@@ -22,6 +23,7 @@
         android:layout_below="@id/field_name"
         android:layout_marginTop="5dp"
         android:textSize="16sp"
+        android:text="@string/name_placeholder_text"
         android:id="@+id/field_answer"
         />
 

@@ -1,31 +1,16 @@
 package toning.juriaan.vietnamsurgery.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.File;
-import java.lang.reflect.Array;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Locale;
 
-import toning.juriaan.vietnamsurgery.FormListListener;
+import toning.juriaan.vietnamsurgery.listener.FormListListener;
 import toning.juriaan.vietnamsurgery.R;
-import toning.juriaan.vietnamsurgery.activity.DetailPhotoActivity;
-import toning.juriaan.vietnamsurgery.activity.FormListActivity;
-import toning.juriaan.vietnamsurgery.activity.OverviewFormActivity;
 import toning.juriaan.vietnamsurgery.model.FormTemplate;
 
 public class FormListAdapter extends RecyclerView.Adapter<FormListAdapter.FormListViewHolder> {

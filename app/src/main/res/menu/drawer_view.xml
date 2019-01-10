@@ -4,10 +4,10 @@
         <item
             android:id="@+id/filled_in_forms"
             android:icon="@drawable/placeholder"
-            android:title="Filled in forms" />
+            android:title="@string/menu_filled_in_forms" />
         <item
             android:id="@+id/main_activity"
             android:icon="@drawable/placeholder"
-            android:title="Home screen" />
+            android:title="@string/menu_home" />
     </group>
 </menu>

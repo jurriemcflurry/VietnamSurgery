@@ -25,7 +25,7 @@
             android:id="@+id/grid_item_nameTxt"
             android:textSize="22sp"
             android:textColor="@color/colorPrimaryDark"
-            android:text="test"
+            android:text="@string/name_placeholder_item_list"
             />
 
         <View
@@ -51,7 +51,7 @@
                 android:id="@+id/grid_item_districtTxt"
                 android:layout_marginTop="10dp"
                 android:textColor="@color/black"
-                android:text="District:"
+                android:text="@string/name_district_item_list"
                 />
 
             <TextView
@@ -61,7 +61,7 @@
                 android:id="@+id/grid_item_districtAnswerTxt"
                 android:layout_marginTop="10dp"
                 android:textColor="@color/colorPrimaryDark"
-                android:text="placeholder"
+                android:text="@string/name_placeholder_text"
                 />
 
             <TextView
@@ -71,7 +71,7 @@
                 android:id="@+id/grid_item_photoTxt"
                 android:layout_marginTop="10dp"
                 android:textColor="@color/black"
-                android:text="Photos:"
+                android:text="@string/photo_item_list"
                 />
 
             <TextView
@@ -81,7 +81,7 @@
                 android:id="@+id/grid_item_photoAnswerTxt"
                 android:layout_marginTop="10dp"
                 android:textColor="@color/colorPrimaryDark"
-                android:text="3"
+                android:text="@string/name_placeholder_text"
                 />
         </LinearLayout>
     </RelativeLayout>

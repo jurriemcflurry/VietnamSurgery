@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
                 createExcelWorkbook(new File(root, files.get(0).getName()));
             }
         } catch (Exception ex) {
-            Toast.makeText(this, "There was an error: " + ex.getMessage() + " -- Searched in directory: " + root.getPath(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.error_while_finding_xlsx, ex.getMessage(), root.getPath()), Toast.LENGTH_LONG).show();
         }
 
     }
@@ -162,8 +162,7 @@ public class MainActivity extends AppCompatActivity {
 
             chooseExcelSheet(workbook);
         } catch (Exception ex) {
-            Log.i("TESTT", "Error" + " " + ex.getMessage() + " " + ex.getCause());
-            Log.i("TESTT", "Error" + " " + ex.toString());
+            Log.i(TAG, getString(R.string.error_while_opening_xlsx, ex.getMessage()));
         }
     }
 
@@ -269,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(i);
             finish();
         } catch (Exception ex) {
-            Log.e("TESTT", ex.getMessage() + " -- " + ex.getCause());
+            Log.e(TAG, getString(R.string.error_while_reading_xlsx, ex.getMessage()));
         }
     }
 

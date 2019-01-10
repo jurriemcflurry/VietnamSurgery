@@ -249,11 +249,10 @@ public class FormActivity extends AppCompatActivity {
         // this takes the user 'back', as if they pressed the left-facing
         hideKeyboard(this);
         if(noOfThisSection-1 == 0) {
-            // Todo: STRINGS!!
             new AlertDialog.Builder(this)
-                    .setTitle("Confirm")
-                    .setMessage("Are you sure you want to leave this page? Unsaved information will be lost.")
-                    .setPositiveButton("Leave", new DialogInterface.OnClickListener() {
+                    .setTitle(R.string.dialog_confirm_title)
+                    .setMessage(R.string.dialog_confirm_form_text)
+                    .setPositiveButton(R.string.dialog_confirm_form_positive, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             if(form.getRowNumber() > 0) {

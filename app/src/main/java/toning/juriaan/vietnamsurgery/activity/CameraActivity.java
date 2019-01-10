@@ -26,10 +26,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.net.URI;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,6 +39,7 @@ import toning.juriaan.vietnamsurgery.R;
 public class CameraActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_DELETE_IMAGE = 2;
+    private final String TAG = this.getClass().getSimpleName();
     private GridLayout gridLayout1;
     private ArrayList<Bitmap> mImages = new ArrayList<>();
     private FormTemplate form;
@@ -101,9 +99,9 @@ public class CameraActivity extends AppCompatActivity {
     private void setupFloatingActionButton(){
         //onClick opent de native camera van de telefoon
         FloatingActionButton photoButton = this.findViewById(R.id.fab_camera);
-        photoButton.setOnClickListener((View v) -> {
-            dispatchTakePictureIntent();
-        });
+        photoButton.setOnClickListener((View v) ->
+            dispatchTakePictureIntent()
+        );
     }
 
     private void dispatchTakePictureIntent() {
@@ -173,7 +171,7 @@ public class CameraActivity extends AppCompatActivity {
                 pictures.add(mCurrentPhotoPath);
                 form.setPictures(pictures);
             } catch (Exception ex) {
-                Log.i("TESTT", "I made a fkup");
+                Log.i(TAG, getString(R.string.error, ex.getMessage()));
             }
         }
         if(requestCode == REQUEST_DELETE_IMAGE && resultCode == RESULT_OK) {
@@ -183,7 +181,7 @@ public class CameraActivity extends AppCompatActivity {
                 checkForPictures();
             } else {
                 // Todo: Error
-                Toast.makeText(this, "Delete fail", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.error_delete, Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -226,7 +224,7 @@ public class CameraActivity extends AppCompatActivity {
                 thumbImages.add(mypath.getAbsolutePath());
                 form.setThumbImages(thumbImages);
             } else {
-                Toast.makeText(this, "There was an error while saving the thumb-image. Please try again.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.error_save_thumb, Toast.LENGTH_LONG).show();
             }
 
         } catch (Exception ex) {
@@ -236,7 +234,7 @@ public class CameraActivity extends AppCompatActivity {
 
     private boolean goNext(){
         if(mImages.size() <= 0){
-            Toast.makeText(getApplicationContext(), "Make at least one picture", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), R.string.error_not_enough_pics, Toast.LENGTH_LONG).show();
             return false;
         }
 

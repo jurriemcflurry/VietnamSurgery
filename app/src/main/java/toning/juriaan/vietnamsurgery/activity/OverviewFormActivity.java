@@ -44,6 +44,7 @@ public class OverviewFormActivity extends AppCompatActivity {
 
     static final int REQUEST_DELETE_IMAGE = 2;
     static final int REQUEST_ADJUST_FORM = 3;
+    private final String TAG = this.getClass().getSimpleName();
     private Toolbar toolbar;
     private FormTemplate form;
     private LinearLayout layout;
@@ -140,26 +141,22 @@ public class OverviewFormActivity extends AppCompatActivity {
         LayoutInflater mInflator = getLayoutInflater();
         int index = 0;
         for( String pathToFile : form.getThumbImages()) {
-            try {
-                View view = mInflator.inflate(R.layout.photo_gallery_item, mGallery, false);
-                ImageView imageView = view.findViewById(R.id.image_list_iv);
-                File file = new File(form.getPictures().get(index));
-                imageView.setOnClickListener((View v) ->
-                        goToDetailPage(file)
-                );
+            View view = mInflator.inflate(R.layout.photo_gallery_item, mGallery, false);
+            ImageView imageView = view.findViewById(R.id.image_list_iv);
+            File file = new File(form.getPictures().get(index));
+            imageView.setOnClickListener((View v) ->
+                    goToDetailPage(file)
+            );
 
-                Bitmap pic = BitmapFactory.decodeFile(pathToFile);
-                imageView.setImageBitmap(pic);
-                mGallery.addView(view);
-                index++;
-            } catch (Exception ex) {
-                Log.e("TESTT", "oops " + ex.getMessage());
-            }
+            Bitmap pic = BitmapFactory.decodeFile(pathToFile);
+            imageView.setImageBitmap(pic);
+            mGallery.addView(view);
+            index++;
         }
     }
 
     private void saveForm(FormTemplate form) {
-        Toast.makeText(OverviewFormActivity.this, "Saving the form. Wait a moment until it's finished.", Toast.LENGTH_LONG).show();
+        Toast.makeText(OverviewFormActivity.this, R.string.saving_form, Toast.LENGTH_LONG).show();
         String root = Environment.getExternalStorageDirectory().toString() + "/LenTab/lentab-susanne";
         File file = new File(root, form.getFileName());
         try{
@@ -234,7 +231,7 @@ public class OverviewFormActivity extends AppCompatActivity {
                 goToTheStart();
             }
         } catch (Exception ex) {
-            Log.i("TESTT", ex.getMessage() + " -- " + ex.getCause());
+            Log.i(TAG, getString(R.string.error_default, ex.getMessage(), ex.getCause()));
         }
     }
 
@@ -299,13 +296,12 @@ public class OverviewFormActivity extends AppCompatActivity {
     }
 
     public void goToTheStart() {
-        // Todo: Strings!
         String name = form.getSections().get(0).getFields().get(1).getAnswer();
         String birthYear = form.getSections().get(0).getFields().get(2).getAnswer();
         new AlertDialog.Builder(OverviewFormActivity.this)
                 .setTitle("Success")
-                .setMessage("form " + getString(R.string.form_name, form.getFormName(), name, birthYear) + " is saved successfully.")
-                .setPositiveButton("Fill in next form", new DialogInterface.OnClickListener() {
+                .setMessage(getString(R.string.dialog_save_form_text, getString(R.string.form_name, form.getFormName(), name, birthYear)))
+                .setPositiveButton(getString(R.string.dialog_save_form_positive), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         FormTemplate tempForm = new FormTemplate();
@@ -321,7 +317,7 @@ public class OverviewFormActivity extends AppCompatActivity {
                         finish();
                     }
                 })
-                .setNegativeButton("Back to start", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.dialog_save_form_negative), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -392,12 +388,12 @@ public class OverviewFormActivity extends AppCompatActivity {
                 return true;
             } else {
                 // Todo: ErrorMsg
-                Log.e("TESTT", "error1");
+                Log.e(TAG, getString(R.string.error_delete_thumb));
                 return false;
             }
         }
         else {
-            Log.e("TESTT", "eroror 2");
+            Log.e(TAG, getString(R.string.error_delete_pic));
             return false;
         }
     }
@@ -408,9 +404,6 @@ public class OverviewFormActivity extends AppCompatActivity {
             String photoUrl = data.getStringExtra("photoUrl");
             if(deletePhoto(photoUrl)) {
                 putPicturesInGallery();
-            } else {
-                // Todo: Errormessage
-                Toast.makeText(this, "Delete fail", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -423,12 +416,12 @@ public class OverviewFormActivity extends AppCompatActivity {
                 return true;
             case R.id.action_next:
                 if(mGallery.getChildCount() == 0) {
-                    Toast.makeText(getApplicationContext(), "Make at least one picture", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.error_not_enough_pics), Toast.LENGTH_LONG).show();
                     return true;
                 } else {
                     new AlertDialog.Builder(OverviewFormActivity.this)
-                            .setTitle("Confirm")
-                            .setMessage("Are you sure you want to save the form?")
+                            .setTitle(R.string.dialog_confirm_title)
+                            .setMessage(R.string.dialog_confirm_save_form_text)
                             .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
