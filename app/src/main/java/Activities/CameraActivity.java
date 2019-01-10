@@ -1,6 +1,5 @@
 package Activities;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -15,11 +14,6 @@ import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
-<<<<<<< HEAD
-=======
-
->>>>>>> master
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 import toning.juriaan.Models.FormContent;
@@ -64,15 +58,12 @@ public class CameraActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 saveImages();
-<<<<<<< HEAD
-                Toast.makeText(CameraActivity.this, getString(R.string.imagesSaved), Toast.LENGTH_LONG ).show();
-=======
-                Toast.makeText(CameraActivity.this, "Images succesfully saved!", Toast.LENGTH_LONG ).show();
+
+                Toast.makeText(CameraActivity.this,R.string.imagesSaved, Toast.LENGTH_LONG ).show();
                 Intent formOverviewIntent = new Intent(getApplicationContext(), FormOverviewActivity.class);
                 formOverviewIntent.putExtra(Helper.FORM, formName);
                 formOverviewIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentName());
                 startActivity(formOverviewIntent);
->>>>>>> master
             }
         });
     }
@@ -140,28 +131,10 @@ public class CameraActivity extends AppCompatActivity {
             return false;
         }
 
-<<<<<<< HEAD
-        String filename = "imageNumber";
-        int i = 0;
-
-        for(Bitmap image : mImages){
-            try {
-               filename += String.valueOf(i);
-               FileOutputStream fos = this.openFileOutput(filename, Context.MODE_PRIVATE);
-
-               image.compress(Bitmap.CompressFormat.PNG, 100, fos);
-               fos.close();
-               i++;
-            }
-            catch(Exception e){
-                e.printStackTrace();
-                return false;
-            }
-=======
         for(Image image : mImages){
             Storage.saveImage(image, this);
->>>>>>> master
         }
+
         mImages.clear();
         gridLayout1.removeAllViews();
         return true;

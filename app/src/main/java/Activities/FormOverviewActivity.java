@@ -51,10 +51,6 @@ public class FormOverviewActivity extends AppCompatActivity {
 
     }
 
-    private LinearLayout getImagesView() {
-        LinearLayout.LayoutParams
-    }
-
     private LinearLayout getSectionView(Section section) {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
