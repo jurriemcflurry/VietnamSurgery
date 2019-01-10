@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -166,6 +167,17 @@ public class Storage {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static ArrayList<FormContent> getFormContents(Context context) {
+        ArrayList<FormContent> formContents = new ArrayList<>();
+
+        ArrayList<String> names = getFormContentNames(context);
+        for (String name : names) {
+            formContents.add(getFormContent(name, context));
+        }
+
+        return formContents;
     }
 
     public static ArrayList<String> getFormContentNames(Context context){

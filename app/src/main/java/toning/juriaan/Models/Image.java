@@ -2,6 +2,8 @@ package toning.juriaan.Models;
 
 import android.graphics.Bitmap;
 
+import java.io.ByteArrayOutputStream;
+
 public class Image {
     String imageName;
 
@@ -28,7 +30,9 @@ public class Image {
         this.bitmap = bitmap;
     }
 
-    public Byte[] getByteArray() {
-        return null;
+    public byte[] getByteArray() {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        return stream.toByteArray();
     }
 }

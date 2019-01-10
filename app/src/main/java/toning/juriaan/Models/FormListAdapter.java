@@ -13,12 +13,18 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
+import Activities.FormListActivity;
+
 public class FormListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<String> formContentNames;
-    private Context context;
+    private FormListActivity context;
 
-    public FormListAdapter(ArrayList<String> formContentNames, Context context) {
+    public interface FormContentlistener {
+        void onItemClick(FormContent formContent);
+    }
+
+    public FormListAdapter(ArrayList<String> formContentNames, FormListActivity context) {
         this.formContentNames = formContentNames;
         this.context = context;
     }
@@ -33,10 +39,16 @@ public class FormListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-        FormContent formContent = Storage.getFormContent(formContentNames.get(i), context);
+        final FormContent formContent = Storage.getFormContent(formContentNames.get(i), context);
         FormListViewHolder vh = (FormListViewHolder) viewHolder;
         String textViewText = "Name: " + formContent.getFormContentName();
         vh.formContentNameTextView.setText(textViewText);
+        vh.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                context.onItemClick(formContent);
+            }
+        });
     }
 
     @Override

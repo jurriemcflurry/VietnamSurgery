@@ -47,6 +47,7 @@ public class CameraActivity extends FormBaseActivity {
 
         gridLayout1 = (GridLayout) findViewById(R.id.gridLayout1);
         loadIntent();
+        mImages = Storage.getImagesForFormContent(formContent, this);
 
         //onClick opent de native camera van de telefoon
         FloatingActionButton photoButton = (FloatingActionButton) this.findViewById(R.id.fab_camera);
@@ -96,7 +97,7 @@ public class CameraActivity extends FormBaseActivity {
                     startActivityForResult(photoDetail, 0);
                 }
             });
-            saveImages(mImages.get(counter));
+            saveImage(mImages.get(counter));
             gridLayout1.addView(imageView, counter);
             imageView.getLayoutParams().height = (getDisplayMetrics().heightPixels)/2;
             imageView.getLayoutParams().width = (getDisplayMetrics().widthPixels)/2;
@@ -138,7 +139,7 @@ public class CameraActivity extends FormBaseActivity {
     }
 
     //save images to device
-    private boolean saveImages(Image image){
+    private boolean saveImage(Image image){
         Storage.saveImage(image, this);
         return true;
     }

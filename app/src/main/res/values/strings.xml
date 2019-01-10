@@ -19,10 +19,11 @@
     <string name="next">Next</string>
     <string name="save">Save</string>
     <string name="baseURL">http://vietnamcloudapi.azurewebsites.net</string>
+    <string name="testURL">http://localhost:52053/</string>
     <string name="register">Register new user</string>
     <string name="confirmpassword">Confirm password</string>
     <string name="email">Email</string>
-    <string name="toUserDetail">User to Userdetailpage</string>\
+    <string name="toUserDetail">User to Userdetailpage</string>
     <string name="role">Role</string>
     <string name="name">Name</string>
     <string name="district">District</string>
