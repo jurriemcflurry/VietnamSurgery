@@ -113,28 +113,29 @@ public class Storage {
     }
 
     public static ArrayList<Image> getImagesForFormContent(FormContent formContent, Context context) {
+        ArrayList<Image> images = new ArrayList<>();
+
         try {
             File imageDir = getImagesDir(context);
             File[] imageFiles = imageDir.listFiles();
 
-            ArrayList<Image> images = new ArrayList<>();
-
             for (File image : imageFiles) {
                 if (image.getName().toLowerCase().contains(formContent.getFormContentName().toLowerCase())) {
-                    images.add(getImage(image.getName(), context));
+                    images.add(getImage(image, context));
                 }
             }
 
-            return images;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return images;
     }
 
-    private static Image getImage(String imageName, Context context) {
+    private static Image getImage(File imageFile, Context context) {
         try {
-            return new Image(imageName.split(".png")[0], BitmapFactory.decodeFile(imageName));
+            String imageName = imageFile.getName().split(".png")[0];
+            String imagePath = imageFile.getAbsolutePath();
+            return new Image(imageName, BitmapFactory.decodeFile(imagePath));
         } catch (Exception e) {
             e.printStackTrace();
         }

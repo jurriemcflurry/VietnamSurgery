@@ -4,13 +4,18 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 import toning.juriaan.Models.Field;
 import toning.juriaan.Models.Form;
 import toning.juriaan.Models.FormContent;
 import toning.juriaan.Models.Helper;
+import toning.juriaan.Models.Image;
 import toning.juriaan.Models.R;
 import toning.juriaan.Models.Section;
 import toning.juriaan.Models.Storage;
@@ -48,9 +53,32 @@ public class FormOverviewActivity extends AppCompatActivity {
             sectionsView.addView(sectionView);
             Helper.log(section.getSectionName());
         }
-
+        sectionsView.addView(getImagesView());
     }
 
+<<<<<<< HEAD
+=======
+    private LinearLayout getImagesView() {
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout photoGallery = new LinearLayout(this);
+        photoGallery.setOrientation(LinearLayout.HORIZONTAL);
+        photoGallery.setLayoutParams(layoutParams);
+
+        ArrayList<Image> images = Storage.getImagesForFormContent(formContent, this);
+        for (Image image : images) {
+            Helper.log("parsing image");
+            ImageView imageView = new ImageView(this);
+            imageView.setMaxWidth(80);
+            imageView.setMaxHeight(80);
+            imageView.setImageBitmap(image.getBitmap());
+            photoGallery.addView(imageView);
+        }
+
+        return photoGallery;
+    }
+
+>>>>>>> master
     private LinearLayout getSectionView(Section section) {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
