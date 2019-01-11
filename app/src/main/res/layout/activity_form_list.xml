@@ -24,8 +24,21 @@
 
         <android.support.v7.widget.RecyclerView
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
             android:layout_below="@id/linLayout"
+            android:scrollbars="none"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/grid_view_form_list_files"
+            android:numColumns="1"
+            android:gravity="center"
+            android:stretchMode="columnWidth"
+            >
+        </android.support.v7.widget.RecyclerView>
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_below="@id/grid_view_form_list_files"
             android:scrollbars="none"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

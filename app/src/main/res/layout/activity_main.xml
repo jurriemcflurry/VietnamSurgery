@@ -9,23 +9,39 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/frame_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <include layout="@layout/toolbar_actionbar" />
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/choose_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginTop="20dp"
+            android:textSize="16sp"
+            android:layout_gravity="center"
+            android:text="@string/name_placeholder_text"
+            />
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_marginTop="20dp"
+            android:scrollbars="none"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/linLayout"
-            android:orientation="vertical"
-            android:layout_marginTop="?attr/actionBarSize">
+            android:id="@+id/grid_view_main"
+            android:numColumns="1"
+            android:gravity="center"
+            android:stretchMode="columnWidth"
+            >
+        </android.support.v7.widget.RecyclerView>
 
-        </LinearLayout>
-
-    </FrameLayout>
+    </LinearLayout>
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"

@@ -54,4 +54,7 @@
     <string name="menu_home">Màn hình chính</string>
 
     <string name="finished_reading_excel">Đang tải xong</string>
+
+    <string name="choose_file_text">Các tệp bạn có thể thấy ở đây, là các tệp bạn có thể chọn. Chọn tập tin bạn phải làm việc với ngày hôm nay.</string>
+    <string name="choose_sheet_text">Đây là những tờ từ tập tin được chọn. Chọn tờ bạn phải điền vào ngày hôm nay.</string>
 </resources>

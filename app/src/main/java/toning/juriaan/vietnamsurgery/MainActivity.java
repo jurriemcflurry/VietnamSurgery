@@ -12,6 +12,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -32,11 +35,17 @@ import java.util.List;
 
 import toning.juriaan.vietnamsurgery.activity.FormActivity;
 import toning.juriaan.vietnamsurgery.activity.FormListActivity;
+import toning.juriaan.vietnamsurgery.activity.OverviewFormActivity;
+import toning.juriaan.vietnamsurgery.adapter.FileNameAdapter;
+import toning.juriaan.vietnamsurgery.adapter.FormListAdapter;
+import toning.juriaan.vietnamsurgery.adapter.SheetAdapter;
+import toning.juriaan.vietnamsurgery.listener.FileNameListener;
+import toning.juriaan.vietnamsurgery.listener.SheetListener;
 import toning.juriaan.vietnamsurgery.model.Field;
 import toning.juriaan.vietnamsurgery.model.FormTemplate;
 import toning.juriaan.vietnamsurgery.model.Section;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FileNameListener, SheetListener {
 
     private DrawerLayout mDrawerLayout;
     private static final String TAG = "MyActivity";
@@ -44,6 +53,13 @@ public class MainActivity extends AppCompatActivity {
     private List<Section> sections = new ArrayList<>();
     Toolbar toolbar;
     private ActionBar ab;
+    File root = new File(Environment.getExternalStorageDirectory().toString() + "/LenTab/lentab-susanne");
+    RecyclerView mRecyclerView;
+    LinearLayoutManager mLayoutManager = new GridLayoutManager(this, 1);
+    FileNameAdapter mAdapterFiles;
+    SheetAdapter mAdapterSheets;
+    TextView chooseText;
+    XSSFWorkbook mWorkbook;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupFields(){
         toolbar = findViewById(R.id.form_toolbar);
+        mRecyclerView = findViewById(R.id.grid_view_main);
+        chooseText = findViewById(R.id.choose_text);
     }
 
     private void setupToolbar() {
@@ -125,25 +143,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void chooseExcelFile() {
-        File root = new File(Environment.getExternalStorageDirectory().toString() + "/LenTab/lentab-susanne");
         try{
             List<File> files = getListFiles(root);
 
             // Check if there are more than 1 file, if so, show clickables for all files. If not: load the first one directly
             if(files.size() > 1) {
-                LinearLayout layout = findViewById(R.id.linLayout);
-                // Choose a file
-                for (File f : files) {
-                    Button newBtn = new Button(this);
-                    newBtn.setText(f.getName());
-                    layout.addView(newBtn);
-                    newBtn.setOnClickListener((View v) -> {
-                        String fileName = ((Button) v).getText().toString();
-                        form.setFileName(fileName);
-                        form.setFormName(fileName.substring(0, fileName.lastIndexOf('.')));
-                        createExcelWorkbook(new File(root, fileName));
-                    });
-                }
+                chooseText.setText(R.string.choose_file_text);
+                mRecyclerView.setLayoutManager(mLayoutManager);
+                mAdapterFiles = new FileNameAdapter(this, files, this);
+                mRecyclerView.setAdapter(mAdapterFiles);
             } else {
                 form.setFileName(files.get(0).getName());
                 form.setFormName(files.get(0).getName().substring(0, files.get(0).getName().lastIndexOf('.')));
@@ -167,24 +175,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void chooseExcelSheet(XSSFWorkbook workbook) {
-        LinearLayout layout = findViewById(R.id.linLayout);
-
-        LinearLayout row = new LinearLayout(this);
-        row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-
+        mWorkbook = workbook;
         if(workbook.getNumberOfSheets() == 1) {
             readExcelFile(workbook.getSheetAt(0));
         } else {
+            List<String> sheets = new ArrayList<>();
             for( int sheetNumber = 0; sheetNumber < workbook.getNumberOfSheets(); sheetNumber++) {
-                Button newBtn = new Button(this);
-                newBtn.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                newBtn.setText(workbook.getSheetAt(sheetNumber).getSheetName());
-                newBtn.setOnClickListener((View v) ->
-                    readExcelFile(workbook.getSheet(((Button) v).getText().toString()))
-                );
-                row.addView(newBtn);
+                sheets.add(workbook.getSheetAt(sheetNumber).getSheetName());
             }
-            layout.addView(row);
+            chooseText.setText(R.string.choose_sheet_text);
+            mRecyclerView.setLayoutManager(mLayoutManager);
+            mAdapterSheets = new SheetAdapter(this, sheets, this);
+            mRecyclerView.setAdapter(mAdapterSheets);
         }
     }
 
@@ -291,5 +293,17 @@ public class MainActivity extends AppCompatActivity {
                 REQUEST_EXTERNAL_STORAGE
             );
         }
+    }
+
+    @Override
+    public void onItemClick(View view, File file) {
+        form.setFileName(file.getName());
+        form.setFormName(file.getName().substring(0, file.getName().lastIndexOf('.')));
+        createExcelWorkbook(new File(root, file.getName()));
+    }
+
+    @Override
+    public void onItemClick(View view, String sheetName) {
+        readExcelFile(mWorkbook.getSheet(sheetName));
     }
 }

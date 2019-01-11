@@ -54,4 +54,7 @@
     <string name="menu_home">Home Screen</string>
 
     <string name="finished_reading_excel">Finished reading Excel</string>
+    
+    <string name="choose_file_text">The files you can see here, are the files you can choose from. Choose the form you have to work with today.</string>
+    <string name="choose_sheet_text">These are the sheets from the chosen file. Choose the sheet you have to fill in today.</string>
 </resources>

@@ -54,4 +54,7 @@
     <string name="menu_home">Home Scherm</string>
 
     <string name="finished_reading_excel">Formulier ingeladen</string>
+
+    <string name="choose_file_text">De bestanden die hier zichtbaar zijn, zijn de bestanden waar u uit kunt kiezen. Kies het bestand waar u mee moet werken vandaag.</string>
+    <string name="choose_sheet_text">Dit zijn de verschillende tabladen van het gekozen bestand. Kies het tablad die u vandaag moet invullen.</string>
 </resources>
