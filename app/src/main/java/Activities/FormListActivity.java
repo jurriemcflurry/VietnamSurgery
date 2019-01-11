@@ -2,6 +2,7 @@ package Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.FrameLayout;
@@ -83,6 +84,15 @@ public class FormListActivity extends BaseActivity implements FormListAdapter.Fo
         Intent formOverviewIntent = new Intent(getApplicationContext(), FormOverviewActivity.class);
         formOverviewIntent.putExtra(Helper.FORM, form.getFormattedFormName());
         formOverviewIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentName());
-        startActivity(formOverviewIntent);
+        startActivityForResult(formOverviewIntent, 3333);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == 3333) {
+            if (resultCode == Helper.FINISH_CODE) {
+                formListAdapter.setFormContentNames(Storage.getFormContentNames(this));
+            }
+        }
     }
 }

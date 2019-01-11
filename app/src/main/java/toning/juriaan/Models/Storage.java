@@ -113,6 +113,24 @@ public class Storage {
         return succes;
     }
 
+    public static boolean deleteFormContent(FormContent formContent, Context context) {
+        boolean succes = false;
+        try {
+            File file = getFormContentFile(formContent.getFormContentName(), context);
+            ArrayList<File> images = new ArrayList<>();
+
+            for (String imageName : formContent.getImageNames()) {
+                getImageFile(imageName, context).delete();
+            }
+
+            file.delete();
+            succes = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return succes;
+    }
+
     public static ArrayList<Image> getImagesForFormContent(FormContent formContent, Context context) {
         ArrayList<Image> images = new ArrayList<>();
 

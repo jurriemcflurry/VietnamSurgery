@@ -7,12 +7,13 @@
         android:id="@+id/detailpage">
 
 
-        <ImageView
+          <ImageView
             android:id="@+id/detailpage_image"
             android:layout_width="match_parent"
             android:layout_height="160dp"
             android:scaleType="centerCrop"
             android:src="@drawable/usericon"
+            android:layout_marginTop="?attr/actionBarSize"
             />
 
         <TextView

@@ -113,9 +113,21 @@ public class FormOverviewActivity extends FormBaseActivity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.form_content_overview_menu, menu);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.next_menu_item:
+                setResult(Helper.FINISH_CODE);
+                finish();
+                return true;
+            case R.id.delete_menu_item:
+                Storage.deleteFormContent(formContent, this);
                 setResult(Helper.FINISH_CODE);
                 finish();
                 return true;

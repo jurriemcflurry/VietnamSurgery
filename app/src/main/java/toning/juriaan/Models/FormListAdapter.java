@@ -29,6 +29,11 @@ public class FormListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.context = context;
     }
 
+    public void setFormContentNames(ArrayList<String> formContentNames) {
+        this.formContentNames = formContentNames;
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
