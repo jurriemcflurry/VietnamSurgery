@@ -310,6 +310,7 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
 
         int firstRowNum = 5;
         int lastRowNum = sheet.getLastRowNum();
+        formList.clear();
 
         for(int i = firstRowNum; i <= lastRowNum; i++)
         {
