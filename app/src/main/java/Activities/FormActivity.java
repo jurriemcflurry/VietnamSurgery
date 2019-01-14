@@ -45,7 +45,6 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
 
         FrameLayout contentFrameLayout = findViewById(R.id.formbase_framelayout);
