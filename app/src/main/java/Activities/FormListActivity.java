@@ -5,9 +5,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.FrameLayout;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import WebInterfaces.FormWebInterface;
@@ -43,12 +44,11 @@ public class FormListActivity extends BaseActivity implements FormListAdapter.Fo
         formListRecycler = findViewById(R.id.form_list_recycler);
         formListRecycler.setAdapter(formListAdapter);
         formListRecycler.setLayoutManager(new LinearLayoutManager(this));
-//        postFormContentList();
     }
 
     protected void postFormContentList() {
         Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl(getString(R.string.testURL))
+                .baseUrl(getString(R.string.baseURL))
                 .addConverterFactory(GsonConverterFactory.create());
 
         Retrofit retrofit = builder.build();
@@ -58,12 +58,11 @@ public class FormListActivity extends BaseActivity implements FormListAdapter.Fo
         for (FormContent formContent : formContents) {
             FormContentUploadModel uploadModel = new FormContentUploadModel(formContent, this);
             Call<Void> call = client.postFormContent(uploadModel);
-            Helper.log(Helper.getGson().toJson(uploadModel));
             call.enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     try {
-                        Helper.log("onResponse() " + response.code() + " " + response.errorBody().string());
+                        Helper.log("onResponse() " + response.code());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -79,20 +78,37 @@ public class FormListActivity extends BaseActivity implements FormListAdapter.Fo
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.form_list_menu, menu);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public void onItemClick(FormContent formContent) {
         Form form = Storage.getFormById(formContent.getFormId(), this);
         Intent formOverviewIntent = new Intent(getApplicationContext(), FormOverviewActivity.class);
         formOverviewIntent.putExtra(Helper.FORM, form.getFormattedFormName());
         formOverviewIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentName());
-        startActivityForResult(formOverviewIntent, 3333);
+        startActivityForResult(formOverviewIntent, Helper.FORM_OVERVIEW_CODE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == 3333) {
-            if (resultCode == Helper.FINISH_CODE) {
+        if (requestCode == Helper.FORM_OVERVIEW_CODE) {
+            if (resultCode == Helper.CONTENT_SAVED_CODE) {
                 formListAdapter.setFormContentNames(Storage.getFormContentNames(this));
             }
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.upload_menu_item:
+                postFormContentList();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }

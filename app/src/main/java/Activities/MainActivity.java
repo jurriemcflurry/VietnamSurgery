@@ -124,4 +124,10 @@ public class MainActivity extends BaseActivity implements FormAdapter.FormListen
         toFormActivityIntent.putExtra(Helper.FORM, form.getFormattedFormName());
         startActivity(toFormActivityIntent);
     }
+
+    @Override
+    protected void onResume() {
+        formAdapter.updateAmounts();
+        super.onResume();
+    }
 }

@@ -11,10 +11,13 @@ public class Helper {
 
     public final static String FORM = "Form";
     public final static String FORM_CONTENT = "FormContent";
+    public final static String SECTION_INDEX = "SectionIndex";
 
     public final static int FORM_ACTIVITY_CODE = 100;
     public final static int CAMERA_ACTIVITY_CODE = 101;
-    public final static int FINISH_CODE = 200;
+    public final static int FORM_OVERVIEW_CODE = 102;
+    public final static int CONTENT_SAVED_CODE = 200;
+    public final static int UPDATE_CODE = 201;
 
     public static void log(String logEntry) {
         System.out.println("-------------- " + logEntry);

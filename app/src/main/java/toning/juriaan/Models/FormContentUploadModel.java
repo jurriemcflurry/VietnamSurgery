@@ -7,6 +7,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class FormContentUploadModel {
 
@@ -16,7 +17,7 @@ public class FormContentUploadModel {
 
     @Expose
     @SerializedName("FormContent")
-    private String formContent;
+    private ArrayList<FormContentField> formContent;
 
     @Expose
     @SerializedName("Images")
@@ -25,7 +26,10 @@ public class FormContentUploadModel {
     public FormContentUploadModel(FormContent formContent, Context context) {
         this.formId = formContent.getFormId();
         Gson gson = Helper.getGson();
-        this.formContent = gson.toJson(formContent.getFormContent()).toLowerCase();
+        this.formContent = new ArrayList<>();
+        for (Map.Entry<String, String> entry : formContent.getFormContent().entrySet()) {
+            this.formContent.add(new FormContentField(entry.getKey(), entry.getValue()));
+        }
         ArrayList<Image> imgs = Storage.getImagesForFormContent(formContent, context);
         images = new ArrayList<>();
         for (Image img : imgs) {

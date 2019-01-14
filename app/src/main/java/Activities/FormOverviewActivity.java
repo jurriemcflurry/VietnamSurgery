@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
@@ -12,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import toning.juriaan.Models.Field;
@@ -59,7 +57,6 @@ public class FormOverviewActivity extends FormBaseActivity {
         for (Section section : form.getFormTemplate().getSections()) {
             LinearLayout sectionView = getSectionView(section);
             sectionsView.addView(sectionView);
-            Helper.log(section.getSectionName());
         }
         sectionsView.addView(getImagesView());
     }
@@ -123,12 +120,13 @@ public class FormOverviewActivity extends FormBaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.next_menu_item:
-                setResult(Helper.FINISH_CODE);
+                setResult(Helper.CONTENT_SAVED_CODE);
+                formContent.updateDate();
                 finish();
                 return true;
             case R.id.delete_menu_item:
                 Storage.deleteFormContent(formContent, this);
-                setResult(Helper.FINISH_CODE);
+                setResult(Helper.CONTENT_SAVED_CODE);
                 finish();
                 return true;
             default:

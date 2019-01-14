@@ -1,11 +1,15 @@
 package toning.juriaan.Models;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,10 +30,25 @@ public class FormContent {
     @SerializedName("FormContentName")
     private String formContentName;
 
+    @Expose
+    @SerializedName("FormContentDate")
+    private Date formContentDate;
+
     public FormContent(int formId) {
         this.formId = formId;
         formContent = new HashMap<>();
         imageNames = new ArrayList<>();
+        updateDate();
+    }
+
+    public void updateDate() {
+        formContentDate = Calendar.getInstance().getTime();
+        Helper.log(formContentDate.toString());
+    }
+
+    public String getFormContentDate() {
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("MM/dd HH:mm");
+        return format.format(formContentDate);
     }
 
     public String getFormContentName() {

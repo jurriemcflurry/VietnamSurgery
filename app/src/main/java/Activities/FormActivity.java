@@ -58,7 +58,6 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
         sectionNameView = findViewById(R.id.section_name);
         fieldsView = findViewById(R.id.fields_linear_view);
 
-        sectionIndex = 0;
         updateView();
     }
 
@@ -66,6 +65,8 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
         Intent intent = getIntent();
         String formName = intent.getStringExtra(Helper.FORM);
         String formContentName = intent.getStringExtra(Helper.FORM_CONTENT);
+        sectionIndex = intent.getIntExtra(Helper.SECTION_INDEX, 0);
+
         form = Storage.getForm(formName, this);
         if (form == null) {
             finish();
@@ -75,6 +76,10 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
             formContent = Storage.getFormContent(formContentName, this);
         } else {
             formContent = new FormContent(form.getId());
+        }
+
+        if (sectionIndex >= form.getFormTemplate().getSections().length) {
+            sectionIndex = 0;
         }
     }
 
@@ -179,6 +184,7 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
 
     @Override
     public boolean onSupportNavigateUp(){
+        saveAnswers();
         if(sectionIndex > 0){
             sectionIndex--;
             updateView();
@@ -280,8 +286,10 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == Helper.FORM_ACTIVITY_CODE) {
-            if (resultCode == Helper.FINISH_CODE) {
+            if (resultCode == Helper.CONTENT_SAVED_CODE) {
                 finish();
+            } else if (resultCode == Helper.UPDATE_CODE) {
+                updateView();
             }
         }
     }

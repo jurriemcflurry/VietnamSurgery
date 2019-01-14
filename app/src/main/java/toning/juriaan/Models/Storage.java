@@ -1,8 +1,10 @@
 package toning.juriaan.Models;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.SparseIntArray;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,6 +14,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Storage {
@@ -43,6 +47,28 @@ public class Storage {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static Map<Integer, Integer> getAmountById(Context context) {
+        @SuppressLint("UseSparseArrays") Map<Integer, Integer> amountById = new HashMap<>();
+
+        ArrayList<Form> forms = getForms(context);
+        ArrayList<FormContent> formContents = getFormContents(context);
+
+        for (Form form : forms) {
+            amountById.put(form.getId(), 0);
+        }
+
+        for (FormContent formContent : formContents) {
+            for (Map.Entry<Integer, Integer> entry : amountById.entrySet()) {
+                if (entry.getKey() == formContent.getFormId()) {
+                    entry.setValue(entry.getValue() + 1);
+                    break;
+                }
+            }
+        }
+
+        return amountById;
     }
 
     private static String readFile(File file) {

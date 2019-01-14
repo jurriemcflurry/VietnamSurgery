@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,7 +14,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -104,8 +102,8 @@ public class CameraActivity extends FormBaseActivity {
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
         }
         else if (requestCode == Helper.CAMERA_ACTIVITY_CODE) {
-            if (resultCode == Helper.FINISH_CODE){
-                setResult(Helper.FINISH_CODE);
+            if (resultCode == Helper.CONTENT_SAVED_CODE){
+                setResult(Helper.CONTENT_SAVED_CODE);
                 finish();
             }
         }
@@ -169,6 +167,7 @@ public class CameraActivity extends FormBaseActivity {
 
     @Override
     public void onBackPressed(){
+        final CameraActivity cameraActivity = this;
         new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.exitTitle))
                 .setMessage(getString(R.string.imageLoss))
@@ -176,8 +175,13 @@ public class CameraActivity extends FormBaseActivity {
                 .setPositiveButton(getString(R.string.exitPhotos), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        CameraActivity.super.onBackPressed();
+                        cameraActivity.goBack();
                     }
                 }).create().show();
+    }
+
+    public void goBack() {
+        setResult(Helper.UPDATE_CODE);
+        super.onBackPressed();
     }
 }

@@ -18,11 +18,12 @@
     <string name="refresh">Refresh</string>
     <string name="next">Next</string>
     <string name="save">Save</string>
+    <string name="upload">Upload</string>
     <string name="baseURL">http://vietnamcloudapi.azurewebsites.net</string>
-    <string name="testURL">http://localhost:52053/</string>
     <string name="register">Register new user</string>
     <string name="confirmpassword">Confirm password</string>
     <string name="email">Email</string>
+    <string name="test">Test</string>
     <string name="toUserDetail">User to Userdetailpage</string>
     <string name="role">Role</string>
     <string name="name">Name</string>
@@ -52,4 +53,5 @@
     <string name="cancel">Cancel</string>
     <string name="badRequest">Bad Request</string>
     <string name="formContent">Filled in forms</string>
+    <string name="chooseForm">Choose a form:</string>
 </resources>

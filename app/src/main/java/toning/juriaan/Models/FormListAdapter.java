@@ -1,15 +1,13 @@
 package toning.juriaan.Models;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -46,8 +44,17 @@ public class FormListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         final FormContent formContent = Storage.getFormContent(formContentNames.get(i), context);
         FormListViewHolder vh = (FormListViewHolder) viewHolder;
-        String textViewText = "Name: " + formContent.getFormContentName();
-        vh.formContentNameTextView.setText(textViewText);
+
+        String name = "Name: " + formContent.getAnswer("name");
+        String birthyear = "Birthyear: " + formContent.getAnswer("birthyear");
+        String district = "District: " + formContent.getAnswer("district");
+        String dateTime = "Date: " + formContent.getFormContentDate();
+
+        vh.formListNameView.setText(name);
+        vh.formListBirthyearView.setText(birthyear);
+        vh.formListDistrictView.setText(district);
+        vh.formListDateView.setText(dateTime);
+
         vh.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,14 +70,31 @@ public class FormListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public static class FormListViewHolder extends RecyclerView.ViewHolder {
 
-        TextView formContentNameTextView;
+        TextView formListNameView;
+        TextView formListBirthyearView;
+        TextView formListDistrictView;
+        TextView formListDateView;
 
         public FormListViewHolder(@NonNull View itemView) {
             super(itemView);
-            formContentNameTextView = itemView.findViewById(R.id.form_content_name_view);
-            formContentNameTextView.setTextSize(15);
-            formContentNameTextView.setTextColor(Color.BLACK);
-            formContentNameTextView.setPadding(0, 10, 0, 0);
+            formListNameView = itemView.findViewById(R.id.form_list_name);
+            formListBirthyearView = itemView.findViewById(R.id.form_list_birthyear);
+            formListDistrictView = itemView.findViewById(R.id.form_list_district);
+            formListDateView = itemView.findViewById(R.id.form_list_date);
+
+            setupTextView(formListNameView);
+            setupTextView(formListBirthyearView);
+            setupTextView(formListDistrictView);
+            setupTextView(formListDateView);
+
+        }
+
+        private void setupTextView(TextView textView) {
+            textView.setTextSize(15);
+            textView.setTextColor(Color.BLACK);
+            textView.setPadding(0, 10, 0, 0);
+            textView.setSingleLine(true);
+            textView.setEllipsize(TextUtils.TruncateAt.END);
         }
     }
 }
