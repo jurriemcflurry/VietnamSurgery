@@ -472,6 +472,7 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
 
     @Override
     public void onItemClick(View view, String sheetName) {
+        sections = new ArrayList<>();
         readExcelFile(mWorkbook.getSheet(sheetName));
     }
 }
