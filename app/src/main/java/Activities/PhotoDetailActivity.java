@@ -10,15 +10,13 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import java.util.ArrayList;
-
+import toning.juriaan.Models.Helper;
 import toning.juriaan.Models.R;
 
 public class PhotoDetailActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
-        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
 
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
@@ -54,9 +52,8 @@ public class PhotoDetailActivity extends BaseActivity {
 
     @Override
     public void onBackPressed(){
-        int imageid = 9999;
-        getIntent().putExtra("imageid", imageid);
-        setResult(0, getIntent());
+        getIntent().putExtra("imageid", Helper.NO_IMAGE_DELETED);
+        setResult(Helper.DELETE_IMAGE, getIntent());
         finish();
     }
 }

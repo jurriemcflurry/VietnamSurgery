@@ -107,12 +107,12 @@ public class CameraActivity extends FormBaseActivity {
                 finish();
             }
         }
-        else if(requestCode == 0){
+        else if(requestCode == Helper.DELETE_IMAGE){
             //return from deletebutton from photodetailpage
             // remove image from contentlist and imageview from gridlayout
             int removeableObject = data.getIntExtra("imageid", 0);
 
-            if(removeableObject != 9999) {
+            if(removeableObject != Helper.NO_IMAGE_DELETED) {
                 deleteImage(removeableObject);
                 mImages.remove(removeableObject);
                 gridLayout1.removeViewAt(removeableObject);

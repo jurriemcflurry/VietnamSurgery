@@ -43,7 +43,6 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
 
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
@@ -106,16 +105,13 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
             AccessToken.access_token = response.body().token_type + " " + response.body().accesstoken;
             AccessToken.userName = response.body().userName;
             AccessToken.userrole = response.body().role;
-            TextView loginText = (TextView) findViewById(R.id.Logintext);
-            TextView loggedInUser = (TextView) findViewById(R.id.LoggedinUser);
-            loginText.setText(getString(R.string.logout));
-            loggedInUser.setText(AccessToken.userName);
 
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 public void run() {
                     // Actions to do after 1,5 seconds
                     Intent backToHome = new Intent(LoginActivity.this, MainActivity.class);
+                    backToHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(backToHome);
                 }
             }, 1500);

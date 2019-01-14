@@ -37,8 +37,6 @@ public class UsersActivity extends BaseActivity implements Callback<List<User>> 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        //thema moet altijd worden gezet naar AppTheme, zodat de Launcher van het splashscreen niet bij elke actie wordt getoond
-        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
 
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);

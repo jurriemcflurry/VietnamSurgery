@@ -41,7 +41,6 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
 
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
@@ -160,6 +159,7 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
                         @Override
                         public void onClick(View v) {
                             Intent backHome = new Intent(RegisterActivity.this, UsersActivity.class);
+                            backHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(backHome);
                         }
                     }).show();

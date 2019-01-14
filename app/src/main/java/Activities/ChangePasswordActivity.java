@@ -24,7 +24,6 @@ import toning.juriaan.Models.R;
 
 public class ChangePasswordActivity extends BaseActivity implements Callback<ChangePasswordResponse> {
 
-    private DrawerLayout mDrawerLayout;
     private TextInputEditText oldPassword;
     private TextInputEditText newPassword;
     private TextInputEditText confirmNewPassword;
@@ -34,7 +33,6 @@ public class ChangePasswordActivity extends BaseActivity implements Callback<Cha
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
 
 
@@ -91,6 +89,7 @@ public class ChangePasswordActivity extends BaseActivity implements Callback<Cha
                         @Override
                         public void onClick(View v) {
                             Intent toLogin = new Intent(ChangePasswordActivity.this, LoginActivity.class);
+                            toLogin.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(toLogin);
                         }
                     });
