@@ -6,14 +6,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
 
 import WebInterfaces.DetailClickListener;
-
-import static android.support.v4.content.ContextCompat.getDrawable;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> {
 
@@ -40,7 +37,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        return new MyViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.listitem_user, viewGroup, false));
+        return new MyViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_list_item_user, viewGroup, false));
     }
 
     @Override

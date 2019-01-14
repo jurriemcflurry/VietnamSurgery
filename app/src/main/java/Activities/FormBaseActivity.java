@@ -1,13 +1,11 @@
 package Activities;
 
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.widget.FrameLayout;
 
-import toning.juriaan.Models.Helper;
 import toning.juriaan.Models.R;
 
 public class FormBaseActivity extends AppCompatActivity {
@@ -16,7 +14,7 @@ public class FormBaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState){
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.formbase_activity);
+        setContentView(R.layout.activity_form_base);
 
         FrameLayout formbaseFrameLayout = findViewById(R.id.formbase_framelayout);
 

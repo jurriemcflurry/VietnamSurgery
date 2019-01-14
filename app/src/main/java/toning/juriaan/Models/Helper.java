@@ -1,6 +1,7 @@
 package toning.juriaan.Models;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -21,6 +22,12 @@ public class Helper {
 
     public static void log(String logEntry) {
         System.out.println("-------------- " + logEntry);
+    }
+
+    public static void log(String logEntry, Context context) {
+        logEntry = "-------------- " + logEntry;
+        System.out.println(logEntry);
+        Storage.makeLogEntry(logEntry + "\n", context);
     }
 
     public static void hideKeyboard(Activity activity) {

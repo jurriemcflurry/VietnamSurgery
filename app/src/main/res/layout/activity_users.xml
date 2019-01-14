@@ -34,7 +34,7 @@
                 android:paddingRight="16dp"
                 android:paddingTop="16dp"
                 tools:context="Activities.UsersActivity"
-                tools:listitem="@layout/listitem_user"/>
+                tools:listitem="@layout/layout_list_item_user"/>
 
         </LinearLayout>
 

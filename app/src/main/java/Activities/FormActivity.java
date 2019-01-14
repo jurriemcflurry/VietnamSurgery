@@ -131,8 +131,6 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
-        layoutParams.setMargins(10, 0, 0, 0);
-
         LinearLayout linearLayout = new LinearLayout(this);
         linearLayout.setLayoutParams(layoutParams);
         linearLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -184,15 +182,7 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
 
     @Override
     public boolean onSupportNavigateUp(){
-        saveAnswers();
-        if(sectionIndex > 0){
-            sectionIndex--;
-            updateView();
-        }
-        else{
-            onBackPressed();
-        }
-
+        previousSection();
         return true;
     }
 
@@ -238,10 +228,13 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
     }
 
     private void previousSection() {
-        //TODO if index is 0 goto formoverview
-        if (sectionIndex > 0) {
+        saveAnswers();
+        if(sectionIndex > 0){
             sectionIndex--;
             updateView();
+        }
+        else{
+            super.onBackPressed();
         }
     }
 
@@ -292,5 +285,10 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
                 updateView();
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        previousSection();
     }
 }
