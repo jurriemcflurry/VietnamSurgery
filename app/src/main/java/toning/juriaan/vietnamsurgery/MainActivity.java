@@ -264,7 +264,6 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
 
             XSSFWorkbook wb = sheet.getWorkbook();
             wb.close();
-            Toast.makeText(getApplicationContext(), "Finished reading", Toast.LENGTH_SHORT).show();
             Intent i = new Intent(this, FormActivity.class);
             i.putExtra("obj_form", form);
             startActivity(i);
