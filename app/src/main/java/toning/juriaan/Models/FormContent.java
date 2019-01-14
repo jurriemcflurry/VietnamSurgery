@@ -43,11 +43,10 @@ public class FormContent {
 
     public void updateDate() {
         formContentDate = Calendar.getInstance().getTime();
-        Helper.log(formContentDate.toString());
     }
 
     public String getFormContentDate() {
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("MM/dd HH:mm");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("dd/MM HH:mm");
         return format.format(formContentDate);
     }
 
@@ -69,7 +68,7 @@ public class FormContent {
 
         name = name.toLowerCase().replaceAll(" ", "_");
 
-        name += Storage.getFormContentAmount(name, context) + 1;
+        name += Storage.getFormContentNumber(name, context) + 1;
 
         this.formContentName = name;
     }

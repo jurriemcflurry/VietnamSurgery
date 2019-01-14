@@ -3,7 +3,6 @@ package toning.juriaan.Models;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +43,7 @@ public class FormAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         return new FormViewHolder(LayoutInflater
                 .from(viewGroup.getContext())
-                .inflate(R.layout.form_list_layout, viewGroup, false));
+                .inflate(R.layout.layout_form_list, viewGroup, false));
     }
 
     @Override

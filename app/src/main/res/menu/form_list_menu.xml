@@ -3,8 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/upload_menu_item"
-        android:title="@string/upload"
+        android:icon="@drawable/upload_icon_black"
+        android:title=""
         app:showAsAction="ifRoom"
-        android:fitsSystemWindows="true"/>
+        android:fitsSystemWindows="true"
+        />
 
 </menu>

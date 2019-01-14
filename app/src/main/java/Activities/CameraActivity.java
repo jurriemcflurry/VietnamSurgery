@@ -40,7 +40,7 @@ public class CameraActivity extends FormBaseActivity {
         super.onCreate(savedInstanceState);
 
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.formbase_framelayout);
-        getLayoutInflater().inflate(R.layout.camera_activity, contentFrameLayout);
+        getLayoutInflater().inflate(R.layout.activity_camera, contentFrameLayout);
         getSupportActionBar().setTitle(getString(R.string.camera_title));
 
         gridLayout1 = (GridLayout) findViewById(R.id.gridLayout1);
@@ -84,6 +84,7 @@ public class CameraActivity extends FormBaseActivity {
 
             String imageName = formContent.getFormContentName() + "_image_" + (formContent.getImageNames().size() + 1);
             formContent.addImageName(imageName);
+            Storage.saveFormContent(formContent, this);
             mImages.add(counter, new Image(imageName, mImageBitmap));
 
             imageView.setOnClickListener(new View.OnClickListener() {

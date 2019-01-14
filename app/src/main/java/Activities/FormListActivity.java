@@ -7,7 +7,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -29,23 +31,36 @@ public class FormListActivity extends BaseActivity implements FormListAdapter.Fo
 
     private RecyclerView formListRecycler;
     private FormListAdapter formListAdapter;
+    private Integer toUpload = 0;
+    private Integer uploadCount = 0;
+    private TextView uploadCounter;
+    private ArrayList<String> formContentNames;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
-        getLayoutInflater().inflate(R.layout.form_list_activity, contentFrameLayout);
+        getLayoutInflater().inflate(R.layout.activity_form_list, contentFrameLayout);
         getSupportActionBar().setTitle(getString(R.string.formContent));
 
+        uploadCounter = findViewById(R.id.upload_counter);
+        uploadCounter.setVisibility(View.INVISIBLE);
 
-        formListAdapter = new FormListAdapter(Storage.getFormContentNames(this), this);
+        formContentNames = Storage.getFormContentNames(this);
+        formListAdapter = new FormListAdapter(formContentNames, this);
         formListRecycler = findViewById(R.id.form_list_recycler);
         formListRecycler.setAdapter(formListAdapter);
         formListRecycler.setLayoutManager(new LinearLayoutManager(this));
     }
 
     protected void postFormContentList() {
+        toUpload = formContentNames.size();
+        updateUploadProgress();
+        uploadCounter.setVisibility(View.VISIBLE);
+
+
         Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl(getString(R.string.baseURL))
                 .addConverterFactory(GsonConverterFactory.create());
@@ -60,26 +75,46 @@ public class FormListActivity extends BaseActivity implements FormListAdapter.Fo
             call.enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
-                    try {
-                        Helper.log("onResponse() " + response.code());
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    Helper.log("onResponse() " + response.code());
+                    if (response.code() == 200) {
+                        incrementUploadCount();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<Void> call, Throwable t) {
-                    Helper.log("onFailure");
                     t.printStackTrace();
                 }
             });
         }
     }
 
+    private synchronized void incrementUploadCount() {
+        uploadCount++;
+        updateUploadProgress();
+        if (uploadCount >= toUpload) {
+            deleteAllFormContents();
+        }
+    }
+
+    private String getUploadProgressString() {
+        return String.format(getString(R.string.uploadCountText), uploadCount.toString(), toUpload.toString());
+    }
+
+    private void updateUploadProgress() {
+        uploadCounter.setText(getUploadProgressString());
+    }
+
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.form_list_menu, menu);
         return super.onPrepareOptionsMenu(menu);
+    }
+
+    private void deleteAllFormContents() {
+        if (Storage.deleteAllFormContent(this)) {
+            updateView();
+        }
     }
 
     @Override
@@ -95,9 +130,13 @@ public class FormListActivity extends BaseActivity implements FormListAdapter.Fo
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == Helper.FORM_OVERVIEW_CODE) {
             if (resultCode == Helper.CONTENT_SAVED_CODE) {
-                formListAdapter.setFormContentNames(Storage.getFormContentNames(this));
+                updateView();
             }
         }
+    }
+
+    private void updateView() {
+        formListAdapter.setFormContentNames(Storage.getFormContentNames(this));
     }
 
     @Override

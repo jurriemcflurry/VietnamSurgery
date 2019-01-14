@@ -37,7 +37,7 @@ public class FormListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         return new FormListViewHolder(LayoutInflater
                 .from(viewGroup.getContext())
-                .inflate(R.layout.form_content_list_layout, viewGroup, false));
+                .inflate(R.layout.layout_form_content_list, viewGroup, false));
     }
 
     @Override

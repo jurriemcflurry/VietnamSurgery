@@ -64,12 +64,10 @@ public class MainActivity extends BaseActivity implements FormAdapter.FormListen
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                Helper.log("postForm.onResponse() " + response.code());
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                Helper.log("postForm.onFailure()");
             }
         });
     }

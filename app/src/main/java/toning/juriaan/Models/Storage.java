@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.SparseIntArray;
 
 import java.io.BufferedReader;
@@ -13,10 +15,14 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Array;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class Storage {
 
@@ -56,14 +62,22 @@ public class Storage {
         ArrayList<FormContent> formContents = getFormContents(context);
 
         for (Form form : forms) {
-            amountById.put(form.getId(), 0);
+            try {
+                amountById.put(form.getId(), 0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         for (FormContent formContent : formContents) {
             for (Map.Entry<Integer, Integer> entry : amountById.entrySet()) {
-                if (entry.getKey() == formContent.getFormId()) {
-                    entry.setValue(entry.getValue() + 1);
-                    break;
+                try {
+                    if (entry.getKey() == formContent.getFormId()) {
+                        entry.setValue(entry.getValue() + 1);
+                        break;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -125,7 +139,7 @@ public class Storage {
     }
 
     public static boolean saveImage(Image image, Context context) {
-        Boolean succes = false;
+        Boolean success = false;
 
         try {
             FileOutputStream fos = new FileOutputStream(
@@ -136,25 +150,58 @@ public class Storage {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return succes;
+        return success;
     }
 
     public static boolean deleteFormContent(FormContent formContent, Context context) {
-        boolean succes = false;
+        boolean success = false;
         try {
             File file = getFormContentFile(formContent.getFormContentName(), context);
-            ArrayList<File> images = new ArrayList<>();
 
+            boolean failed = false;
+            Helper.log("deleteFormContent() imageNames.size(): " + formContent.getImageNames().size(), context);
             for (String imageName : formContent.getImageNames()) {
-                getImageFile(imageName, context).delete();
+                failed = !deleteImage(imageName, context);
+                Helper.log("delete formContent image " + imageName + ": " + !failed, context);
             }
 
-            file.delete();
-            succes = true;
+            success = file.delete() && !failed;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return succes;
+        return success;
+    }
+
+    public static boolean deleteImage(String imageName, Context context) {
+        boolean success = false;
+        try {
+            File imageFile = getImageFile(imageName, context);
+            success = imageFile.delete();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return success;
+    }
+
+    public static boolean deleteAllFormContent(Context context) {
+        boolean success = false;
+        try {
+            ArrayList<FormContent> formContentFiles = getFormContents(context);
+
+            boolean failed = false;
+            for (FormContent formContent : formContentFiles) {
+                failed = !deleteFormContent(formContent, context);
+                Helper.log("delete formContent " + formContent.getFormContentName() + ": " + !failed, context);
+            }
+
+            success = !failed;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Helper.log("Delete all success: " + success, context);
+
+        return success;
     }
 
     public static ArrayList<Image> getImagesForFormContent(FormContent formContent, Context context) {
@@ -224,29 +271,30 @@ public class Storage {
         return formContents;
     }
 
-    public static ArrayList<String> getFormContentNames(Context context){
+    public static ArrayList<String> getFormContentNames(Context context) {
         ArrayList<String> names = new ArrayList<>();
 
         try {
             File[] files = getFormContentDir(context).listFiles();
             for (File file : files) {
-                names.add(file.getName().split(".json")[0]);
+                if (file.length() > 0 && file.getName().contains(".json")) {
+                    names.add(file.getName().split(".json")[0]);
+                } else {
+                    Helper.log("File " + file.getName() + " too small", context);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        for(String name : names) {
-            Helper.log(name);
-        }
         return names;
     }
 
-    public static int getFormContentAmount(String formContentName, Context context) {
+    public static int getFormContentNumber(String formContentName, Context context) {
         try {
             File[] files = getFormContentDir(context).listFiles();
-            int counter = 0;
+            int highestNumber = 0;
             for (File file : files) {
+                if (file.length() <= 0) continue;
                 String name = file.getName();
                 name = name.split(".json")[0];
                 String[] splitName = name.split("_");
@@ -259,14 +307,34 @@ public class Storage {
                     }
                 }
                 if (same) {
-                    counter++;
+                    try {
+                        int fileNumber = Integer.parseInt(splitName[splitName.length - 1]);
+                        if (fileNumber >= highestNumber) {
+                            highestNumber = fileNumber + 1;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
-            return counter;
+            return highestNumber;
         } catch (Exception e) {
             e.printStackTrace();
             return -1;
+        }
+    }
+
+    public static void makeLogEntry(String entry, Context context) {
+        try {
+            File logFile = getLogFile(context);
+            OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(logFile, true));
+
+            writer.append(entry);
+            writer.flush();
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -284,6 +352,12 @@ public class Storage {
 
     private static File getImageFile(String imageName, Context context) throws Exception {
         File file = new File(getImagesDir(context), imageName + ".png");
+        checkFile(file);
+        return file;
+    }
+
+    private static File getLogFile(Context context) throws Exception {
+        File file = new File(getLogDir(context), "log.txt");
         checkFile(file);
         return file;
     }
@@ -316,6 +390,10 @@ public class Storage {
 
     private static File getImagesDir(Context context) throws Exception {
         return getDir("images", context);
+    }
+
+    private static File getLogDir(Context context) throws Exception {
+        return getDir("log", context);
     }
 
     private static File getDir(String dirName, Context context) throws Exception {
