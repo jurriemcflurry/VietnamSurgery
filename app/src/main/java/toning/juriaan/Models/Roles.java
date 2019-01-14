@@ -48,4 +48,13 @@ public class Roles implements Parcelable {
     public String getRoleId(){
         return this.roleId;
     }
+
+    public String getRole(){
+        if(this.roleId.equals("1")){
+            return "Admin";
+        }
+        else{
+            return "User";
+        }
+    }
 }

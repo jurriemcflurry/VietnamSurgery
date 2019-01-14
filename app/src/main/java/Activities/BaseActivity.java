@@ -1,11 +1,13 @@
 package Activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,6 +46,13 @@ public class BaseActivity extends AppCompatActivity {
         if(AccessToken.userName != null){
             loggedInUser.setText(AccessToken.userName);
             editProfile.setVisibility(View.VISIBLE);
+            editProfile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent editProfile = new Intent(getApplicationContext(), ChangePasswordActivity.class);
+                    startActivity(editProfile);
+                }
+            });
         }
         else{
             loggedInUser.setText(getString(R.string.not_logged_in));
@@ -75,14 +84,7 @@ public class BaseActivity extends AppCompatActivity {
             menu.add(getString(R.string.logout)).setIcon(R.drawable.logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
-                    AccessToken.access_token = null;
-                    AccessToken.userName = null;
-                    AccessToken.userrole = null;
-
-                    drawerLayout.closeDrawers();
-                    Intent refresh = new Intent(getApplicationContext(), MainActivity.class);
-                    refresh.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(refresh);
+                    logout();
                     return false;
                 }
             });
@@ -126,5 +128,16 @@ public class BaseActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void logout(){
+        AccessToken.access_token = null;
+        AccessToken.userName = null;
+        AccessToken.userrole = null;
+
+        drawerLayout.closeDrawers();
+        Intent refresh = new Intent(getApplicationContext(), MainActivity.class);
+        refresh.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(refresh);
     }
 }

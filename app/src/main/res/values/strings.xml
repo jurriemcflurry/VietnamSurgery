@@ -13,7 +13,6 @@
     <string name="users">Users</string>
     <string name="user">User</string>
     <string name="userOverview">User Overview</string>
-    <string name="userdetail">User Details</string>
     <string name="camera_title">Pictures</string>
     <string name="refresh">Refresh</string>
     <string name="next">Next</string>
@@ -24,12 +23,10 @@
     <string name="confirmpassword">Confirm password</string>
     <string name="email">Email</string>
     <string name="test">Test</string>
-    <string name="toUserDetail">User to Userdetailpage</string>
     <string name="role">Role</string>
     <string name="name">Name</string>
     <string name="district">District</string>
     <string name="birthYear">Birthyear</string>
-    <string name="roleOverview">(Role)</string>
     <string name="admin">Admin</string>
     <string name="oldPassword">Old Password</string>
     <string name="newPassword">New Password</string>
@@ -45,7 +42,7 @@
     <string name="wrongEmailFormat">Emailadress is incorrect</string>
     <string name="passwordFormatError">Password must contain at least one capital, one number, and one special character</string>
     <string name="noAccess">You have no access to this area. Login as admin to view this page</string>
-    <string name="userDeleted">User successfully deleted, returning to Userpage</string>
+    <string name="userDeleted">User successfully deleted!</string>
     <string name="imagesSaved">Images successfully saved!</string>
     <string name="exitTitle">Exit?</string>
     <string name="imageLoss">Going back without saving erases the pictures</string>
