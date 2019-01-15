@@ -19,6 +19,8 @@ public class Helper {
     public final static int FORM_OVERVIEW_CODE = 102;
     public final static int CONTENT_SAVED_CODE = 200;
     public final static int UPDATE_CODE = 201;
+    public final static int NO_IMAGE_DELETED = 9999;
+    public final static int DELETE_IMAGE = 0;
 
     public static void log(String logEntry) {
         System.out.println("-------------- " + logEntry);

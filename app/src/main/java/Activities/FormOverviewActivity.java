@@ -30,7 +30,6 @@ public class FormOverviewActivity extends FormBaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
 
         loadForms();

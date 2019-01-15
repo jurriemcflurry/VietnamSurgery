@@ -3,11 +3,14 @@ package Activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import ResponseModels.FormulierenResponse;
 import WebInterfaces.FormWebInterface;
@@ -30,11 +33,10 @@ public class MainActivity extends BaseActivity implements FormAdapter.FormListen
     private FormAdapter formAdapter;
     private ArrayList<Form> forms;
     private Context context = this;
+    private boolean doubleBackToExitPressedOnce = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //thema moet altijd worden gezet naar AppTheme, zodat de Launcher van het splashscreen niet bij elke actie wordt getoond
-        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
 
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
@@ -46,16 +48,6 @@ public class MainActivity extends BaseActivity implements FormAdapter.FormListen
         formAdapter = new FormAdapter(forms, this);
         recyclerView.setAdapter(formAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-
-//        Button OpenCamera = (Button) findViewById(R.id.ToCamera);
-//        OpenCamera.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent toCamera = new Intent(MainActivity.this, FormBaseActivity.class);
-//                startActivity(toCamera);
-//            }
-//        });
 
         getForms();
     }
@@ -127,5 +119,24 @@ public class MainActivity extends BaseActivity implements FormAdapter.FormListen
     protected void onResume() {
         formAdapter.updateAmounts();
         super.onResume();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
     }
 }

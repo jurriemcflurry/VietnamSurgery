@@ -39,7 +39,6 @@ public class FormListActivity extends BaseActivity implements FormListAdapter.Fo
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
 
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
