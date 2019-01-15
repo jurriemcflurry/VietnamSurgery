@@ -62,6 +62,7 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
             @Override
             public void onClick(View v) {
                 if(email.getText().toString().isEmpty() || password.getText().toString().isEmpty()){
+                    helper.hideKeyboard(LoginActivity.this);
                     Snackbar.make(findViewById(R.id.login_linear_layout), getString(R.string.emptyFields),Snackbar.LENGTH_LONG)
                             .show();
                     return;
