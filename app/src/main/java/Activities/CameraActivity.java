@@ -28,7 +28,6 @@ public class CameraActivity extends FormBaseActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private Bitmap mImageBitmap;
     private GridLayout gridLayout1;
-    private Button saveImagesButton;
     private FormContent formContent;
     private String formName;
     private ArrayList<Image> mImages = new ArrayList<>();
@@ -73,34 +72,7 @@ public class CameraActivity extends FormBaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            mImageBitmap = (Bitmap) extras.get("data");
-            ImageView imageView = new ImageView(CameraActivity.this);
-            imageView.setImageBitmap(mImageBitmap);
-
-            while(!mImages.isEmpty() && mImages.size() <= counter){
-                counter++;
-            }
-
-            String imageName = formContent.getFormContentName() + "_image_" + (formContent.getImageNames().size() + 1);
-            formContent.addImageName(imageName);
-            Storage.saveFormContent(formContent, this);
-            mImages.add(counter, new Image(imageName, mImageBitmap));
-
-            imageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent photoDetail = new Intent(CameraActivity.this, PhotoDetailActivity.class);
-                    photoDetail.putExtra("image", mImageBitmap);
-                    photoDetail.putExtra("id", counter);
-                    startActivityForResult(photoDetail, 0);
-                }
-            });
-            saveImage(mImages.get(counter));
-            gridLayout1.addView(imageView, counter);
-            imageView.getLayoutParams().height = (getDisplayMetrics().heightPixels)/2;
-            imageView.getLayoutParams().width = (getDisplayMetrics().widthPixels)/2;
-            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+            handleImage(data);
         }
         else if (requestCode == Helper.CAMERA_ACTIVITY_CODE) {
             if (resultCode == Helper.CONTENT_SAVED_CODE){
@@ -120,6 +92,37 @@ public class CameraActivity extends FormBaseActivity {
                 gridLayout1.requestLayout();
             }
         }
+    }
+
+    private void handleImage(Intent data) {
+        Bundle extras = data.getExtras();
+        mImageBitmap = (Bitmap) extras.get("data");
+        ImageView imageView = new ImageView(CameraActivity.this);
+        imageView.setImageBitmap(mImageBitmap);
+
+        while(!mImages.isEmpty() && mImages.size() <= counter){
+            counter++;
+        }
+
+        String imageName = formContent.getFormContentName() + "_image_" + (formContent.getImageNames().size() + 1);
+        formContent.addImageName(imageName);
+        Storage.saveFormContent(formContent, this);
+        mImages.add(counter, new Image(imageName, mImageBitmap));
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent photoDetail = new Intent(CameraActivity.this, PhotoDetailActivity.class);
+                photoDetail.putExtra("image", mImageBitmap);
+                photoDetail.putExtra("id", counter);
+                startActivityForResult(photoDetail, 0);
+            }
+        });
+        saveImage(mImages.get(counter));
+        gridLayout1.addView(imageView, counter);
+        imageView.getLayoutParams().height = (getDisplayMetrics().heightPixels)/2;
+        imageView.getLayoutParams().width = (getDisplayMetrics().widthPixels)/2;
+        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
     }
 
     private boolean deleteImage(int removeableObject){
