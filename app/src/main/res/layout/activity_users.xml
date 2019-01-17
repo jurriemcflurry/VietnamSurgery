@@ -3,28 +3,25 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="Activities.UsersActivity"
+    tools:context="activities.UsersActivity"
     android:id="@+id/users_frame_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/registerUser"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_margin="16dp"
-        android:src="@drawable/add"
-        android:scaleType="center"
-        app:backgroundTint="@color/colorPrimary"/>
-
         <LinearLayout
             android:id="@+id/users_linearlayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="?attr/actionBarSize"
             android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/usersNoInternet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/noInternet"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
 
             <android.support.v7.widget.RecyclerView android:id="@+id/users_list"
                 xmlns:android="http://schemas.android.com/apk/res/android"
@@ -36,7 +33,7 @@
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:paddingTop="16dp"
-                tools:context="Activities.UsersActivity"
+                tools:context="activities.UsersActivity"
                 tools:listitem="@layout/layout_list_item_user"/>
 
         </LinearLayout>

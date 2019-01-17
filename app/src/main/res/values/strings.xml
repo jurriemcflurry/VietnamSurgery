@@ -12,6 +12,7 @@
     <string name="forms">Forms</string>
     <string name="users">Users</string>
     <string name="user">User</string>
+    <string name="addUser">Add User</string>
     <string name="userOverview">User Overview</string>
     <string name="camera_title">Pictures</string>
     <string name="refresh">Refresh</string>
@@ -24,6 +25,7 @@
     <string name="email">Email</string>
     <string name="test">Test</string>
     <string name="role">Role</string>
+    <string name="roleLabel">Role:</string>
     <string name="name">Name</string>
     <string name="district">District</string>
     <string name="birthYear">Birthyear</string>
@@ -52,4 +54,5 @@
     <string name="formContent">Filled in forms</string>
     <string name="chooseForm">Choose a form:</string>
     <string name="uploadCountText">Upload progress: %s of %s.</string>
+    <string name="noInternet">No internet connection available. Please try again later</string>
 </resources>
