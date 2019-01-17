@@ -1,6 +1,9 @@
 package activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -45,7 +48,7 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
 
         FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_register, contentFrameLayout);
-        getSupportActionBar().setTitle(getString(R.string.register));
+        getSupportActionBar().setTitle(getString(R.string.addUser));
 
         setupLayout();
 
@@ -57,18 +60,18 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
         userWebInterface = retrofit.create(UserWebInterface.class);
     }
 
+    //method to define the layout elements
     private void setupLayout(){
         frameLayout = findViewById(R.id.register_frame_layout);
-        //get the spinner from the xml.
+
+        //set dropdown for userrole
         userrole = findViewById(R.id.spinner1);
-        //create a list of items for the spinner.
         String[] items = new String[]{getString(R.string.admin), getString(R.string.user)};
-        //create an adapter to describe how the items are displayed
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
-        //set the spinners adapter to the previously created one.
         userrole.setAdapter(adapter);
         userrole.setOnItemSelectedListener(this);
 
+        //define layout elements
         password = findViewById(R.id.registerpasswordEditText);
         confirmPassword = findViewById(R.id.registerconfirmpasswordEditText);
         email = findViewById(R.id.registeremailEditText);
@@ -85,12 +88,24 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
         });
     }
 
+    //make call to register new user, after checks
     public void registerNewUser(){
+
+        //check if there is a network available; if not, return
+        if(!isNetworkAvailable()){
+            pBar.setVisibility(View.INVISIBLE);
+            Snackbar.make(findViewById(R.id.register_linear_layout), getString(R.string.noInternet),Snackbar.LENGTH_LONG)
+                    .show();
+            return;
+        }
+
+        //get userinput
         String registerPassword = password.getText().toString();
         String registerConfirmPassword = confirmPassword.getText().toString();
         String registerEmail = email.getText().toString();
         String registerUserRole = userrole.getSelectedItem().toString();
 
+        //check if all fields are filled in
         if(registerPassword.isEmpty() || registerConfirmPassword.isEmpty() || registerEmail.isEmpty() || registerUserRole.isEmpty()){
             pBar.setVisibility(View.INVISIBLE);
             Snackbar.make(findViewById(R.id.register_linear_layout), getString(R.string.emptyFields),Snackbar.LENGTH_LONG)
@@ -98,6 +113,7 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
             return;
         }
 
+        //when all fields are filled in, check if filled in email is valid
         if(!isEmailValid(registerEmail)){
             pBar.setVisibility(View.INVISIBLE);
             Snackbar.make(findViewById(R.id.register_linear_layout), getString(R.string.wrongEmailFormat),Snackbar.LENGTH_LONG)
@@ -105,6 +121,7 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
             return;
         }
 
+        //when fields are filled in and email is in valid format, check if confirm password matches the first password
         if(!registerPassword.equals(registerConfirmPassword)){
             pBar.setVisibility(View.INVISIBLE);
             Snackbar.make(findViewById(R.id.register_linear_layout), getString(R.string.passwordError),Snackbar.LENGTH_LONG)
@@ -112,8 +129,10 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
             return;
         }
 
+        //when all checks are OK, place input into an object for the call
         RegisterObject registerObject = new RegisterObject(registerPassword, registerConfirmPassword, registerUserRole, registerEmail);
 
+        //make the call to register
         userWebInterface.register(registerObject).enqueue(this);
         helper.hideKeyboard(this);
     }
@@ -129,6 +148,7 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
         // Another interface callback
     }
 
+    //method to check if a string has te format of an emailadress
     public boolean isEmailValid(String email) {
         String regExpn =
                 "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@"
@@ -149,23 +169,32 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
             return false;
     }
 
+    //method to check if there is a network available
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+
     @Override
     public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
         pBar.setVisibility(View.INVISIBLE);
 
-        if(response.isSuccessful() && response.body() != null){
-            Snackbar.make(findViewById(R.id.register_linear_layout), getString(R.string.userOverview), Snackbar.LENGTH_INDEFINITE)
-                    .setAction(getString(R.string.homeCaps), new View.OnClickListener() {
+        if(response.isSuccessful() && response.body() != null){ //user successfully added
+            Snackbar.make(findViewById(R.id.register_linear_layout), getString(R.string.userAdded), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getString(R.string.userOverview), new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent backHome = new Intent(RegisterActivity.this, UsersActivity.class);
-                            backHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(backHome);
+                            Intent userOverview = new Intent(RegisterActivity.this, UsersActivity.class);
+                            userOverview.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(userOverview);
                         }
                     }).show();
         }
         else{
-            if(response.message().equals("Bad Request")){
+            if(response.message().equals("Bad Request")){ //one of the parameters was not correct, where only password has not been validated yet
                 Snackbar.make(findViewById(R.id.register_linear_layout), getString(R.string.passwordFormatError),Snackbar.LENGTH_LONG)
                         .show();
             }

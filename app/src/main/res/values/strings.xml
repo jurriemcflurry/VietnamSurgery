@@ -20,7 +20,6 @@
     <string name="save">Save</string>
     <string name="upload">Upload</string>
     <string name="baseURL">http://vietnamcloudapi.azurewebsites.net</string>
-    <string name="register">Register new user</string>
     <string name="confirmpassword">Confirm password</string>
     <string name="email">Email</string>
     <string name="test">Test</string>
