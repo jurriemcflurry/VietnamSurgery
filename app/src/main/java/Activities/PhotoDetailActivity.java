@@ -25,7 +25,7 @@ public class PhotoDetailActivity extends BaseActivity {
 
         Intent photo = getIntent();
         Bitmap image = (Bitmap) photo.getParcelableExtra("image");
-        final int imageId = photo.getIntExtra("id", 0);
+        final String imageName = photo.getStringExtra(Helper.IMAGE_NAME);
 
         ImageView imageView = findViewById(R.id.photo_detail_iv);
         imageView.setImageBitmap(image);
@@ -41,7 +41,7 @@ public class PhotoDetailActivity extends BaseActivity {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                getIntent().putExtra("imageid", imageId);
+                                getIntent().putExtra(Helper.IMAGE_NAME, imageName);
                                 setResult(0, getIntent());
                                 finish();
                             }

@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,17 +23,16 @@ import java.util.ArrayList;
 import toning.juriaan.Models.FormContent;
 import toning.juriaan.Models.Helper;
 import toning.juriaan.Models.Image;
+import toning.juriaan.Models.ImageAdapter;
 import toning.juriaan.Models.R;
 import toning.juriaan.Models.Storage;
 
 public class CameraActivity extends FormBaseActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
-    private Bitmap mImageBitmap;
-    private GridLayout gridLayout1;
+    private RecyclerView imageRecycler;
+    private ImageAdapter imageAdapter;
     private FormContent formContent;
     private String formName;
-    private ArrayList<Image> mImages = new ArrayList<>();
-    private int counter = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,12 +43,15 @@ public class CameraActivity extends FormBaseActivity {
         getLayoutInflater().inflate(R.layout.activity_camera, contentFrameLayout);
         getSupportActionBar().setTitle(getString(R.string.camera_title));
 
-        gridLayout1 = (GridLayout) findViewById(R.id.gridLayout1);
         loadIntent();
-        mImages = Storage.getImagesForFormContent(formContent, this);
+
+        imageRecycler = findViewById(R.id.image_recycler);
+        imageRecycler.setLayoutManager(new GridLayoutManager(this, 2));
+        imageAdapter = new ImageAdapter(this);
+        imageRecycler.setAdapter(imageAdapter);
 
         //onClick opent de native camera van de telefoon
-        FloatingActionButton photoButton = (FloatingActionButton) this.findViewById(R.id.fab_camera);
+        FloatingActionButton photoButton = this.findViewById(R.id.fab_camera);
         photoButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -58,6 +62,13 @@ public class CameraActivity extends FormBaseActivity {
                 }
             }
         });
+
+        updateView();
+    }
+
+    private void updateView() {
+        Helper.log("CameraActivity formContent.getImageNames().size() " + formContent.getImageNames().size(), this);
+        imageAdapter.setImageNames(formContent.getImageNames());
     }
 
     private void loadIntent() {
@@ -83,54 +94,42 @@ public class CameraActivity extends FormBaseActivity {
         else if(requestCode == Helper.DELETE_IMAGE){
             //return from deletebutton from photodetailpage
             // remove image from contentlist and imageview from gridlayout
-            int removeableObject = data.getIntExtra("imageid", 0);
+            String removeableObject = data.getStringExtra(Helper.IMAGE_NAME);
 
-            if(removeableObject != Helper.NO_IMAGE_DELETED) {
-                deleteImage(removeableObject);
-                mImages.remove(removeableObject);
-                gridLayout1.removeViewAt(removeableObject);
-                gridLayout1.requestLayout();
-            }
+//            if(removeableObject != Helper.NO_IMAGE_DELETED) {
+//                deleteImage(removeableObject);
+//                mImages.remove(removeableObject);
+//                gridLayout1.removeViewAt(removeableObject);
+//                gridLayout1.requestLayout();
+//            }
         }
     }
 
     private void handleImage(Intent data) {
         Bundle extras = data.getExtras();
-        mImageBitmap = (Bitmap) extras.get("data");
-        ImageView imageView = new ImageView(CameraActivity.this);
-        imageView.setImageBitmap(mImageBitmap);
-
-        while(!mImages.isEmpty() && mImages.size() <= counter){
-            counter++;
-        }
+        Bitmap mImageBitmap = (Bitmap) extras.get("data");
 
         String imageName = formContent.getFormContentName() + "_image_" + (formContent.getImageNames().size() + 1);
+        Image image = new Image(imageName, mImageBitmap);
         formContent.addImageName(imageName);
+        Storage.saveImage(image, this);
         Storage.saveFormContent(formContent, this);
-        mImages.add(counter, new Image(imageName, mImageBitmap));
+        updateView();
 
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent photoDetail = new Intent(CameraActivity.this, PhotoDetailActivity.class);
-                photoDetail.putExtra("image", mImageBitmap);
-                photoDetail.putExtra("id", counter);
-                startActivityForResult(photoDetail, 0);
-            }
-        });
-        saveImage(mImages.get(counter));
-        gridLayout1.addView(imageView, counter);
-        imageView.getLayoutParams().height = (getDisplayMetrics().heightPixels)/2;
-        imageView.getLayoutParams().width = (getDisplayMetrics().widthPixels)/2;
-        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-    }
-
-    private boolean deleteImage(int removeableObject){
-        String dir = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/images/";
-        String path = dir + mImages.get(removeableObject).getImageName() + ".png";
-        new File(path).delete();
-
-        return true;
+//        imageView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent photoDetail = new Intent(CameraActivity.this, PhotoDetailActivity.class);
+//                photoDetail.putExtra("image", mImageBitmap);
+//                photoDetail.putExtra("id", counter);
+//                startActivityForResult(photoDetail, 0);
+//            }
+//        });
+//        saveImage(mImages.get(counter));
+//        gridLayout1.addView(imageView, counter);
+//        imageView.getLayoutParams().height = (getDisplayMetrics().heightPixels)/2;
+//        imageView.getLayoutParams().width = (getDisplayMetrics().widthPixels)/2;
+//        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
     }
 
     //ophalen van de schermafmetingen
@@ -140,17 +139,11 @@ public class CameraActivity extends FormBaseActivity {
         return displayMetrics;
     }
 
-    //save images to device
-    private boolean saveImage(Image image){
-        Storage.saveImage(image, this);
-        return true;
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.next_menu_item:
-                if(mImages.isEmpty()){
+                if(formContent.getImageNames().isEmpty()){
                     new AlertDialog.Builder(this)
                             .setTitle("No images found")
                             .setMessage("You need to take at least one picture")

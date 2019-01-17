@@ -14,18 +14,25 @@
         android:src="@drawable/camera_icon"
         app:backgroundTint="@color/colorPrimary"/>
 
-    <ScrollView
-        android:id="@+id/scrollView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="?attr/actionBarSize">
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/image_recycler"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-        <GridLayout
-            android:id="@+id/gridLayout1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:columnCount="2">
-        </GridLayout>
-    </ScrollView>
+    </android.support.v7.widget.RecyclerView>
+
+    <!--<ScrollView-->
+        <!--android:id="@+id/scrollView1"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="?attr/actionBarSize">-->
+
+        <!--<GridLayout-->
+            <!--android:id="@+id/gridLayout1"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:columnCount="2">-->
+        <!--</GridLayout>-->
+    <!--</ScrollView>-->
 
 </android.support.design.widget.CoordinatorLayout>

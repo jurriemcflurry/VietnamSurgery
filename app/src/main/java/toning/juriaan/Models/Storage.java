@@ -205,9 +205,8 @@ public class Storage {
     }
 
     public static ArrayList<Image> getImagesForFormContent(FormContent formContent, Context context) {
-        ArrayList<Image> images = new ArrayList<>();
-
         try {
+            ArrayList<Image> images = new ArrayList<>();
             File imageDir = getImagesDir(context);
             File[] imageFiles = imageDir.listFiles();
 
@@ -216,11 +215,26 @@ public class Storage {
                     images.add(getImage(image, context));
                 }
             }
-
+            return images;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return images;
+        return null;
+    }
+
+    public static Image getImageByName(String imageName, Context context) {
+        try {
+            File[] imageFiles = getImagesDir(context).listFiles();
+
+            for (File imageFile : imageFiles) {
+                if (imageFile.getName().toLowerCase().contains(imageName.toLowerCase())) {
+                    return getImage(imageFile, context);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private static Image getImage(File imageFile, Context context) {
