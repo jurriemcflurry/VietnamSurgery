@@ -11,7 +11,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import toning.juriaan.Models.Helper;
+import toning.juriaan.Models.Image;
 import toning.juriaan.Models.R;
+import toning.juriaan.Models.Storage;
 
 public class PhotoDetailActivity extends BaseActivity {
 
@@ -23,12 +25,15 @@ public class PhotoDetailActivity extends BaseActivity {
         getLayoutInflater().inflate(R.layout.activity_photo_detail, contentFrameLayout);
         getSupportActionBar().setTitle(getString(R.string.camera_title));
 
-        Intent photo = getIntent();
-        Bitmap image = (Bitmap) photo.getParcelableExtra("image");
-        final String imageName = photo.getStringExtra(Helper.IMAGE_NAME);
+        Intent intent = getIntent();
+        final String imageName = intent.getStringExtra(Helper.IMAGE_NAME);
+        if (imageName == null) onBackPressed();
+
+        Image image = Storage.getImageByName(imageName, this);
+        if (image == null) onBackPressed();
 
         ImageView imageView = findViewById(R.id.photo_detail_iv);
-        imageView.setImageBitmap(image);
+        imageView.setImageBitmap(image.getBitmap());
 
         FloatingActionButton deleteButton = findViewById(R.id.delete_btn);
         deleteButton.setOnClickListener(new View.OnClickListener() {
@@ -42,7 +47,7 @@ public class PhotoDetailActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 getIntent().putExtra(Helper.IMAGE_NAME, imageName);
-                                setResult(0, getIntent());
+                                setResult(Helper.DELETE_IMAGE, getIntent());
                                 finish();
                             }
                         }).create().show();
@@ -52,7 +57,7 @@ public class PhotoDetailActivity extends BaseActivity {
 
     @Override
     public void onBackPressed(){
-        getIntent().putExtra("imageid", Helper.NO_IMAGE_DELETED);
+        getIntent().putExtra(Helper.IMAGE_NAME, Helper.NO_IMAGE_DELETED);
         setResult(Helper.DELETE_IMAGE, getIntent());
         finish();
     }

@@ -5,8 +5,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.provider.MediaStore;
-import android.util.SparseIntArray;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,15 +12,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.Array;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutionException;
 
 public class Storage {
 
@@ -143,7 +135,7 @@ public class Storage {
 
         try {
             FileOutputStream fos = new FileOutputStream(
-                    getImageFile(image.getImageName(), context));
+                    getImageFile(image.getNextImageName(), context));
 
             image.getBitmap().compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.close();
@@ -151,6 +143,15 @@ public class Storage {
             e.printStackTrace();
         }
         return success;
+    }
+
+    public static File getImageFileWithName(String fileName, Context context) {
+        try {
+            return getImageFile(fileName, context);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static boolean deleteFormContent(FormContent formContent, Context context) {
@@ -241,7 +242,7 @@ public class Storage {
         try {
             String imageName = imageFile.getName().split(".png")[0];
             String imagePath = imageFile.getAbsolutePath();
-            return new Image(imageName, BitmapFactory.decodeFile(imagePath));
+            return new Image(imageName, BitmapFactory.decodeFile(imagePath), Uri.fromFile(imageFile));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -303,7 +304,7 @@ public class Storage {
         return names;
     }
 
-    public static int getFormContentNumber(String formContentName, Context context) {
+    public static int getNextFormContentNumber(String formContentName, Context context) {
         try {
             File[] files = getFormContentDir(context).listFiles();
             int highestNumber = 0;
@@ -339,6 +340,19 @@ public class Storage {
         }
     }
 
+    public static int getNextImageNumber(FormContent formContent, Context context) {
+        ArrayList<Image> images = getImagesForFormContent(formContent, context);
+        int highestNumber = 0;
+        for (Image image : images) {
+            String[] splitImageName = image.getNextImageName().split("_");
+            int imageNumber = Integer.parseInt(splitImageName[splitImageName.length - 1]);
+            if (imageNumber >= highestNumber) {
+                highestNumber = imageNumber + 1;
+            }
+        }
+        return highestNumber;
+    }
+
     public static void makeLogEntry(String entry, Context context) {
         try {
             File logFile = getLogFile(context);
@@ -365,7 +379,10 @@ public class Storage {
     }
 
     private static File getImageFile(String imageName, Context context) throws Exception {
-        File file = new File(getImagesDir(context), imageName + ".png");
+        if (!imageName.contains(Helper.IMAGE_EXTENSION))
+            imageName += Helper.IMAGE_EXTENSION;
+
+        File file = new File(getImagesDir(context), imageName);
         checkFile(file);
         return file;
     }

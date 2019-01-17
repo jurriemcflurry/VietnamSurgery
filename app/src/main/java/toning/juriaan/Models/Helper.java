@@ -13,7 +13,8 @@ public class Helper {
     public final static String FORM = "Form";
     public final static String FORM_CONTENT = "FormContent";
     public final static String SECTION_INDEX = "SectionIndex";
-    public final static String IMAGE_NAME = "ImageId";
+    public final static String IMAGE_NAME = "ImageName";
+    public final static String IMAGE_EXTENSION = ".png";
 
     public final static int FORM_ACTIVITY_CODE = 100;
     public final static int CAMERA_ACTIVITY_CODE = 101;
@@ -21,7 +22,7 @@ public class Helper {
     public final static int CONTENT_SAVED_CODE = 200;
     public final static int UPDATE_CODE = 201;
     public final static int NO_IMAGE_DELETED = 9999;
-    public final static int DELETE_IMAGE = 0;
+    public final static int DELETE_IMAGE = 202;
 
     public static void log(String logEntry) {
         System.out.println("-------------- " + logEntry);
