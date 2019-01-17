@@ -2,7 +2,6 @@ package activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -11,7 +10,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import toning.juriaan.models.Helper;
+import toning.juriaan.models.Image;
 import toning.juriaan.models.R;
+import toning.juriaan.models.Storage;
 
 public class PhotoDetailActivity extends BaseActivity {
 
@@ -23,12 +24,15 @@ public class PhotoDetailActivity extends BaseActivity {
         getLayoutInflater().inflate(R.layout.activity_photo_detail, contentFrameLayout);
         getSupportActionBar().setTitle(getString(R.string.camera_title));
 
-        Intent photo = getIntent();
-        Bitmap image = (Bitmap) photo.getParcelableExtra("image");
-        final int imageId = photo.getIntExtra("id", 0);
+        Intent intent = getIntent();
+        final String imageName = intent.getStringExtra(Helper.IMAGE_NAME);
+        if (imageName == null) onBackPressed();
+
+        Image image = Storage.getImageByName(imageName, this);
+        if (image == null) onBackPressed();
 
         ImageView imageView = findViewById(R.id.photo_detail_iv);
-        imageView.setImageBitmap(image);
+        imageView.setImageBitmap(image.getBitmap());
 
         FloatingActionButton deleteButton = findViewById(R.id.delete_btn);
         deleteButton.setOnClickListener(new View.OnClickListener() {
@@ -41,8 +45,8 @@ public class PhotoDetailActivity extends BaseActivity {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                getIntent().putExtra("imageid", imageId);
-                                setResult(0, getIntent());
+                                getIntent().putExtra(Helper.IMAGE_NAME, imageName);
+                                setResult(Helper.DELETE_IMAGE, getIntent());
                                 finish();
                             }
                         }).create().show();
@@ -52,7 +56,7 @@ public class PhotoDetailActivity extends BaseActivity {
 
     @Override
     public void onBackPressed(){
-        getIntent().putExtra("imageid", Helper.NO_IMAGE_DELETED);
+        getIntent().putExtra(Helper.IMAGE_NAME, Helper.NO_IMAGE_DELETED);
         setResult(Helper.DELETE_IMAGE, getIntent());
         finish();
     }

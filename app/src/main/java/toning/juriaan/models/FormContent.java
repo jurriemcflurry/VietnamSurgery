@@ -68,9 +68,22 @@ public class FormContent {
 
         name = name.toLowerCase().replaceAll(" ", "_");
 
-        name += Storage.getFormContentNumber(name, context) + 1;
+        name += Storage.getNextFormContentNumber(name, context);
 
         this.formContentName = name;
+    }
+
+    public boolean isValidInfo() {
+        String name = getAnswer("name");
+        String district = getAnswer("district");
+        String birthyear = getAnswer("birthyear");
+        String birthYear=  getAnswer("birth year");
+
+        return (!name.isEmpty() && !district.isEmpty() && (!birthYear.isEmpty() || !birthyear.isEmpty()));
+    }
+
+    public boolean isValid() {
+        return imageNames.size() > 0 && isValidInfo();
     }
 
     public int getFormId() {
@@ -122,8 +135,8 @@ public class FormContent {
         this.imageNames = imageNames;
     }
 
-    public void addImageName(String imagePath) {
-        imageNames.add(imagePath);
+    public void addImageName(String imageName) {
+        imageNames.add(imageName);
     }
 
     public String toJson() {

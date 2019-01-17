@@ -34,6 +34,7 @@ import toning.juriaan.models.Storage;
 @SuppressLint("Registered")
 public class FormActivity extends FormBaseActivity implements AdapterView.OnItemSelectedListener {
 
+    private boolean isNew = true;
     private Toolbar toolbar;
     private TextView sectionNameView;
     private LinearLayout fieldsView;
@@ -186,22 +187,32 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
     }
 
     private void nextSection() {
-        saveAnswers();
-        if (sectionIndex < form.getFormTemplate().getSections().length - 1) {
-            sectionIndex++;
-            updateView();
-        } else if (sectionIndex >= form.getFormTemplate().getSections().length - 1) {
-            storeFormContent();
+        if (validateSection()) {
+            saveAnswers();
+            if (sectionIndex < form.getFormTemplate().getSections().length - 1) {
+                sectionIndex++;
+                updateView();
+            } else if (sectionIndex >= form.getFormTemplate().getSections().length - 1) {
+                storeFormContent();
 
-            Intent cameraIntent = new Intent(getApplicationContext(), CameraActivity.class);
-            cameraIntent.putExtra(Helper.FORM, form.getFormattedFormName());
-            cameraIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentName());
-            startActivityForResult(cameraIntent, Helper.FORM_ACTIVITY_CODE);
+                Intent cameraIntent = new Intent(getApplicationContext(), CameraActivity.class);
+                cameraIntent.putExtra(Helper.FORM, form.getFormattedFormName());
+                cameraIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentName());
+                startActivityForResult(cameraIntent, Helper.FORM_ACTIVITY_CODE);
+            }
         }
     }
 
+    private boolean validateSection() {
+        return true;
+    }
+
     private void storeFormContent() {
-        formContent.setFormContentName(getFieldNames(), this);
+        if (isNew) {
+            formContent.setFormContentName(getFieldNames(), this);
+            isNew = false;
+        }
+
         Storage.saveFormContent(formContent, this);
     }
 

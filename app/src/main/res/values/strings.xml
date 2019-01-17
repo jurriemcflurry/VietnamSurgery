@@ -54,4 +54,6 @@
     <string name="chooseForm">Choose a form:</string>
     <string name="uploadCountText">Upload progress: %s of %s.</string>
     <string name="noInternet">No internet connection available. Please try again later</string>
+    <string name="formName">Form template name:</string>
+    <string name="formTemplateUse"># Used</string>
 </resources>

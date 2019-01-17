@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    android:id="@+id/form_frame_layout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/form_frame_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:id="@+id/section_view"
@@ -14,10 +17,10 @@
 
             <TextView
                 android:id="@+id/section_name"
-                android:textSize="20sp"
-                android:textColor="#000"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:textColor="#000"
+                android:textSize="20sp" />
 
             <LinearLayout
                 android:id="@+id/fields_linear_view"
@@ -28,4 +31,5 @@
             </LinearLayout>
 
         </LinearLayout>
+    </ScrollView>
 </FrameLayout>
