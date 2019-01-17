@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="toning.juriaan.Models">
+    package="toning.juriaan.models">
 
     <application
         android:allowBackup="true"
@@ -10,28 +10,28 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Launcher"
         android:usesCleartextTraffic="true">
-        <activity android:name="Activities.MainActivity" android:exported="true">
+        <activity android:name="activities.MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="Activities.CameraActivity">
+        <activity android:name="activities.CameraActivity">
             <intent-filter>
                 <action android:name="android.media.action.IMAGE_CAPTURE"></action>
             </intent-filter>
         </activity>
-        <activity android:name="Activities.FormActivity"></activity>
-        <activity android:name="Activities.LoginActivity"></activity>
-        <activity android:name="Activities.UsersActivity"></activity>
-        <activity android:name="Activities.RegisterActivity"></activity>
-        <activity android:name="Activities.ChangePasswordActivity"></activity>
-        <activity android:name="Activities.BaseActivity"></activity>
-        <activity android:name="Activities.PhotoDetailActivity"></activity>
-        <activity android:name="Activities.FormOverviewActivity"></activity>
-        <activity android:name="Activities.FormBaseActivity"></activity>
-        <activity android:name="Activities.FormListActivity"></activity>
+        <activity android:name="activities.FormActivity"></activity>
+        <activity android:name="activities.LoginActivity"></activity>
+        <activity android:name="activities.UsersActivity"></activity>
+        <activity android:name="activities.RegisterActivity"></activity>
+        <activity android:name="activities.ChangePasswordActivity"></activity>
+        <activity android:name="activities.BaseActivity"></activity>
+        <activity android:name="activities.PhotoDetailActivity"></activity>
+        <activity android:name="activities.FormOverviewActivity"></activity>
+        <activity android:name="activities.FormBaseActivity"></activity>
+        <activity android:name="activities.FormListActivity"></activity>
     </application>
 
 
