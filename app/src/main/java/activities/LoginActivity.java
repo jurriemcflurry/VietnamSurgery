@@ -106,13 +106,13 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
 
     @Override
     public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-        //sla token op
-        //set headertexts goed
-        //terug naar home
         helper.hideKeyboard(this);
         pBar.setVisibility(View.INVISIBLE);
 
         if(response.isSuccessful() && response.body() != null){
+            //sla token op
+            //set headertexts goed
+            //terug naar home
             Snackbar.make(findViewById(R.id.login_linear_layout),getString(R.string.loggedIn), Snackbar.LENGTH_INDEFINITE)
                     .show();
             AccessToken.access_token = response.body().token_type + " " + response.body().accesstoken;
