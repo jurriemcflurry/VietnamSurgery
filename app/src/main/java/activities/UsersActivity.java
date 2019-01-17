@@ -41,7 +41,7 @@ public class UsersActivity extends BaseActivity implements Callback<List<User>> 
     private UserAdapter mListAdapter;
     private LinearLayoutManager mLinearLayoutManager;
     private ProgressBar pBar;
-    private TextView usersNoInternet;
+    private TextView usersNoSuccess;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,7 +52,7 @@ public class UsersActivity extends BaseActivity implements Callback<List<User>> 
         getSupportActionBar().setTitle(getString(R.string.usersTitle));
 
         pBar = findViewById(R.id.pBar_users);
-        usersNoInternet = findViewById(R.id.usersNoInternet);
+        usersNoSuccess = findViewById(R.id.usersNoSuccess);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(getString(R.string.baseURL))
@@ -98,10 +98,10 @@ public class UsersActivity extends BaseActivity implements Callback<List<User>> 
 
         if(!isNetworkAvailable()){
             pBar.setVisibility(View.INVISIBLE);
-            usersNoInternet.setVisibility(View.VISIBLE);
+            usersNoSuccess.setVisibility(View.VISIBLE);
         }
         else{
-            usersNoInternet.setVisibility(View.GONE);
+            usersNoSuccess.setVisibility(View.GONE);
             getUsers();
         }
     }
@@ -185,6 +185,8 @@ public class UsersActivity extends BaseActivity implements Callback<List<User>> 
 
     @Override
     public void onFailure(Call<List<User>> call, Throwable t) {
-        t.printStackTrace();
+        pBar.setVisibility(View.INVISIBLE);
+        usersNoSuccess.setText(getString(R.string.usersTryAgain));
+        usersNoSuccess.setVisibility(View.VISIBLE);
     }
 }

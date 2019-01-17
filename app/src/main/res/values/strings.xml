@@ -90,6 +90,7 @@
 
     <!-- UsersActivity -->
     <string name="usersNoInternet">No internet connection available. Please try again later</string>
+    <string name="usersTryAgain">Users could not be loaded right now. Please try again later</string>
     <string name="usersTitle">Users</string>
     <string name="noAccess">You have no access to this area. Login as admin to view this page</string>
     <string name="userDeleted">User successfully deleted!</string>
@@ -99,6 +100,7 @@
     <string name="deleteUserMessage">Are you sure you want to delete user </string>
     <string name="cancelDelete">Cancel</string>
     <string name="confirmDelete">Delete</string>
+
 
     <!-- Overig -->
     <string name="refresh">Refresh</string>
