@@ -58,50 +58,25 @@ public class BaseActivity extends AppCompatActivity {
         }
 
         if(AccessToken.userrole != null && AccessToken.userrole.equals(getString(R.string.BaseAdminCheck))){
-            menu.add(getString(R.string.users)).setIcon(R.drawable.user_list_menu_icon_black).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    Intent naarUsers = new Intent(getApplicationContext(), UsersActivity.class);
-                    startActivity(naarUsers);
-                    return false;
-                }
-            });
+            addMenuItemsAdmin(menu);
         }
 
         if(AccessToken.access_token == null){
-            menu.add(getString(R.string.login)).setIcon(R.drawable.login).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
-                    startActivity(loginIntent);
-                    return false;
-                }
-            });
+            addLoginButton(menu);
         }
         else{
-            menu.add(getString(R.string.logout)).setIcon(R.drawable.logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    logout();
-                    return false;
-                }
-            });
+            addLogoutButton(menu);
         }
 
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        // set item as selected to persist highlight
                         menuItem.setChecked(true);
-                        // close drawer when item is tapped
                         drawerLayout.closeDrawers();
 
-                        // Add code here to update the UI based on the item selected
-                        // For example, swap UI fragments here
-
                         switch(menuItem.getItemId()){
-                            case R.id.nav_1: //Bovenste Item
+                            case R.id.nav_1: //Top item
                                 Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
                                 homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(homeIntent);
@@ -126,6 +101,47 @@ public class BaseActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void addMenuItemsAdmin(Menu menu){
+        menu.add(getString(R.string.createNewForm)).setIcon(R.drawable.enter_form_menu_icon_black).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent createForm = new Intent(getApplicationContext(), CreateFormActivity.class);
+                startActivity(createForm);
+                return false;
+            }
+        });
+
+        menu.add(getString(R.string.users)).setIcon(R.drawable.user_list_menu_icon_black).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent naarUsers = new Intent(getApplicationContext(), UsersActivity.class);
+                startActivity(naarUsers);
+                return false;
+            }
+        });
+    }
+
+    private void addLoginButton(Menu menu){
+        menu.add(getString(R.string.login)).setIcon(R.drawable.login).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(loginIntent);
+                return false;
+            }
+        });
+    }
+
+    private void addLogoutButton(Menu menu){
+        menu.add(getString(R.string.logout)).setIcon(R.drawable.logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                logout();
+                return false;
+            }
+        });
     }
 
     private void logout(){

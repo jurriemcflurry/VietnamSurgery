@@ -13,6 +13,7 @@
     <string name="next">Next</string>
     <string name="delete">Delete</string>
     <string name="addUser">Add User</string>
+    <string name="createNewForm">Create New Form</string>
 
     <!-- BaseActivity -->
     <string name="BaseAdminCheck">Admin</string>
@@ -101,6 +102,8 @@
     <string name="cancelDelete">Cancel</string>
     <string name="confirmDelete">Delete</string>
 
+    <!-- CreateFormActivity -->
+    <string name="createFormTitle">Create New Form</string>
 
     <!-- Overig -->
     <string name="refresh">Refresh</string>

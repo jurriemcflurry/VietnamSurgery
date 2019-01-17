@@ -32,6 +32,7 @@
         <activity android:name="activities.FormOverviewActivity"></activity>
         <activity android:name="activities.FormBaseActivity"></activity>
         <activity android:name="activities.FormListActivity"></activity>
+        <activity android:name="activities.CreateFormActivity"></activity>
     </application>
 
 
