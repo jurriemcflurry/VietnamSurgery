@@ -57,14 +57,14 @@ public class BaseActivity extends AppCompatActivity {
             editProfile.setVisibility(View.GONE);
         }
 
-        if(AccessToken.userrole != null && AccessToken.userrole.equals(getString(R.string.BaseAdminCheck))){
-            addMenuItemsAdmin(menu);
-        }
-
         if(AccessToken.access_token == null){
             addLoginButton(menu);
         }
         else{
+            if(AccessToken.userrole.equals(getString(R.string.BaseAdminCheck))){
+                addMenuItemsAdmin(menu);
+            }
+
             addLogoutButton(menu);
         }
 
