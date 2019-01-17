@@ -39,7 +39,7 @@ public class MainActivity extends BaseActivity implements FormAdapter.FormListen
 
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_main, contentFrameLayout);
-        getSupportActionBar().setTitle(getString(R.string.home));
+        getSupportActionBar().setTitle(getString(R.string.homeTitle));
 
         forms = new ArrayList<>();
         recyclerView = findViewById(R.id.form_recycler);
@@ -127,7 +127,7 @@ public class MainActivity extends BaseActivity implements FormAdapter.FormListen
         }
 
         this.doubleBackToExitPressedOnce = true;
-        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.exit), Toast.LENGTH_SHORT).show();
 
         new Handler().postDelayed(new Runnable() {
 

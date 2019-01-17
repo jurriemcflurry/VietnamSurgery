@@ -48,7 +48,7 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
 
         FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_register, contentFrameLayout);
-        getSupportActionBar().setTitle(getString(R.string.addUser));
+        getSupportActionBar().setTitle(getString(R.string.addUserTitle));
 
         setupLayout();
 
@@ -66,7 +66,7 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
 
         //set dropdown for userrole
         userrole = findViewById(R.id.spinner1);
-        String[] items = new String[]{getString(R.string.admin), getString(R.string.user)};
+        String[] items = new String[]{getString(R.string.adminRegisterDropdown), getString(R.string.userRegisterDropdown)};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
         userrole.setAdapter(adapter);
         userrole.setOnItemSelectedListener(this);
@@ -90,11 +90,12 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
 
     //make call to register new user, after checks
     public void registerNewUser(){
+        helper.hideKeyboard(this);
 
         //check if there is a network available; if not, return
         if(!isNetworkAvailable()){
             pBar.setVisibility(View.INVISIBLE);
-            Snackbar.make(findViewById(R.id.register_linear_layout), getString(R.string.noInternet),Snackbar.LENGTH_LONG)
+            Snackbar.make(findViewById(R.id.register_linear_layout), getString(R.string.registerNoInternet),Snackbar.LENGTH_LONG)
                     .show();
             return;
         }
@@ -108,7 +109,7 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
         //check if all fields are filled in
         if(registerPassword.isEmpty() || registerConfirmPassword.isEmpty() || registerEmail.isEmpty() || registerUserRole.isEmpty()){
             pBar.setVisibility(View.INVISIBLE);
-            Snackbar.make(findViewById(R.id.register_linear_layout), getString(R.string.emptyFields),Snackbar.LENGTH_LONG)
+            Snackbar.make(findViewById(R.id.register_linear_layout), getString(R.string.registerEmptyFields),Snackbar.LENGTH_LONG)
                     .show();
             return;
         }
@@ -134,7 +135,6 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
 
         //make the call to register
         userWebInterface.register(registerObject).enqueue(this);
-        helper.hideKeyboard(this);
     }
 
     public void onItemSelected(AdapterView<?> parent, View view,
@@ -180,6 +180,7 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
 
     @Override
     public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
+        helper.hideKeyboard(this);
         pBar.setVisibility(View.INVISIBLE);
 
         if(response.isSuccessful() && response.body() != null){ //user successfully added
@@ -194,7 +195,7 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
                     }).show();
         }
         else{
-            if(response.message().equals("Bad Request")){ //one of the parameters was not correct, where only password has not been validated yet
+            if(response.message().equals(getString(R.string.badRequest))){ //one of the parameters was not correct, where only password has not been validated yet
                 Snackbar.make(findViewById(R.id.register_linear_layout), getString(R.string.passwordFormatError),Snackbar.LENGTH_LONG)
                         .show();
             }
@@ -207,6 +208,9 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
 
     @Override
     public void onFailure(Call<RegisterResponse> call, Throwable t) {
-        t.printStackTrace();
+        helper.hideKeyboard(this);
+        pBar.setVisibility(View.INVISIBLE);
+        Snackbar.make(findViewById(R.id.register_linear_layout), getString(R.string.userNotAdded),Snackbar.LENGTH_LONG)
+                .show();
     }
 }

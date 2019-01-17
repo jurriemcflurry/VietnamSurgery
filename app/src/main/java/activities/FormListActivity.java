@@ -43,7 +43,7 @@ public class FormListActivity extends BaseActivity implements FormListAdapter.Fo
 
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_form_list, contentFrameLayout);
-        getSupportActionBar().setTitle(getString(R.string.formContent));
+        getSupportActionBar().setTitle(getString(R.string.formContentFormList));
 
         uploadCounter = findViewById(R.id.upload_counter);
         uploadCounter.setVisibility(View.INVISIBLE);

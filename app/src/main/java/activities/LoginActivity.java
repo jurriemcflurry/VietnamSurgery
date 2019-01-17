@@ -39,9 +39,9 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
+        FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_login, contentFrameLayout);
-        getSupportActionBar().setTitle(getString(R.string.login));
+        getSupportActionBar().setTitle(getString(R.string.loginTitle));
 
         setupLayoutControls();
 
@@ -68,7 +68,7 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
                 //check of er internetconnectie is
                 if(!isNetworkAvailable()){
                     helper.hideKeyboard(LoginActivity.this);
-                    Snackbar.make(findViewById(R.id.login_linear_layout), getString(R.string.noInternet),Snackbar.LENGTH_LONG)
+                    Snackbar.make(findViewById(R.id.login_linear_layout), getString(R.string.loginNoInternet),Snackbar.LENGTH_LONG)
                             .show();
                     return;
                 }
@@ -76,7 +76,7 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
                 //check of velden zijn ingevuld
                 if(email.getText().toString().isEmpty() || password.getText().toString().isEmpty()){
                     helper.hideKeyboard(LoginActivity.this);
-                    Snackbar.make(findViewById(R.id.login_linear_layout), getString(R.string.emptyFields),Snackbar.LENGTH_LONG)
+                    Snackbar.make(findViewById(R.id.login_linear_layout), getString(R.string.loginEmptyFields),Snackbar.LENGTH_LONG)
                             .show();
                     return;
                 }
@@ -92,7 +92,7 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
 
         String username = email.getText().toString();
         String passWord = password.getText().toString();
-        String granttype = getString(R.string.password2);
+        String granttype = getString(R.string.granttypePassword);
 
         userWebInterface.login(username, passWord, granttype).enqueue(this);
     }
@@ -143,7 +143,10 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
 
     @Override
     public void onFailure(Call<LoginResponse> call, Throwable t) {
-        t.printStackTrace();
+        helper.hideKeyboard(this);
+        pBar.setVisibility(View.INVISIBLE);
+        Snackbar.make(findViewById(R.id.login_linear_layout),getString(R.string.notLoggedIn), Snackbar.LENGTH_INDEFINITE)
+                .show();
     }
 }
 

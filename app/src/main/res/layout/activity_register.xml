@@ -27,7 +27,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:inputType="textEmailAddress"
-                    android:hint="@string/email"/>
+                    android:hint="@string/emailRegisterHint"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -42,7 +42,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:inputType="textPassword"
-                    android:hint="@string/password"/>
+                    android:hint="@string/passwordRegisterHint"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -91,7 +91,7 @@
                 android:layout_marginTop="30dp"
                 android:background="@drawable/mybutton"
                 android:textColor="@color/white"
-                android:text="@string/addUser"
+                android:text="@string/addUserButton"
                 android:layout_gravity="center_horizontal"/>
         </LinearLayout>
 

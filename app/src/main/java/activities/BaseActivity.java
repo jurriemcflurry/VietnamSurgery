@@ -57,7 +57,7 @@ public class BaseActivity extends AppCompatActivity {
             editProfile.setVisibility(View.GONE);
         }
 
-        if(AccessToken.userrole != null && AccessToken.userrole.equals(getString(R.string.admin))){
+        if(AccessToken.userrole != null && AccessToken.userrole.equals(getString(R.string.BaseAdminCheck))){
             menu.add(getString(R.string.users)).setIcon(R.drawable.user_list_menu_icon_black).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {

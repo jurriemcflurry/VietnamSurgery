@@ -1,59 +1,108 @@
 <resources>
     <string name="app_name">VietnamSurgery</string>
-    <string name="username">Username</string>
-    <string name="password">Password</string>
-    <string name="password2">password</string>
-    <string name="login">Login</string>
-    <string name="loginCaps">LOGIN</string>
-    <string name="home">Home</string>
-    <string name="homeCaps">HOME</string>
-    <string name="not_logged_in">Not logged in</string>
-    <string name="logout">Log out</string>
-    <string name="forms">Forms</string>
-    <string name="users">Users</string>
-    <string name="user">User</string>
-    <string name="addUser">Add User</string>
-    <string name="userOverview">User Overview</string>
-    <string name="camera_title">Pictures</string>
-    <string name="refresh">Refresh</string>
-    <string name="next">Next</string>
-    <string name="save">Save</string>
-    <string name="upload">Upload</string>
     <string name="baseURL">http://vietnamcloudapi.azurewebsites.net</string>
-    <string name="confirmpassword">Confirm password</string>
-    <string name="email">Email</string>
-    <string name="test">Test</string>
-    <string name="role">Role</string>
-    <string name="roleLabel">Role:</string>
-    <string name="name">Name</string>
-    <string name="district">District</string>
-    <string name="birthYear">Birthyear</string>
-    <string name="admin">Admin</string>
-    <string name="oldPassword">Old Password</string>
-    <string name="newPassword">New Password</string>
-    <string name="confirmNewPassword">Confirm New Password</string>
-    <string name="changePassword">Change Password</string>
-    <string name="passwordChanged">Password is changed, please login again</string>
-    <string name="userAdded">User successfully added</string>
-    <string name="loggedIn">Successfully logged in, returning to homepage</string>
+    <string name="badRequest">Bad Request</string>
+
+    <!-- Menu items -->
+    <string name="home">Home</string>
+    <string name="formContent">Filled in forms</string>
+    <string name="not_logged_in">Not logged in</string>
+    <string name="users">Users</string>
+    <string name="login">Login</string>
+    <string name="logout">Log out</string>
+    <string name="next">Next</string>
     <string name="delete">Delete</string>
-    <string name="failedLogin">Incorrect username or password</string>
-    <string name="emptyFields">Please check if all fields are filled in</string>
-    <string name="passwordError">Confirm Password does not match Password</string>
-    <string name="wrongEmailFormat">Emailadress is incorrect</string>
-    <string name="passwordFormatError">Password must contain at least one capital, one number, and one special character</string>
-    <string name="noAccess">You have no access to this area. Login as admin to view this page</string>
-    <string name="userDeleted">User successfully deleted!</string>
+    <string name="addUser">Add User</string>
+
+    <!-- BaseActivity -->
+    <string name="BaseAdminCheck">Admin</string>
+
+    <!-- CameraActivity -->
     <string name="imagesSaved">Images successfully saved!</string>
     <string name="exitTitle">Exit?</string>
     <string name="imageLoss">Going back without saving erases the pictures</string>
     <string name="exitPhotos">Exit Photos</string>
     <string name="cancel">Cancel</string>
-    <string name="badRequest">Bad Request</string>
-    <string name="formContent">Filled in forms</string>
-    <string name="chooseForm">Choose a form:</string>
+
+    <!-- ChangePasswordActivity -->
+    <string name="oldPassword">Old Password</string>
+    <string name="newPassword">New Password</string>
+    <string name="confirmNewPassword">Confirm New Password</string>
+    <string name="changePassword">Change Password</string>
+    <string name="passwordChanged">Password is changed, please login again</string>
+    <string name="loginCaps">LOGIN</string>
+
+    <!-- FormActivity -->
+    <string name="forms">Forms</string>
+    <string name="name">Name</string>
+    <string name="district">District</string>
+    <string name="birthYear">Birthyear</string>
+
+    <!-- FormListActivity -->
+    <string name="formContentFormList">Filled in forms</string>
     <string name="uploadCountText">Upload progress: %s of %s.</string>
-    <string name="noInternet">No internet connection available. Please try again later</string>
+
+    <!-- FormOverviewActivity -->
+
+    <!-- LoginActivity -->
+    <string name="loginTitle">Login</string>
+    <string name="loginNoInternet">No internet connection available. Please try again later</string>
+    <string name="loginEmptyFields">Please check if all fields are filled in</string>
+    <string name="granttypePassword">password</string>
+    <string name="loggedIn">Successfully logged in, returning to homepage</string>
+    <string name="notLoggedIn">Login could not be performed right now. Please try again later</string>
+    <string name="failedLogin">Incorrect username or password</string>
+    <string name="emailLoginHint">Email</string>
+    <string name="passwordLoginHint">Password</string>
+    <string name="loginPageButton">Login</string>
+
+    <!-- MainActivity -->
+    <string name="chooseForm">Choose a form:</string>
     <string name="formName">Form template name:</string>
     <string name="formTemplateUse"># Used</string>
+    <string name="homeTitle">Home</string>
+    <string name="exit">Please click BACK again to exit</string>
+
+    <!-- PhotoDetailActivity -->
+    <string name="camera_title">Pictures</string>
+
+    <!-- RegisterActivity -->
+    <string name="addUserTitle">Add User</string>
+    <string name="adminRegisterDropdown">Admin</string>
+    <string name="userRegisterDropdown">User</string>
+    <string name="registerNoInternet">No internet connection available. Please try again later</string>
+    <string name="registerEmptyFields">Please check if all fields are filled in</string>
+    <string name="wrongEmailFormat">Emailadress is incorrect</string>
+    <string name="passwordError">Confirm Password does not match Password</string>
+    <string name="userAdded">User successfully added</string>
+    <string name="userOverview">User Overview</string>
+    <string name="passwordFormatError">Password must contain at least one capital, one number, and one special character</string>
+    <string name="userNotAdded">User could not be added right now. Please try again later</string>
+    <string name="roleLabel">Role:</string>
+    <string name="emailRegisterHint">Email</string>
+    <string name="passwordRegisterHint">Password</string>
+    <string name="confirmpassword">Confirm password</string>
+    <string name="addUserButton">Add User</string>
+
+    <!-- Users Listitem -->
+    <string name="listitemUsername">Username</string>
+    <string name="listitemRole">Role</string>
+
+    <!-- UsersActivity -->
+    <string name="usersNoInternet">No internet connection available. Please try again later</string>
+    <string name="usersTitle">Users</string>
+    <string name="noAccess">You have no access to this area. Login as admin to view this page</string>
+    <string name="userDeleted">User successfully deleted!</string>
+    <string name="loginSnackbar">Login</string>
+    <string name="adminCheck">Admin</string>
+    <string name="deleteUserTitle">Delete user?</string>
+    <string name="deleteUserMessage">Are you sure you want to delete user </string>
+    <string name="cancelDelete">Cancel</string>
+    <string name="confirmDelete">Delete</string>
+
+    <!-- Overig -->
+    <string name="refresh">Refresh</string>
+    <string name="save">Save</string>
+    <string name="upload">Upload</string>
+    <string name="test">Test</string>
 </resources>

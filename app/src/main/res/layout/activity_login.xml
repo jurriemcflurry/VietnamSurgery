@@ -21,7 +21,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textEmailAddress"
-                    android:hint="@string/email" />
+                    android:hint="@string/emailLoginHint" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -36,7 +36,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPassword"
-                    android:hint="@string/password"/>
+                    android:hint="@string/passwordLoginHint"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -48,7 +48,7 @@
                 android:background="@drawable/mybutton"
                 android:textColor="@color/white"
                 android:layout_gravity="center_horizontal"
-                android:text="@string/login"/>
+                android:text="@string/loginPageButton"/>
         </LinearLayout>
 
     <ProgressBar

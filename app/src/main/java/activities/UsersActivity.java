@@ -49,7 +49,7 @@ public class UsersActivity extends BaseActivity implements Callback<List<User>> 
 
         FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_users, contentFrameLayout);
-        getSupportActionBar().setTitle(getString(R.string.users));
+        getSupportActionBar().setTitle(getString(R.string.usersTitle));
 
         pBar = findViewById(R.id.pBar_users);
         usersNoInternet = findViewById(R.id.usersNoInternet);
@@ -68,12 +68,12 @@ public class UsersActivity extends BaseActivity implements Callback<List<User>> 
             @Override
             public void onItemClick(int position) {
                 final User user = mListAdapter.getItem(position);
-                if(AccessToken.userrole.equals("Admin")){
+                if(AccessToken.userrole.equals(getString(R.string.adminCheck))){
                     new AlertDialog.Builder(UsersActivity.this)
-                            .setTitle("Delete user?")
-                            .setMessage("Are you sure you want to delete user " + user.username + "?")
-                            .setNegativeButton("Cancel", null)
-                            .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            .setTitle(getString(R.string.deleteUserTitle))
+                            .setMessage(getString(R.string.deleteUserMessage) + user.username + "?")
+                            .setNegativeButton(getString(R.string.cancelDelete), null)
+                            .setPositiveButton(getString(R.string.confirmDelete), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     pBar.setVisibility(View.VISIBLE);
@@ -83,7 +83,7 @@ public class UsersActivity extends BaseActivity implements Callback<List<User>> 
                 }
                 else{
                     Snackbar.make(findViewById(R.id.users_frame_layout), getString(R.string.noAccess), Snackbar.LENGTH_LONG)
-                            .setAction(getString(R.string.login), new View.OnClickListener() {
+                            .setAction(getString(R.string.loginSnackbar), new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     Intent toLogin = new Intent(getApplicationContext(), LoginActivity.class);
@@ -128,7 +128,7 @@ public class UsersActivity extends BaseActivity implements Callback<List<User>> 
         if(AccessToken.access_token == null){
             pBar.setVisibility(View.INVISIBLE);
             Snackbar.make(findViewById(R.id.users_linearlayout), getString(R.string.noAccess),Snackbar.LENGTH_LONG)
-                    .setAction(getString(R.string.login), new View.OnClickListener() {
+                    .setAction(getString(R.string.loginSnackbar), new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent toLogin = new Intent(UsersActivity.this, LoginActivity.class);
