@@ -14,6 +14,10 @@ public class Section {
 
     public Section(){}
 
+    public Section(String sectionName){
+        this.sectionName = sectionName;
+    }
+
     public Section(String sectionName, Field[] fields) {
         this.sectionName = sectionName;
         this.fields = fields;
