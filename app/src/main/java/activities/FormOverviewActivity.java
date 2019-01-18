@@ -121,6 +121,7 @@ public class FormOverviewActivity extends FormBaseActivity {
             case R.id.next_menu_item:
                 setResult(Helper.CONTENT_SAVED_CODE);
                 formContent.updateDate();
+                Storage.cleanImgDir(this);
                 finish();
                 return true;
             case R.id.delete_menu_item:

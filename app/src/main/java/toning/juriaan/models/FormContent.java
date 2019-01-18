@@ -2,6 +2,7 @@ package toning.juriaan.models;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -23,7 +24,7 @@ public class FormContent {
     private Map<String, String> formContent;
 
     @Expose
-    @SerializedName("ImagePaths")
+    @SerializedName("ImageNames")
     private ArrayList<String> imageNames;
 
     @Expose

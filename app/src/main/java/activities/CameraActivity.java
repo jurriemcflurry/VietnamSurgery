@@ -1,5 +1,6 @@
 package activities;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -30,6 +31,8 @@ public class CameraActivity extends FormBaseActivity {
     private String formName;
     private final CameraActivity cameraActivity = this;
     private File nextImageFile;
+    private Uri nextImageUri;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
@@ -40,7 +43,7 @@ public class CameraActivity extends FormBaseActivity {
         getSupportActionBar().setTitle(getString(R.string.camera_title));
 
         loadIntent();
-        updateNextImageFile();
+        updateNextImage();
         imageGridLayout = findViewById(R.id.image_grid_layout);
 
         //onClick opent de native camera van de telefoon
@@ -51,19 +54,23 @@ public class CameraActivity extends FormBaseActivity {
             public void onClick(View v) {
                 Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 if (cameraIntent.resolveActivity(getPackageManager()) != null) {
-                    Uri outUri = Uri.fromFile(nextImageFile);
-                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outUri);
+                    ContentValues values = new ContentValues();
+                    values.put(MediaStore.Images.Media.TITLE, "foootoooo");
+                    values.put(MediaStore.Images.Media.DESCRIPTION, "fooooooootttttttoooooooo");
+                    nextImageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, nextImageUri);
                     startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
                 }
             }
         });
-
+        Helper.log("CameraActivity.onCreate()");
         updateView();
     }
 
     private void updateView() {
-        Helper.log("CameraActivity formContent.getImageNames().size() " + formContent.getImageNames().size(), this);
         imageGridLayout.removeAllViews();
+        Helper.log("updateView() " + formContent.getImageNames().size());
         for (String imageName : formContent.getImageNames()) {
             ImageView imageView = getImageView(imageName);
             if (imageView == null) continue;
@@ -110,8 +117,9 @@ public class CameraActivity extends FormBaseActivity {
     //click op de imageview geeft de foto groter weer
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            handleSaveImage(data);
+            handleSaveImage();
             updateView();
         } else if (requestCode == Helper.CAMERA_ACTIVITY_CODE) {
             if (resultCode == Helper.CONTENT_SAVED_CODE) {
@@ -124,21 +132,28 @@ public class CameraActivity extends FormBaseActivity {
         }
     }
 
-    private void handleSaveImage(Intent data) {
-        Bundle extras = data.getExtras();
-        Bitmap imageBitmap = (Bitmap) extras.get("data");
-        Uri imageUri = data.getData();
+    private void handleSaveImage() {
+        Bitmap bitmap = null;
+        try {
+            bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), nextImageUri);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (bitmap == null) return;
+
 
         formContent.addImageName(nextImageFile.getName());
-        Image image = new Image(nextImageFile.getName(), imageBitmap, imageUri);
+        Image image = new Image(nextImageFile.getName(), bitmap, nextImageUri);
         Storage.saveImage(image, this);
+        Helper.log("handleSaveImage() " + formContent.getImageNames().size());
         Storage.saveFormContent(formContent, this);
-        updateNextImageFile();
+        updateNextImage();
     }
 
-    private void updateNextImageFile() {
-        String imageName = formContent.getFormContentName() + "_image_" + Storage.getNextImageNumber(formContent, this);
+    private void updateNextImage() {
+        String imageName = Image.getNextImageName(formContent, this);
         nextImageFile = Storage.getImageFileWithName(imageName + Helper.IMAGE_EXTENSION, this);
+        nextImageUri = Uri.fromFile(nextImageFile);
     }
 
     private void handleDeleteImage(Intent data) {
