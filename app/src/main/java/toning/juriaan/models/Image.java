@@ -3,25 +3,16 @@ package toning.juriaan.models;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.provider.MediaStore;
 
 import java.io.ByteArrayOutputStream;
 
 public class Image {
-    String imageName;
+    private String imageName;
 
-    Bitmap bitmap;
+    private Bitmap bitmap;
 
-    Uri uri;
-
-    public Image(String imageName, Bitmap bitmap) {
-        this.imageName = imageName;
-        this.bitmap = bitmap;
-    }
-
-    public Image(String imageName, Uri uri) {
-        this.imageName = imageName;
-        this.uri = uri;
-    }
+    private Uri uri;
 
     public Image(String imageName, Bitmap bitmap, Uri uri) {
         this.imageName = imageName;
@@ -29,7 +20,7 @@ public class Image {
         this.uri = uri;
     }
 
-    public String getNextImageName() {
+    public String getImageName() {
         return imageName;
     }
 
