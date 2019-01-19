@@ -27,6 +27,8 @@ public class Helper {
     public final static int NO_IMAGE_DELETED = 9999;
     public final static int DELETE_IMAGE = 202;
 
+    public final static int THUMBNAIL_SIZE = 400;
+
     public static void log(String logEntry) {
         System.out.println("-------------- " + logEntry);
     }

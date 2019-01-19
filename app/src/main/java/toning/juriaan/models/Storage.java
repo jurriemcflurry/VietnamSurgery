@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.provider.MediaStore;
 
@@ -138,12 +139,7 @@ public class Storage {
             FileOutputStream fos = new FileOutputStream(
                     getImageFile(image.getImageName(), context));
 
-            Helper.log("Storage.saveImage() " + image.getImageName());
-
             Bitmap imageBitMap = image.getBitmap();
-
-            Helper.log(String.format("imageUri %b", image.getUri() == null));
-            Helper.log(String.format("imageBitMap %b", image.getBitmap() == null));
 
             if (imageBitMap == null) {
                 imageBitMap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), image.getUri());
@@ -157,6 +153,40 @@ public class Storage {
         return success;
     }
 
+    public static ArrayList<Image> getThumbnailsForFormContent(FormContent formContent, Context context) {
+        try {
+            ArrayList<Image> thumbNails = new ArrayList<>();
+
+            for (String imageName : formContent.getImageNames()) {
+                thumbNails.add(getThumbnailForImage(imageName, context));
+            }
+
+            return thumbNails;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static Image getThumbnailForImage(String imageName, Context context) {
+        try {
+            File imageFile = getImageFile(imageName, context);
+
+            Uri imageUri = Uri.fromFile(imageFile);
+
+            Bitmap image = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+            Bitmap imageThumbnail = ThumbnailUtils.extractThumbnail(
+                    image,
+                    Helper.THUMBNAIL_SIZE, Helper.THUMBNAIL_SIZE);
+
+            return new Image(imageName, imageThumbnail, imageUri);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static File getImageFileWithName(String fileName, Context context) {
         try {
             return getImageFile(fileName, context);
@@ -167,16 +197,16 @@ public class Storage {
     }
 
     public static boolean deleteFormContent(FormContent formContent, Context context) {
-        boolean success = false;
+        boolean success = true;
         try {
             File file = getFormContentFile(formContent.getFormContentName(), context);
+            if (file == null) return false;
 
-            boolean failed = false;
             for (String imageName : formContent.getImageNames()) {
-                failed = !deleteImage(imageName, context);
+                success = deleteImage(imageName, context);
             }
 
-            success = file.delete() && !failed;
+            success = file.delete() && success;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -349,7 +379,6 @@ public class Storage {
                 if (file.length() > 0 && file.getName().contains(".json")) {
                     names.add(file.getName().split(".json")[0]);
                 } else {
-                    Helper.log("File " + file.getName() + " too small", context);
                     file.delete();
                 }
             }
@@ -361,6 +390,7 @@ public class Storage {
 
     public static int getNextFormContentNumber(String formContentName, Context context) {
         try {
+            cleanStorage(context);
             File[] files = getFormContentDir(context).listFiles();
             int highestNumber = 0;
             for (File file : files) {
@@ -396,6 +426,7 @@ public class Storage {
     }
 
     public static int getNextImageNumber(FormContent formContent, Context context) {
+        cleanStorage(context);
         ArrayList<Image> images = getImagesForFormContent(formContent, context);
         int highestNumber = 0;
         for (Image image : images) {

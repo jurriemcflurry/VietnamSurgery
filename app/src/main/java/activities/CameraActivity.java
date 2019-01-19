@@ -2,7 +2,9 @@ package activities;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -29,7 +31,6 @@ public class CameraActivity extends FormBaseActivity {
     private GridLayout imageGridLayout;
     private FormContent formContent;
     private String formName;
-    private final CameraActivity cameraActivity = this;
     private File nextImageFile;
     private Uri nextImageUri;
 
@@ -45,6 +46,7 @@ public class CameraActivity extends FormBaseActivity {
         loadIntent();
         updateNextImage();
         imageGridLayout = findViewById(R.id.image_grid_layout);
+        imageGridLayout.setColumnCount(2);
 
         //onClick opent de native camera van de telefoon
         FloatingActionButton photoButton = this.findViewById(R.id.fab_camera);
@@ -55,22 +57,20 @@ public class CameraActivity extends FormBaseActivity {
                 Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 if (cameraIntent.resolveActivity(getPackageManager()) != null) {
                     ContentValues values = new ContentValues();
-                    values.put(MediaStore.Images.Media.TITLE, "foootoooo");
-                    values.put(MediaStore.Images.Media.DESCRIPTION, "fooooooootttttttoooooooo");
+                    values.put(MediaStore.Images.Media.TITLE, nextImageFile.getName());
                     nextImageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
 
                     cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, nextImageUri);
+//                    cameraIntent.putExtra(MediaStore.Images.ImageColumns.ORIENTATION, );
                     startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
                 }
             }
         });
-        Helper.log("CameraActivity.onCreate()");
         updateView();
     }
 
     private void updateView() {
         imageGridLayout.removeAllViews();
-        Helper.log("updateView() " + formContent.getImageNames().size());
         for (String imageName : formContent.getImageNames()) {
             ImageView imageView = getImageView(imageName);
             if (imageView == null) continue;
@@ -80,7 +80,7 @@ public class CameraActivity extends FormBaseActivity {
     }
 
     private ImageView getImageView(final String imageName) {
-        Image image = Storage.getImageByName(imageName, this);
+        Image image = Storage.getThumbnailForImage(imageName, this);
         if (image == null) return null;
 
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
@@ -89,10 +89,11 @@ public class CameraActivity extends FormBaseActivity {
 
         ImageView imageView = new ImageView(this);
         imageView.setLayoutParams(layoutParams);
-        imageView.setImageURI(image.getUri());
+        imageView.setImageBitmap(image.getBitmap());
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imageView.setMaxHeight(600);
-        imageView.setMaxWidth(600);
+        imageView.setMaxWidth(200);
+        imageView.setMaxWidth(200);
+
 
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,7 +146,6 @@ public class CameraActivity extends FormBaseActivity {
         formContent.addImageName(nextImageFile.getName());
         Image image = new Image(nextImageFile.getName(), bitmap, nextImageUri);
         Storage.saveImage(image, this);
-        Helper.log("handleSaveImage() " + formContent.getImageNames().size());
         Storage.saveFormContent(formContent, this);
         updateNextImage();
     }
