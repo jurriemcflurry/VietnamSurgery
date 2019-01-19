@@ -144,11 +144,10 @@ public class CameraActivity extends AppCompatActivity {
         String district = form.getSections().get(1).getFields().get(3).getAnswer();
         SimpleDateFormat format= new SimpleDateFormat("yyyyMMdd_HH:mm:ss",Locale.getDefault());
         String myDate = format.format(new Date());
-        String date = myDate.toString();
         if(mImages.size() > 0) {
-            photoName = patientName + "_" + birthYear + "_" + district + "_" + date + "_" + Integer.toString(mImages.size());
+            photoName = patientName + "_" + birthYear + "_" + district + "_" + myDate + "_" + Integer.toString(mImages.size());
         } else {
-            photoName = patientName + "_" + birthYear + "_" + district + "_" + date;
+            photoName = patientName + "_" + birthYear + "_" + district + "_" + myDate;
         }
         File image = new File(storageDirJpg, photoName + ".jpg");
 
@@ -251,10 +250,10 @@ public class CameraActivity extends AppCompatActivity {
 
     private void putPictureInGridLayout(Bitmap picture, String path) {
         ImageView imageView = new ImageView(this);
-        imageView.setImageBitmap(picture);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         lp.setMargins(10, 10, 10, 10);
         imageView.setLayoutParams(lp);
+        imageView.setImageBitmap(picture);
         imageView.setOnClickListener((View v) ->
             goToDetailPage(new File(path))
         );
