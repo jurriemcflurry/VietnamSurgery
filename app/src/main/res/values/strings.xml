@@ -42,6 +42,7 @@
     <string name="isRequired">is required.</string>
     <string name="isNotANumber">is not a number.</string>
     <string name="formErrorTitle">Form Invalid:</string>
+    <string name="ok">Ok</string>
 
     <!-- FormListActivity -->
     <string name="formContentFormList">Filled in forms</string>

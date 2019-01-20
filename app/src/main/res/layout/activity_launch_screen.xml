@@ -12,7 +12,7 @@
     <!-- Your product logo - 144dp color version of your app icon -->
     <item>
 
-        <bitmap
+        <imageBitmap
             android:src="@drawable/splashscreen_logos"
             android:gravity="center" />
 

@@ -18,6 +18,7 @@ public class Helper {
     public final static String SECTION_INDEX = "SectionIndex";
     public final static String IMAGE_NAME = "ImageName";
     public final static String IMAGE_EXTENSION = ".png";
+    public final static String IS_NEW = "IsNew";
 
     public final static int FORM_ACTIVITY_CODE = 100;
     public final static int CAMERA_ACTIVITY_CODE = 101;

@@ -1,6 +1,7 @@
 package activities;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -9,6 +10,7 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import toning.juriaan.models.Field;
@@ -25,12 +27,13 @@ public class FormOverviewActivity extends FormBaseActivity {
     private LinearLayout sectionsView;
     private FormContent formContent;
     private Form form;
+    private boolean isNew;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        loadForms();
+        loadIntent();
 
         FrameLayout contentFrameLayout = findViewById(R.id.formbase_framelayout);
         getLayoutInflater().inflate(R.layout.activity_form_overview, contentFrameLayout);
@@ -41,10 +44,12 @@ public class FormOverviewActivity extends FormBaseActivity {
         updateView();
     }
 
-    private void loadForms() {
+    private void loadIntent() {
         Intent intent = getIntent();
         String formContentName = intent.getStringExtra(Helper.FORM_CONTENT);
         String formName = intent.getStringExtra(Helper.FORM);
+        isNew = intent.getBooleanExtra(Helper.IS_NEW, false);
+        Helper.log("FormOverview load with " + isNew);
 
         form = Storage.getForm(formName, this);
         formContent = Storage.getFormContent(formContentName, this);
@@ -58,22 +63,26 @@ public class FormOverviewActivity extends FormBaseActivity {
         sectionsView.addView(getImagesView());
     }
 
-    private LinearLayout getImagesView() {
+    private ScrollView getImagesView() {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        ScrollView scrollView = new ScrollView(this);
         LinearLayout photoGallery = new LinearLayout(this);
         photoGallery.setOrientation(LinearLayout.HORIZONTAL);
         photoGallery.setLayoutParams(layoutParams);
 
         for (String imageName : formContent.getImageNames()) {
-            Image image = Storage.getThumbnailForImage(imageName, this);
+            Image image = Storage.getImageByName(imageName, this);
             if (image == null) continue;
             ImageView imageView = new ImageView(this);
-            imageView.setImageBitmap(image.getBitmap());
+            Bitmap bitmap = image.getThumbnailBitmap(this);
+
+            imageView.setImageBitmap(bitmap);
             photoGallery.addView(imageView);
         }
 
-        return photoGallery;
+        scrollView.addView(photoGallery);
+        return scrollView;
     }
 
     private LinearLayout getSectionView(Section section) {
@@ -107,7 +116,11 @@ public class FormOverviewActivity extends FormBaseActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.form_content_overview_menu, menu);
+        if (isNew) {
+            getMenuInflater().inflate(R.menu.form_activity_menu, menu);
+        } else {
+            getMenuInflater().inflate(R.menu.form_overview_activity_menu, menu);
+        }
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -121,7 +134,7 @@ public class FormOverviewActivity extends FormBaseActivity {
                 Storage.cleanImgDir(this);
                 finish();
                 return true;
-            case R.id.delete_menu_item:
+            case 0:
                 Storage.deleteFormContent(formContent, this);
                 setResult(Helper.CONTENT_SAVED_CODE);
                 finish();

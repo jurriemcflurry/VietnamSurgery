@@ -139,13 +139,14 @@ public class Storage {
             FileOutputStream fos = new FileOutputStream(
                     getImageFile(image.getImageName(), context));
 
-            Bitmap imageBitMap = image.getBitmap();
+            Bitmap imageBitMap = image.getImageBitmap(context);
 
             if (imageBitMap == null) {
-                imageBitMap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), image.getUri());
+                image.setImageBitmap(MediaStore.Images.Media.getBitmap(context.getContentResolver(), image.getUri()));
             }
 
-            imageBitMap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            image.getImageBitmap(context).compress(Bitmap.CompressFormat.PNG, 100, fos);
+            saveThumbnail(image, context);
             fos.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -153,38 +154,25 @@ public class Storage {
         return success;
     }
 
-    public static ArrayList<Image> getThumbnailsForFormContent(FormContent formContent, Context context) {
+    public static boolean saveThumbnail(Image image, Context context) {
+        boolean success = false;
+
         try {
-            ArrayList<Image> thumbNails = new ArrayList<>();
-
-            for (String imageName : formContent.getImageNames()) {
-                thumbNails.add(getThumbnailForImage(imageName, context));
-            }
-
-            return thumbNails;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    public static Image getThumbnailForImage(String imageName, Context context) {
-        try {
-            File imageFile = getImageFile(imageName, context);
-
-            Uri imageUri = Uri.fromFile(imageFile);
-
-            Bitmap image = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
             Bitmap imageThumbnail = ThumbnailUtils.extractThumbnail(
-                    image,
+                    image.getImageBitmap(context),
                     Helper.THUMBNAIL_SIZE, Helper.THUMBNAIL_SIZE);
 
-            return new Image(imageName, imageThumbnail, imageUri);
+            FileOutputStream fos = new FileOutputStream(
+                    getThumbnailFile(image.getThumbnailName(), context));
+
+            imageThumbnail.compress(Bitmap.CompressFormat.PNG, 100, fos);
+
+            success = true;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+
+        return success;
     }
 
     public static File getImageFileWithName(String fileName, Context context) {
@@ -203,7 +191,7 @@ public class Storage {
             if (file == null) return false;
 
             for (String imageName : formContent.getImageNames()) {
-                success = deleteImage(imageName, context);
+                success = deleteImage(new Image(imageName), context);
             }
 
             success = file.delete() && success;
@@ -213,11 +201,12 @@ public class Storage {
         return success;
     }
 
-    public static boolean deleteImage(String imageName, Context context) {
+    public static boolean deleteImage(Image image, Context context) {
         boolean success = false;
         try {
-            File imageFile = getImageFile(imageName, context);
-            success = imageFile.delete();
+            File imageFile = getImageFile(image.getImageName(), context);
+            File thumbnailFile = getThumbnailFile(image.getThumbnailName(), context);
+            success = imageFile.delete() && thumbnailFile.delete();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -284,6 +273,20 @@ public class Storage {
                     file.delete();
                 }
             }
+            cleanThumbnailDir(context);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void cleanThumbnailDir(Context context) {
+        try {
+            File[] files = getThumbnailDir(context).listFiles();
+            for (File file : files) {
+                if (file.length() == 0) {
+                    file.delete();
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -326,11 +329,31 @@ public class Storage {
         try {
             String imageName = imageFile.getName().split(".png")[0];
             String imagePath = imageFile.getAbsolutePath();
-            return new Image(imageName, BitmapFactory.decodeFile(imagePath), Uri.fromFile(imageFile));
+            return new Image(imageName, Uri.fromFile(imageFile));
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static void getImageBitmap(Image image, Context context) {
+        try {
+            File imageFile = getImageFile(image.getImageName(), context);
+            Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+            image.setImageBitmap(bitmap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void getThumbnailBitmap(Image image, Context context) {
+        try {
+            File thumbnailFile = getThumbnailFile(image.getThumbnailName(), context);
+            Bitmap bitmap = BitmapFactory.decodeFile(thumbnailFile.getAbsolutePath());
+            image.setThumbnailBitmap(bitmap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static Form getFormById(int formId, Context context) {
@@ -473,6 +496,15 @@ public class Storage {
         return file;
     }
 
+    private static File getThumbnailFile(String thumbnailName, Context context) throws Exception {
+        if (!thumbnailName.contains(Helper.IMAGE_EXTENSION))
+            thumbnailName += Helper.IMAGE_EXTENSION;
+
+        File file = new File(getThumbnailDir(context), thumbnailName);
+        checkFile(file);
+        return file;
+    }
+
     private static File getLogFile(Context context) throws Exception {
         File file = new File(getLogDir(context), "log.txt");
         checkFile(file);
@@ -507,6 +539,10 @@ public class Storage {
 
     private static File getImagesDir(Context context) throws Exception {
         return getDir("images", context);
+    }
+
+    private static File getThumbnailDir(Context context) throws Exception {
+        return getDir("thumbnails", context);
     }
 
     private static File getLogDir(Context context) throws Exception {

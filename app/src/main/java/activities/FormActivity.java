@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Pair;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -34,7 +35,7 @@ import toning.juriaan.models.Storage;
 @SuppressLint("Registered")
 public class FormActivity extends FormBaseActivity implements AdapterView.OnItemSelectedListener {
 
-    private boolean isNew = true;
+    private boolean isNew;
     private Toolbar toolbar;
     private TextView sectionNameView;
     private LinearLayout fieldsView;
@@ -53,7 +54,7 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
         getSupportActionBar().setTitle(getString(R.string.forms));
 
         dropDownValues = new ArrayList<>();
-        loadForm();
+        loadIntent();
 
         sectionNameView = findViewById(R.id.section_name);
         fieldsView = findViewById(R.id.fields_linear_view);
@@ -61,10 +62,12 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
         updateView();
     }
 
-    protected void loadForm() {
+    protected void loadIntent() {
         Intent intent = getIntent();
         String formName = intent.getStringExtra(Helper.FORM);
         String formContentName = intent.getStringExtra(Helper.FORM_CONTENT);
+        isNew = intent.getBooleanExtra(Helper.IS_NEW, false);
+        Helper.log("Form load with " + isNew);
         sectionIndex = intent.getIntExtra(Helper.SECTION_INDEX, 0);
 
         form = Storage.getForm(formName, this);
@@ -73,12 +76,10 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
         }
 
         if (formContentName != null && !formContentName.isEmpty()) {
-            Helper.log("loadForm() loading formContent");
             formContent = Storage.getFormContent(formContentName, this);
         }
 
         if (formContent == null) {
-            Helper.log("loadForm() creating formContent");
             formContent = new FormContent(form.getId());
         }
 
@@ -214,6 +215,7 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
         saveAnswers();
         ArrayList<String> errors = validateSection();
         if (errors.size() == 0) {
+            clearFields();
             if (sectionIndex < form.getFormTemplate().getSections().length - 1) {
                 sectionIndex++;
                 updateView();
@@ -224,6 +226,8 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
                 Intent cameraIntent = new Intent(getApplicationContext(), CameraActivity.class);
                 cameraIntent.putExtra(Helper.FORM, form.getFormattedFormName());
                 cameraIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentId());
+                cameraIntent.putExtra(Helper.IS_NEW, isNew);
+                Helper.log("Form start with " + isNew);
                 startActivityForResult(cameraIntent, Helper.FORM_ACTIVITY_CODE);
             }
         } else {
@@ -234,7 +238,7 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
             new AlertDialog.Builder(this)
                     .setTitle(getString(R.string.formErrorTitle))
                     .setMessage(errorMessage)
-                    .setNegativeButton("Ok", null)
+                    .setNegativeButton(getString(R.string.ok), null)
                     .create().show();
         }
     }
@@ -266,10 +270,6 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
     }
 
     private void storeFormContent() {
-        if (isNew) {
-            isNew = false;
-        }
-
         Storage.saveFormContent(formContent, this);
     }
 
@@ -282,7 +282,6 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
             if (field.getType().equals(FieldType.String.toString()) || field.getType().equals(FieldType.Number.toString())) {
                 EditText textField = findViewById(i);
                 fieldValue = textField.getText().toString();
-                textField.setText("");
             } else if (field.getType().equals(FieldType.Choice.toString())) {
                 Spinner spinner = findViewById(i);
                 fieldValue = getDropDownValueAt(i);
@@ -292,6 +291,17 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
 
             Helper.log("saveAnswers() " + formContent);
             formContent.addAnswer(fieldName, fieldValue);
+        }
+    }
+
+    private void clearFields() {
+        Field[] fields = form.getFormTemplate().getSections()[sectionIndex].getFields();
+        for (int i = 0; i < fields.length; i++) {
+            try {
+                EditText textField = findViewById(i);
+                textField.setText("");
+            } catch (Exception e) {
+            }
         }
     }
 
@@ -367,11 +377,14 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
     protected void onResume() {
         super.onResume();
         String formContentName = formContent.getFormContentId();
-        if (formContentName != null && !isNew) {
-            Helper.log("names: " + formContentName + " formContent.getname() " + formContent.getFormContentId());
-            formContent = Storage.getFormContent(formContentName, this);
-            Helper.log("ooooooooooh " + formContent);
-        }
+        formContent = Storage.getFormContent(formContentName, this);
         updateView();
     }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.form_activity_menu, menu);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
 }

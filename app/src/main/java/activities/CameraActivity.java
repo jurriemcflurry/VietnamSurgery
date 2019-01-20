@@ -3,12 +3,15 @@ package activities;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.util.DisplayMetrics;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -22,6 +25,7 @@ import toning.juriaan.models.FormContent;
 import toning.juriaan.models.Helper;
 import toning.juriaan.models.Image;
 import toning.juriaan.models.R;
+import toning.juriaan.models.SaveImageHandler;
 import toning.juriaan.models.Storage;
 
 public class CameraActivity extends FormBaseActivity {
@@ -31,6 +35,7 @@ public class CameraActivity extends FormBaseActivity {
     private String formName;
     private File nextImageFile;
     private Uri nextImageUri;
+    private boolean isNew;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,48 +72,58 @@ public class CameraActivity extends FormBaseActivity {
         updateView();
     }
 
-    private void updateView() {
+    private synchronized void updateView() {
         imageGridLayout.removeAllViews();
         for (String imageName : formContent.getImageNames()) {
-            ImageView imageView = getImageView(imageName);
-            if (imageView == null) continue;
+            ImageView imageView = new ImageView(this);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.setMargins(10, 10, 10, 10);
+            imageView.setLayoutParams(layoutParams);
 
+            loadImageView(imageName, imageView);
             imageGridLayout.addView(imageView);
         }
     }
 
-    private ImageView getImageView(final String imageName) {
-        Image image = Storage.getThumbnailForImage(imageName, this);
-        if (image == null) return null;
+    private void loadImageView(final String imageName, final ImageView imageView) {
+        Image image = Storage.getImageByName(imageName, this);
+        if (image == null) return;
 
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(10, 10, 10, 10);
+        imageView.setImageResource(0);
 
-        ImageView imageView = new ImageView(this);
-        imageView.setLayoutParams(layoutParams);
-        imageView.setImageBitmap(image.getBitmap());
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imageView.setMaxWidth(200);
-        imageView.setMaxWidth(200);
-
-
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent photoDetailIntent = new Intent(getApplicationContext(), PhotoDetailActivity.class);
-                photoDetailIntent.putExtra(Helper.IMAGE_NAME, imageName);
-                startActivityForResult(photoDetailIntent, Helper.CAMERA_ACTIVITY_CODE);
-            }
-        });
-
-        return imageView;
+        Bitmap bitmap = image.getThumbnailBitmap(this);
+        if (bitmap != null) {
+            imageView.setImageBitmap(bitmap);
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent photoDetailIntent = new Intent(getApplicationContext(), PhotoDetailActivity.class);
+                    photoDetailIntent.putExtra(Helper.IMAGE_NAME, imageName);
+                    startActivityForResult(photoDetailIntent, Helper.CAMERA_ACTIVITY_CODE);
+                }
+            });
+        } else {
+            Drawable refreshImage = getDrawable(R.drawable.refresh_icon_black);
+            bitmap = ((BitmapDrawable) refreshImage).getBitmap();
+            bitmap = Bitmap.createScaledBitmap(bitmap, Helper.THUMBNAIL_SIZE, Helper.THUMBNAIL_SIZE, true);
+            imageView.setImageBitmap(bitmap);
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    loadImageView(imageName, imageView);
+                }
+            });
+        }
     }
 
     private void loadIntent() {
         Intent intent = getIntent();
         formName = intent.getStringExtra(Helper.FORM);
         formContent = Storage.getFormContent(intent.getStringExtra(Helper.FORM_CONTENT), this);
+        isNew = intent.getBooleanExtra(Helper.IS_NEW, false);
+        Helper.log("Camera load with " + isNew);
     }
 
     //het resultaat van de camera (een foto) wordt hier in een nieuwe ImageView gestopt
@@ -143,7 +158,10 @@ public class CameraActivity extends FormBaseActivity {
 
         formContent.addImageName(nextImageFile.getName());
         Image image = new Image(nextImageFile.getName(), bitmap, nextImageUri);
-        Storage.saveImage(image, this);
+
+        SaveImageHandler saveImageHandler = new SaveImageHandler(image, this);
+        new Thread(saveImageHandler).start();
+
         Storage.saveFormContent(formContent, this);
         updateNextImage();
     }
@@ -155,12 +173,12 @@ public class CameraActivity extends FormBaseActivity {
     }
 
     private void handleDeleteImage(Intent data) {
-        String imageToRemoveName = data.getStringExtra(Helper.IMAGE_NAME);
-        Helper.log("CameraActivity.handleDeleteImage() " + imageToRemoveName);
-        if (!formContent.getImageNames().contains(imageToRemoveName)) return;
+        String imageNameToRemove = data.getStringExtra(Helper.IMAGE_NAME);
+        Helper.log("CameraActivity.handleDeleteImage() " + imageNameToRemove);
+        if (!formContent.getImageNames().contains(imageNameToRemove)) return;
 
-        formContent.getImageNames().remove(imageToRemoveName);
-        Storage.deleteImage(imageToRemoveName, this);
+        formContent.getImageNames().remove(imageNameToRemove);
+        Storage.deleteImage(new Image(imageNameToRemove), this);
     }
 
     //ophalen van de schermafmetingen
@@ -184,6 +202,8 @@ public class CameraActivity extends FormBaseActivity {
                     Intent formOverviewIntent = new Intent(getApplicationContext(), FormOverviewActivity.class);
                     formOverviewIntent.putExtra(Helper.FORM, formName);
                     formOverviewIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentId());
+                    formOverviewIntent.putExtra(Helper.IS_NEW, isNew);
+                    Helper.log("Camera start with " + isNew);
                     startActivityForResult(formOverviewIntent, Helper.CAMERA_ACTIVITY_CODE);
                 }
                 return true;
@@ -194,18 +214,13 @@ public class CameraActivity extends FormBaseActivity {
 
     @Override
     public void onBackPressed() {
-//        final CameraActivity cameraActivity = this;
-//        new AlertDialog.Builder(this)
-//                .setTitle(getString(R.string.exitTitle))
-//                .setMessage(getString(R.string.imageLoss))
-//                .setNegativeButton(getString(R.string.cancel), null)
-//                .setPositiveButton(getString(R.string.exitPhotos), new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        cameraActivity.goBack();
-//                    }
-//                }).create().show();
         setResult(Helper.UPDATE_CODE);
         super.onBackPressed();
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.form_activity_menu, menu);
+        return super.onPrepareOptionsMenu(menu);
     }
 }
