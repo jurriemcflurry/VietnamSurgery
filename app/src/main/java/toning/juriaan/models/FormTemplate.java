@@ -32,6 +32,10 @@ public class FormTemplate {
         sections.add(section);
     }
 
+    public void removeSection(Section section){
+        sections.remove(section);
+    }
+
     public String toJson() {
         return new Gson().toJson(this);
     }

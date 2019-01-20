@@ -109,13 +109,19 @@
     <!-- CreateFormActivity -->
     <string name="createFormTitle">Create New Form</string>
     <string name="saveNewForm">Save</string>
-    <string name="createFormHeaderText">In each form we have some fields that are necessary to fill in, so these subjects and fields are already set. To add more fields in a subject, you can click on the pencil. To add more subjects, you can press the plus-button on the bottom-right of this screen.</string>
+    <string name="createFormHeaderText">In each form we have some fields that are necessary to fill in, so these subjects and fields are already set. To add more fields in a subject, you can click on the subject title. To add more subjects, you can press the plus-button on the bottom-right of this screen. To delete a question or section, keep it shortly pressed.</string>
     <string name="createFormNameHint">Form name (district of use)</string>
     <string name="personalInfo">Personal Info</string>
     <string name="contactInfo">Contact Info</string>
     <string name="namePersonalInfo">Name</string>
     <string name="birthyearPersonalInfo">Birthyear</string>
     <string name="districtContactInfo">District</string>
+    <string name="stringToText">Text</string>
+    <string name="choiceToDropDown">DropDown</string>
+    <string name="deleteQuestionTitle">Delete Question?</string>
+    <string name="deleteQuestionMessage">Are you sure you want to delete question: </string>
+    <string name="deleteQuestion">Delete</string>
+    <string name="cancelDeleteQuestion">Cancel</string>
 
     <!-- AddSectionActivity -->
     <string name="addSectionTitle">Add Section</string>

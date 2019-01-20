@@ -37,7 +37,6 @@ public class AddSectionActivity extends FormBaseActivity {
     }
 
     private void addSection(){
-        Helper.log(sectionNameEditText.getText().toString());
         if(sectionNameEditText.getText().toString().isEmpty()){
             return;
         }

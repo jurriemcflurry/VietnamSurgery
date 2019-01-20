@@ -1,5 +1,7 @@
 package activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -9,6 +11,7 @@ import android.support.design.widget.TextInputEditText;
 import android.util.Pair;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
@@ -41,6 +44,7 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
     private ArrayList<Pair> dropDownValues;
     private TextInputEditText formNameEditText;
     private FloatingActionButton addSectionFAB;
+    private String[] options;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +53,7 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
         FrameLayout contentFrameLayout = findViewById(R.id.formbase_framelayout);
         getLayoutInflater().inflate(R.layout.activity_create_form, contentFrameLayout);
         getSupportActionBar().setTitle(getString(R.string.createFormTitle));
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         formView = findViewById(R.id.create_form_section_view);
         formNameEditText = findViewById(R.id.form_name_edittext);
@@ -60,6 +65,8 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
                 startActivityForResult(addSection, Helper.ADD_SECTION_CODE);
             }
         });
+
+        dropDownValues = new ArrayList<>();
 
         formTemplate = new FormTemplate();
         loadStandardItems();
@@ -87,6 +94,24 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
                     startActivityForResult(addQuestion, Helper.ADD_QUESTION_CODE);
                 }
             });
+
+            sectionView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    new AlertDialog.Builder(CreateFormActivity.this)
+                            .setTitle("Delete this subject?")
+                            .setMessage("Are you sure you want to delete the subject: " + section.getSectionName())
+                            .setNegativeButton("Cancel", null)
+                            .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    deleteSection(section);
+                                }
+                            })
+                            .create().show();
+                    return false;
+                }
+            });
             formView.addView(sectionView);
             formView.addView(fieldsView);
         }
@@ -106,6 +131,7 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
     private TextView makeSectionView(final Section section){
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.topMargin = 50;
 
         TextView sectionHeader = new TextView(this);
         sectionHeader.setLayoutParams(layoutParams);
@@ -119,6 +145,7 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
     private LinearLayout makeFieldsView(){
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.topMargin = 20;
 
         LinearLayout fields = new LinearLayout(this);
         fields.setLayoutParams(layoutParams);
@@ -151,7 +178,7 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
         }
     }
 
-    private LinearLayout createTextField(Field field, int i) {
+    private LinearLayout createTextField(final Field field, int i) {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
@@ -164,11 +191,14 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
 
         TextView fieldName = new TextView(this);
         fieldName.setLayoutParams(textViewLayoutParams);
-        fieldName.setText(field.getFieldName());
+        String labelText = field.getFieldName() + ":";
+        fieldName.setText(labelText);
+        fieldName.setTextSize(17);
 
         TextView fieldType = new TextView(this);
         fieldType.setLayoutParams(textViewLayoutParams);
-        fieldType.setText(field.getType());
+        fieldType.setText(setLabelTextFieldType(field.getType()));
+        fieldType.setTextSize(17);
 
         String value = getFieldValue(field);
         if (value != null) {
@@ -178,11 +208,17 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
 
         linearLayout.addView(fieldName);
         linearLayout.addView(fieldType);
+        linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteField(field);
+            }
+        });
 
         return linearLayout;
     }
 
-    private LinearLayout createDropDownField(Field field, int i) {
+    private LinearLayout createDropDownField(final Field field, int i) {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
@@ -195,21 +231,18 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
         textView.setText(labelText);
         textView.setTextSize(17);
 
-        Spinner spinner = new Spinner(this);
-        spinner.setLayoutParams(layoutParams);
-        spinner.setId(i);
-
-        try {
-            ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(
-                    this, android.R.layout.simple_spinner_dropdown_item, field.getOptions());
-            spinner.setAdapter(adapter);
-            spinner.setOnItemSelectedListener(this);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        TextView fieldType = new TextView(this);
+        fieldType.setText(setLabelTextFieldType(field.getType()));
+        fieldType.setTextSize(17);
 
         linearLayout.addView(textView);
-        linearLayout.addView(spinner);
+        linearLayout.addView(fieldType);
+        linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteField(field);
+            }
+        });
 
         return linearLayout;
     }
@@ -234,20 +267,56 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
         dropDownValues.add(pair);
     }
 
-    public String getDropDownValueAt(int id) {
-        for (int i = 0; i < dropDownValues.size(); i++) {
-            if (dropDownValues.get(i).first.equals(id)) {
-                return (String) dropDownValues.get(i).second;
-            }
+    private String setLabelTextFieldType(String inputText){
+        if(inputText.equals(FieldType.Choice.toString())){
+            return getString(R.string.choiceToDropDown);
         }
-        return null;
+        else if(inputText.equals(FieldType.String.toString())){
+            return getString(R.string.stringToText);
+        }
+
+        return FieldType.Number.toString();
     }
 
-    public String[] getFieldNames() {
-        String[] fieldNames = {getString(R.string.name),
-                getString(R.string.district),
-                getString(R.string.birthYear)};
-        return fieldNames;
+    private void deleteField(Field field){
+        String fieldname = field.getFieldName();
+
+        if(fieldname.equals(getString(R.string.namePersonalInfo)) || fieldname.equals(getString(R.string.birthYear)) || fieldname.equals(getString(R.string.districtContactInfo))){
+            return;
+        }
+
+        for(final Section section : formTemplate.getSections()){
+            ArrayList<Field> fields = section.getFields();
+            int i = 0;
+            for(final Field f : fields){
+                if(f.getFieldName().equals(fieldname)){
+                    new AlertDialog.Builder(this)
+                            .setTitle(getString(R.string.deleteQuestionTitle))
+                            .setMessage(getString(R.string.deleteQuestionMessage) + fieldname)
+                            .setPositiveButton(getString(R.string.deleteQuestion), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    section.removeFields(f);
+                                    updateView();
+                                }
+                            })
+                            .setNegativeButton(getString(R.string.cancelDeleteQuestion), null)
+                            .create().show();
+
+                    return;
+                }
+                i++;
+            }
+        }
+    }
+
+    private void deleteSection(Section section){
+        if(section.getSectionName().equals(getString(R.string.personalInfo)) || section.getSectionName().equals(getString(R.string.contactInfo))){
+            return;
+        }
+
+        formTemplate.removeSection(section);
+        updateView();
     }
 
     @Override
@@ -280,16 +349,22 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
                 String questionName = extras.getString(Helper.QUESTION_NAME);
                 Boolean required = extras.getBoolean(Helper.REQUIRED);
                 String type = extras.getString(Helper.QUESTION_TYPE_STRING);
+                if(type.equals(FieldType.Choice.toString())){
+                    options = extras.getStringArray("Options");
+                }
                 String sectionName = extras.getString(Helper.QUESTION_SECTION);
-
-                Helper.log(questionName);
-                Helper.log(required.toString());
-                Helper.log(type);
-                Helper.log(sectionName);
 
                 for(Section section : formTemplate.getSections()){
                     if(section.getSectionName().equals(sectionName)){
-                        section.addFields(new Field(questionName, type, required));
+                        Field newQuestion = new Field(questionName, type, required);
+                        if(newQuestion.getType().equals(FieldType.Choice.toString())){
+                            try{
+                                newQuestion.setOptions(options);
+                            }catch(Exception e){
+
+                            }
+                        }
+                        section.addFields(newQuestion);
                     }
                 }
 
@@ -310,31 +385,44 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
         }
     }
 
-    private void postForm(String formName, FormTemplate formTemplate) {
+    private void postForm(final String formName, final FormTemplate formTemplate) {
         if(formNameEditText.getText().toString().isEmpty()){
-           return;
+            new AlertDialog.Builder(this)
+                    .setTitle("Formname is not filled in")
+                    .setMessage("Please fill in a formname")
+                    .setNegativeButton("Back", null)
+                    .create().show();
+        }else{
+            new AlertDialog.Builder(this)
+                    .setTitle("Save Form")
+                    .setMessage("Do you want to save this form?")
+                    .setNegativeButton("Back", null)
+                    .setPositiveButton("Save Form", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Retrofit.Builder builder = new Retrofit.Builder()
+                                    .baseUrl(getString(R.string.baseURL))
+                                    .addConverterFactory(GsonConverterFactory.create());
+
+                            Retrofit retrofit = builder.build();
+                            FormWebInterface client = retrofit.create(FormWebInterface.class);
+                            Call<Void> call = client.postFormTemplate(new FormTemplateObject(formName, formTemplate));
+
+                            call.enqueue(new Callback<Void>() {
+                                @Override
+                                public void onResponse(Call<Void> call, Response<Void> response) {
+                                    Intent backHome =  new Intent(getApplicationContext(), MainActivity.class);
+                                    backHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(backHome);
+                                }
+
+                                @Override
+                                public void onFailure(Call<Void> call, Throwable t) {
+                                }
+                            });
+                        }
+                    })
+                    .create().show();
         }
-
-
-        Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl(getString(R.string.baseURL))
-                .addConverterFactory(GsonConverterFactory.create());
-
-        Retrofit retrofit = builder.build();
-        FormWebInterface client = retrofit.create(FormWebInterface.class);
-        Call<Void> call = client.postFormTemplate(new FormTemplateObject(formName, formTemplate));
-
-        call.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                Intent backHome =  new Intent(getApplicationContext(), MainActivity.class);
-                backHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(backHome);
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-            }
-        });
     }
 }

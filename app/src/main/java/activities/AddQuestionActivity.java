@@ -17,6 +17,8 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import toning.juriaan.models.FieldType;
 import toning.juriaan.models.Helper;
 import toning.juriaan.models.R;
@@ -30,6 +32,8 @@ public class AddQuestionActivity extends FormBaseActivity implements AdapterView
     private Spinner questionTypeSpinner;
     private LinearLayout optionsLayout;
     private boolean firstTimeChoice = true;
+    private ArrayList<EditText> optionsEditTexts;
+    private String[] options;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +78,16 @@ public class AddQuestionActivity extends FormBaseActivity implements AdapterView
             required = true;
         }
 
+        if(questionTypeSpinner.getSelectedItem().toString().equals(FieldType.Choice.toString())){
+            options = new String[optionsEditTexts.size()];
+            int i = 0;
+            for(EditText e : optionsEditTexts){
+                options[i] = e.getText().toString();
+                i++;
+            }
+            getIntent().putExtra("Options", options);
+        }
+
         getIntent().putExtra(Helper.QUESTION_NAME, questionName.getText().toString());
         getIntent().putExtra(Helper.REQUIRED, required);
         getIntent().putExtra(Helper.QUESTION_TYPE_STRING, questionTypeSpinner.getSelectedItem().toString());
@@ -95,6 +109,7 @@ public class AddQuestionActivity extends FormBaseActivity implements AdapterView
         EditText editText = new EditText(this);
         editText.setLayoutParams(layoutParams);
         editText.setHint("Option");
+        optionsEditTexts.add(editText);
 
         textInputLayout.addView(editText);
 
@@ -127,8 +142,8 @@ public class AddQuestionActivity extends FormBaseActivity implements AdapterView
 
             if(firstTimeChoice){
                 firstTimeChoice = false;
+                optionsEditTexts = new ArrayList<>();
                 makeOption();
-
             }
         }
         else{
