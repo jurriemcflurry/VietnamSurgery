@@ -7,7 +7,6 @@ import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
@@ -33,11 +32,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import toning.juriaan.vietnamsurgery.R;
 import toning.juriaan.vietnamsurgery.Utility.PhotoUtils;
 import toning.juriaan.vietnamsurgery.Utility.Utils;
-import toning.juriaan.vietnamsurgery.listener.FileNameListener;
 import toning.juriaan.vietnamsurgery.model.FormTemplate;
-import toning.juriaan.vietnamsurgery.R;
 
 public class CameraActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;

@@ -9,8 +9,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import toning.juriaan.vietnamsurgery.listener.FormListListener;
 import toning.juriaan.vietnamsurgery.R;
+import toning.juriaan.vietnamsurgery.listener.FormListListener;
 import toning.juriaan.vietnamsurgery.model.FormTemplate;
 
 public class FormListAdapter extends RecyclerView.Adapter<FormListAdapter.FormListViewHolder> {

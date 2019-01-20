@@ -7,11 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.io.File;
 import java.util.List;
 
 import toning.juriaan.vietnamsurgery.R;
-import toning.juriaan.vietnamsurgery.listener.FileNameListener;
 import toning.juriaan.vietnamsurgery.listener.SheetListener;
 
 public class SheetAdapter extends RecyclerView.Adapter<SheetAdapter.SheetViewHolder> {

@@ -102,7 +102,7 @@ public class DirectoryChooserDialog {
                 m_chosenDirectoryListener.onChosenDir(m_dir);
             }
         }));
-        
+
         if(cancelable) {
             dialogBuilder.setNegativeButton(R.string.dialog_cancel, null);
         }
