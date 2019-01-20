@@ -10,6 +10,8 @@
     <string name="section_name_photo_detail">Detail foto</string>
     <string name="dialog_choose">Kies</string>
     <string name="directory_chooser_text">Hieronder kan een map gekozen worden waar de Excelbestanden in staan\n\nHuidige map:\n%1$s</string>
+    <string name="dialog_warning_title">Waarschuwing</string>
+    <string name="dialog_warning_text">Er is minder dan 100Mb ruimte beschikbaar op dit apparaat. Maak ruimte vrij om problemen te voorkomen.</string>
 
     <string name="name_placeholder_item_list">((NAAM))</string>
     <string name="name_district_item_list">Wijk: </string>

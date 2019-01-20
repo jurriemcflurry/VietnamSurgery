@@ -7,6 +7,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,7 +17,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,6 +63,13 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
         setupFields();
         setupToolbar();
         setupNavigation();
+
+        if(!Utils.isEnoughSpaceLeftOnOnDevice(root.getAbsolutePath())){
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.dialog_warning_title)
+                    .setMessage(R.string.dialog_warning_text)
+                    .setPositiveButton(getString(R.string.dialog_ok), null).show();
+        }
 
         // Check if we can read/write to the storage. If so, continue; if not; prompt the user
         if(Utils.verifyStoragePermissions(this)) {

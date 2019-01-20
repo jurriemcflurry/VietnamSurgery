@@ -342,11 +342,9 @@ public class OverviewFormActivity extends AppCompatActivity {
         String name = form.getSections().get(0).getFields().get(1).getAnswer();
         String birthYear = form.getSections().get(0).getFields().get(2).getAnswer();
         new AlertDialog.Builder(OverviewFormActivity.this)
-                .setTitle("Success")
+                .setTitle(getString(R.string.dialog_save_form_title))
                 .setMessage(getString(R.string.dialog_save_form_text, getString(R.string.form_name, form.getFormName(), name, birthYear)))
-                .setPositiveButton(getString(R.string.dialog_save_form_positive), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                .setPositiveButton(getString(R.string.dialog_save_form_positive), (DialogInterface dialog, int which) -> {
                         FormTemplate tempForm = new FormTemplate();
                         tempForm.setFileName(form.getFileName());
                         tempForm.setSheetName(form.getSheetName());
@@ -358,25 +356,18 @@ public class OverviewFormActivity extends AppCompatActivity {
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                         finish();
-                    }
                 })
-                .setNegativeButton(getString(R.string.dialog_save_form_negative), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                .setNegativeButton(getString(R.string.dialog_save_form_negative), (DialogInterface dialog, int which) -> {
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                         finish();
-                    }
                 })
-                .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
+                .setOnCancelListener((DialogInterface dialog) -> {
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                         finish();
-                    }
                 }).show();
     }
 

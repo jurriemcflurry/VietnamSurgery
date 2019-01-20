@@ -10,6 +10,8 @@
     <string name="section_name_photo_detail">Photo detail</string>
     <string name="dialog_choose">Choose</string>
     <string name="directory_chooser_text">Below you can choose a folder containing the Excel files\n\nCurrent folder:\n%1$s</string>
+    <string name="dialog_warning_title">Warning</string>
+    <string name="dialog_warning_text">There is less than 100Mb of space available on this device. Free up space to prevent problems.</string>
 
     <string name="name_placeholder_item_list">((NAME))</string>
     <string name="name_district_item_list">District: </string>

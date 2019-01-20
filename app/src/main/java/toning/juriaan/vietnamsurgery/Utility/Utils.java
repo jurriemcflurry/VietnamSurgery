@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.StatFs;
 import android.support.v4.app.ActivityCompat;
 
 import java.io.File;
@@ -97,5 +98,16 @@ public final class Utils {
         }
 
         return inFiles;
+    }
+
+    /**
+     * Method to check if there is enough space left. It check's for 100Mb
+     * @param path path where to check
+     * @return boolean
+     */
+    public static boolean isEnoughSpaceLeftOnOnDevice(String path) {
+        StatFs stats = new StatFs(path);
+        long bytes = stats.getAvailableBytes();
+        return (bytes <= 104857600L);
     }
 }

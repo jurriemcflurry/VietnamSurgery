@@ -28,6 +28,7 @@ import java.util.Map;
 
 import toning.juriaan.vietnamsurgery.MainActivity;
 import toning.juriaan.vietnamsurgery.R;
+import toning.juriaan.vietnamsurgery.Utility.Utils;
 import toning.juriaan.vietnamsurgery.model.Field;
 import toning.juriaan.vietnamsurgery.model.FormTemplate;
 import toning.juriaan.vietnamsurgery.model.Section;
@@ -54,6 +55,15 @@ public class FormActivity extends AppCompatActivity {
         loadIntent();
         setupFields();
         setupToolbar();
+        View view = findViewById(R.id.form_frame_layout);
+        setupUI(view);
+
+        if(!Utils.isEnoughSpaceLeftOnOnDevice(Utils.getRootDir())){
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.dialog_warning_title)
+                    .setMessage(R.string.dialog_warning_text)
+                    .setPositiveButton(getString(R.string.dialog_ok), null).show();
+        }
 
         if(tempNoOfSec == 0) {
             generateForm(form.getSections().get(0), layout);
@@ -62,8 +72,7 @@ public class FormActivity extends AppCompatActivity {
             generateForm(form.getSections().get(tempNoOfSec-1), layout);
         }
 
-        View view = findViewById(R.id.form_frame_layout);
-        setupUI(view);
+
 
     }
 
@@ -85,6 +94,7 @@ public class FormActivity extends AppCompatActivity {
         stepCounter = findViewById(R.id.step_counter);
         layout = findViewById(R.id.formLayout);
         toolbar = findViewById(R.id.form_toolbar);
+        Utils.setSharedPrefs(this);
     }
 
     /**
