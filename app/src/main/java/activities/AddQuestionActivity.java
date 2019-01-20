@@ -12,8 +12,10 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import toning.juriaan.models.FieldType;
 import toning.juriaan.models.Helper;
@@ -84,6 +86,9 @@ public class AddQuestionActivity extends FormBaseActivity implements AdapterView
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
+        LinearLayout.LayoutParams addOptionParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
         TextInputLayout textInputLayout = new TextInputLayout(this);
         textInputLayout.setLayoutParams(layoutParams);
 
@@ -92,7 +97,26 @@ public class AddQuestionActivity extends FormBaseActivity implements AdapterView
         editText.setHint("Option");
 
         textInputLayout.addView(editText);
+
+        final LinearLayout addOption = new LinearLayout(this);
+        addOption.setLayoutParams(layoutParams);
+        addOption.setOrientation(LinearLayout.HORIZONTAL);
+
+        final TextView addExtraOption = new TextView(this);
+        addExtraOption.setLayoutParams(addOptionParams);
+        addExtraOption.setText("Add another option       +");
+        addExtraOption.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                makeOption();
+                addOption.removeView(addExtraOption);
+            }
+        });
+
+        addOption.addView(addExtraOption);
+
         optionsLayout.addView(textInputLayout);
+        optionsLayout.addView(addOption);
     }
 
     @Override
