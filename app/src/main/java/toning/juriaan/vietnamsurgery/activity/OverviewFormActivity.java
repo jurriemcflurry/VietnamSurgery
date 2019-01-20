@@ -36,6 +36,7 @@ import java.util.List;
 
 import toning.juriaan.vietnamsurgery.MainActivity;
 import toning.juriaan.vietnamsurgery.Utility.PhotoUtils;
+import toning.juriaan.vietnamsurgery.Utility.Utils;
 import toning.juriaan.vietnamsurgery.model.Field;
 import toning.juriaan.vietnamsurgery.model.FormTemplate;
 import toning.juriaan.vietnamsurgery.R;
@@ -55,6 +56,7 @@ public class OverviewFormActivity extends AppCompatActivity {
     private File storageDirPng;
     LinearLayout mGallery;
     int requestCode;
+    private String root;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,9 +86,10 @@ public class OverviewFormActivity extends AppCompatActivity {
         mFormOverview = findViewById(R.id.formLayout);
         mInflator = getLayoutInflater();
         toolbar = findViewById(R.id.form_toolbar);
-        String rootDir = Environment.getExternalStorageDirectory().toString();
-        storageDirPng = new File(rootDir + File.separator + "/LenTab/lentab-susanne/VietnamSurgery/thumbs");
         mGallery = findViewById(R.id.photo_gallery);
+        Utils.setSharedPrefs(this);
+        root = Utils.getRootDir();
+        storageDirPng = new File(root + File.separator + form.getFormName() + File.separator + "thumbs");
     }
 
     /**
@@ -183,7 +186,6 @@ public class OverviewFormActivity extends AppCompatActivity {
      */
     private void saveForm(FormTemplate form) {
         Toast.makeText(OverviewFormActivity.this, R.string.saving_form, Toast.LENGTH_LONG).show();
-        String root = Environment.getExternalStorageDirectory().toString() + "/LenTab/lentab-susanne";
         File file = new File(root, form.getFileName());
         try{
             Workbook wb = WorkbookFactory.create(file);
@@ -240,7 +242,7 @@ public class OverviewFormActivity extends AppCompatActivity {
             }
 
             // Save the file! And delete the "new" file - Because of a f-up in POI we have to do this unfortunately
-            File file2 = new File(root, "test.xlsx");
+            File file2 = new File(root, "dummyfile.xlsx");
             FileOutputStream out = new FileOutputStream(file2);
             file2.delete();
             wb.write(out);

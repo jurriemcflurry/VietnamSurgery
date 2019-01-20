@@ -34,6 +34,8 @@ import java.util.List;
 import java.util.Locale;
 
 import toning.juriaan.vietnamsurgery.Utility.PhotoUtils;
+import toning.juriaan.vietnamsurgery.Utility.Utils;
+import toning.juriaan.vietnamsurgery.listener.FileNameListener;
 import toning.juriaan.vietnamsurgery.model.FormTemplate;
 import toning.juriaan.vietnamsurgery.R;
 
@@ -65,6 +67,7 @@ public class CameraActivity extends AppCompatActivity {
 
         loadIntent();
         setupFields();
+        makeDirsIfNecessary();
         setupToolbar();
         setupFloatingActionButton();
         checkForPictures();
@@ -89,9 +92,26 @@ public class CameraActivity extends AppCompatActivity {
         sectionNameTv = findViewById(R.id.section_name);
         sectionNameTv.setText(R.string.section_name_photos);
         toolbar = findViewById(R.id.form_toolbar);
-        rootDir = Environment.getExternalStorageDirectory().toString();
-        storageDirJpg = new File( rootDir + "/LenTab/lentab-susanne/VietnamSurgery");
-        storageDirPng = new File(rootDir + File.separator + "/LenTab/lentab-susanne/VietnamSurgery/thumbs");
+        Utils.setSharedPrefs(this);
+        rootDir = Utils.getRootDir();
+        storageDirJpg = new File( rootDir + File.separator + form.getFormName());
+        storageDirPng = new File(rootDir + File.separator + form.getFormName() + File.separator  + "thumbs");
+    }
+
+    /**
+     * Method to create dirs if they don't exist yet
+     */
+    private void makeDirsIfNecessary() {
+        if (!storageDirPng.exists()) {
+            if(!storageDirPng.mkdirs()){
+                Log.w("Creating file error :", storageDirPng.getAbsolutePath());
+            }
+        }
+        if (!storageDirJpg.exists()) {
+            if(!storageDirJpg.mkdirs()){
+                Log.w("Creating file error: ", storageDirJpg.getAbsolutePath());
+            }
+        }
     }
 
     /**
@@ -237,28 +257,16 @@ public class CameraActivity extends AppCompatActivity {
      */
     private void saveThumb(Bitmap thumb) {
         try {
-            File mypath = null;
+            File photoFile = new File(storageDirPng, photoName + ".png");
 
-            if(!storageDirPng.exists()) {
-                if(storageDirPng.mkdirs()){
-                    mypath = new File(storageDirPng, photoName + ".png");
-                }
-            } else {
-                mypath = new File(storageDirPng, photoName + ".png");
-            }
-
-            if(mypath != null) {
-                FileOutputStream fos = new FileOutputStream(mypath);
-                thumb.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                fos.close();
-                thumbImages.add(mypath.getAbsolutePath());
-                form.setThumbImages(thumbImages);
-            } else {
-                Toast.makeText(this, R.string.error_save_thumb, Toast.LENGTH_LONG).show();
-            }
+            FileOutputStream fos = new FileOutputStream(photoFile);
+            thumb.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.close();
+            thumbImages.add(photoFile.getAbsolutePath());
+            form.setThumbImages(thumbImages);
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Toast.makeText(this, R.string.error_save_thumb, Toast.LENGTH_LONG).show();
         }
     }
 

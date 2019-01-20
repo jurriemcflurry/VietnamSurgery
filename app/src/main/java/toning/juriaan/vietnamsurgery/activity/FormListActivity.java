@@ -35,6 +35,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import toning.juriaan.vietnamsurgery.Utility.Utils;
 import toning.juriaan.vietnamsurgery.adapter.FileNameAdapter;
 import toning.juriaan.vietnamsurgery.adapter.SheetAdapter;
 import toning.juriaan.vietnamsurgery.listener.FileNameListener;
@@ -57,12 +58,12 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
     Toolbar toolbar;
     private ActionBar ab;
     private DrawerLayout mDrawerLayout;
-    final private File root =  new File(Environment.getExternalStorageDirectory().toString() + "/LenTab/lentab-susanne");
-    RecyclerView mRecyclerView;
-    LinearLayoutManager mLayoutManager = new GridLayoutManager(this, 1);
-    FileNameAdapter mAdapterFiles;
-    SheetAdapter mAdapterSheets;
-    XSSFWorkbook mWorkbook;
+    private File root;
+    private RecyclerView mRecyclerView;
+    private LinearLayoutManager mLayoutManager = new GridLayoutManager(this, 1);
+    private FileNameAdapter mAdapterFiles;
+    private SheetAdapter mAdapterSheets;
+    private XSSFWorkbook mWorkbook;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +104,8 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
         toolbar = findViewById(R.id.form_toolbar);
         form = new FormTemplate();
         mRecyclerView = findViewById(R.id.grid_view_form_list_files);
+        Utils.setSharedPrefs(this);
+        root = new File(Utils.getRootDir());
     }
 
     /**
@@ -444,8 +447,8 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
         List<String> pictures = new ArrayList<>();
         List<String> thumbs = new ArrayList<>();
 
-        File storageDir = new File(Environment.getExternalStorageDirectory().toString() + "/LenTab/lentab-susanne/VietnamSurgery");
-        File[] files = storageDir.listFiles();
+        File storageDirJpg = new File( root + File.separator + form.getFormName());
+        File[] files = storageDirJpg.listFiles();
 
         String patientName = patientForm.getSections().get(0).getFields().get(1).getAnswer();
         String birthYear = patientForm.getSections().get(0).getFields().get(2).getAnswer();
@@ -454,7 +457,7 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
             // Todo: NAME OF PICTURES!
             if(file.getName().contains( patientName + "_" + birthYear + "_" )) {
                 pictures.add(file.getAbsolutePath());
-                File pngFile = new File(Environment.getExternalStorageDirectory().toString() + "/LenTab/lentab-susanne/VietnamSurgery/thumbs", file.getName().replace("jpg", "png"));
+                File pngFile = new File(root + File.separator + form.getFormName() + File.separator  + "thumbs", file.getName().replace("jpg", "png"));
                 thumbs.add(pngFile.getAbsolutePath());
             }
         }

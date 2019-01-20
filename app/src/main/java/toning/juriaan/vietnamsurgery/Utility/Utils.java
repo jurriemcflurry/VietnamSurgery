@@ -27,7 +27,7 @@ public final class Utils {
     /**
      * Function to get chosenDirKey
      */
-    public static String getChosenDirKey() {
+    private static String getChosenDirKey() {
         return chosenDirKey;
     }
 
@@ -48,8 +48,8 @@ public final class Utils {
     /**
      * Method to remove the rootDir for the files
      */
-    public static boolean removeRootDirFromPrefs() {
-        return prefs.edit().remove(getChosenDirKey()).commit();
+    public static void removeRootDirFromPrefs() {
+        prefs.edit().remove(getChosenDirKey()).apply();
     }
 
     /**
@@ -62,8 +62,9 @@ public final class Utils {
     /**
      * Function to check permissions. If we don't have these permissions, we're going to ask for them
      * @param activity activity you're using this prompt im
+     * @return boolean
      */
-    public static void verifyStoragePermissions(Activity activity) {
+    public static boolean verifyStoragePermissions(Activity activity) {
         // Check if we have write permission
         int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
@@ -74,6 +75,9 @@ public final class Utils {
                     PERMISSIONS_STORAGE,
                     REQUEST_EXTERNAL_STORAGE
             );
+            return false;
+        } else {
+            return true;
         }
     }
 

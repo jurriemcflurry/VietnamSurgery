@@ -60,6 +60,7 @@ import toning.juriaan.vietnamsurgery.model.Section;
 
 public class MainActivity extends AppCompatActivity implements FileNameListener, SheetListener {
 
+    private final int PERMISSION_READ_STORAGE = 1;
     private DrawerLayout mDrawerLayout;
     private static final String TAG = "MyActivity";
     private FormTemplate form = new FormTemplate();
@@ -86,41 +87,35 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
         setupNavigation();
 
         // Check if we can read/write to the storage. If so, continue; if not; prompt the user
-        Utils.verifyStoragePermissions(this);
+        if(Utils.verifyStoragePermissions(this)) {
+            chooseDirOrLoadList();
+        }
+    }
 
-
+    private void chooseDirOrLoadList() {
         if(Utils.getRootDir() == null) {
             chooseDir();
         } else {
             root = new File(Utils.getRootDir());
-            Utils.removeRootDirFromPrefs();
+            // Todo: Remove this item!
+            //Utils.removeRootDirFromPrefs();
             List<File> files = Utils.getListOfExcelFiles(root);
             chooseExcelFile(files);
         }
-
-
-
     }
 
-
-    public void chooseDir() {
-        // Create DirectoryChooserDialog and register a callback
-        DirectoryChooserDialog directoryChooserDialog =
-                new DirectoryChooserDialog(this,
-                        new DirectoryChooserDialog.ChosenDirectoryListener()
-                        {
-                            @Override
-                            public void onChosenDir(String chosenDir)
-                            {
-                                if(Utils.editRootDirInPrefs(chosenDir)){
-                                    root = new File(chosenDir);
-                                    List<File> files = Utils.getListOfExcelFiles(root);
-                                    chooseExcelFile(files);
-                                }
-                            }
-                        });
-
-        directoryChooserDialog.chooseDirectory(false);
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_READ_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    chooseDirOrLoadList();
+                }
+            }
+        }
     }
 
     /**
@@ -182,6 +177,29 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
                     return true;
                 }
             });
+    }
+
+    /**
+     * Method that fires the DirectoryChooserDialog
+     */
+    public void chooseDir() {
+        // Create DirectoryChooserDialog and register a callback
+        DirectoryChooserDialog directoryChooserDialog =
+                new DirectoryChooserDialog(this,
+                        new DirectoryChooserDialog.ChosenDirectoryListener()
+                        {
+                            @Override
+                            public void onChosenDir(String chosenDir)
+                            {
+                                if(Utils.editRootDirInPrefs(chosenDir)){
+                                    root = new File(chosenDir);
+                                    List<File> files = Utils.getListOfExcelFiles(root);
+                                    chooseExcelFile(files);
+                                }
+                            }
+                        });
+
+        directoryChooserDialog.chooseDirectory(false);
     }
 
     /**
