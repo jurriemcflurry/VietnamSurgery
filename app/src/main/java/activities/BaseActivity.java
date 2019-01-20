@@ -17,6 +17,11 @@ import android.widget.TextView;
 import toning.juriaan.models.AccessToken;
 import toning.juriaan.models.R;
 
+import com.microsoft.appcenter.AppCenter;
+import com.microsoft.appcenter.analytics.Analytics;
+import com.microsoft.appcenter.crashes.Crashes;
+import com.microsoft.appcenter.AppCenter; import com.microsoft.appcenter.analytics.Analytics; import com.microsoft.appcenter.crashes.Crashes;
+
 public class BaseActivity extends AppCompatActivity {
 
     DrawerLayout drawerLayout;
@@ -26,6 +31,9 @@ public class BaseActivity extends AppCompatActivity {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
+
+        AppCenter.start(getApplication(), "5af67a22-a470-452f-b89c-91c5425eca0f",
+                Analytics.class, Crashes.class);
 
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
