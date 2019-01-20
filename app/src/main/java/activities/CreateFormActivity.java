@@ -83,8 +83,8 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
                 @Override
                 public void onClick(View v) {
                     Intent addQuestion = new Intent(getApplicationContext(), AddQuestionActivity.class);
-                    addQuestion.putExtra("section", section.getSectionName());
-                    startActivityForResult(addQuestion, 12);
+                    addQuestion.putExtra(Helper.QUESTION_SECTION, section.getSectionName());
+                    startActivityForResult(addQuestion, Helper.ADD_QUESTION_CODE);
                 }
             });
             formView.addView(sectionView);
@@ -282,6 +282,11 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
                 String type = extras.getString(Helper.QUESTION_TYPE_STRING);
                 String sectionName = extras.getString(Helper.QUESTION_SECTION);
 
+                Helper.log(questionName);
+                Helper.log(required.toString());
+                Helper.log(type);
+                Helper.log(sectionName);
+
                 for(Section section : formTemplate.getSections()){
                     if(section.getSectionName().equals(sectionName)){
                         section.addFields(new Field(questionName, type, required));
@@ -306,6 +311,11 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
     }
 
     private void postForm(String formName, FormTemplate formTemplate) {
+        if(formNameEditText.getText().toString().isEmpty()){
+           return;
+        }
+
+
         Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl(getString(R.string.baseURL))
                 .addConverterFactory(GsonConverterFactory.create());
@@ -317,6 +327,9 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
+                Intent backHome =  new Intent(getApplicationContext(), MainActivity.class);
+                backHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(backHome);
             }
 
             @Override
