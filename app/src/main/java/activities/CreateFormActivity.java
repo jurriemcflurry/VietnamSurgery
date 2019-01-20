@@ -63,32 +63,41 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
 
         formTemplate = new FormTemplate();
         loadStandardItems();
+        updateView();
+    }
+
+    private void updateView(){
+        formView.removeAllViews();
+
+        for(final Section section : formTemplate.getSections()){
+            TextView sectionView = makeSectionView(section);
+            ArrayList<Field> fields = section.getFields();
+            LinearLayout fieldsView = makeFieldsView();
+            int i = 0;
+            for(Field field : fields){
+                fieldsView.addView(createViewFromField(field, i));
+                i++;
+            }
+
+            sectionView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent addQuestion = new Intent(getApplicationContext(), AddQuestionActivity.class);
+                    addQuestion.putExtra("section", section.getSectionName());
+                    startActivityForResult(addQuestion, 12);
+                }
+            });
+            formView.addView(sectionView);
+            formView.addView(fieldsView);
+        }
     }
 
     private void loadStandardItems(){
         ArrayList<Field> personalInfoFields = makePersonalInfoFields();
         Section personalInfoSection = new Section(getString(R.string.personalInfo), personalInfoFields);
-        TextView personalInfoSectionView = makeSectionView(personalInfoSection);
-        LinearLayout fieldsView = makeFieldsView();
-        int i = 0;
-        for(Field field : personalInfoFields){
-            fieldsView.addView(createViewFromField(field, i));
-            i++;
-        }
-        formView.addView(personalInfoSectionView);
-        formView.addView(fieldsView);
 
         ArrayList<Field> contactInfoFields = makeContactInfoFields();
         Section contactInfoSection = new Section(getString(R.string.contactInfo), contactInfoFields);
-        TextView contactInfoSectionView = makeSectionView(contactInfoSection);
-        LinearLayout fieldsView2 = makeFieldsView();
-        i = 0;
-        for(Field field : contactInfoFields){
-            fieldsView2.addView(createViewFromField(field, i));
-            i++;
-        }
-        formView.addView(contactInfoSectionView);
-        formView.addView(fieldsView2);
 
         formTemplate.getSections().add(personalInfoSection);
         formTemplate.getSections().add(contactInfoSection);
@@ -259,10 +268,27 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
         if(requestCode == Helper.ADD_SECTION_CODE){
             if(resultCode == Helper.SECTION_ADDED_RESULT_CODE){
                Bundle extras = data.getExtras();
-               String sectionName = extras.getString(Helper.SECTION_ADDED);
-               Section newSection = new Section(sectionName);
-               formView.addView(makeSectionView(newSection));
+               Section newSection = new Section(extras.getString(Helper.SECTION_ADDED));
                formTemplate.addSection(newSection);
+               updateView();
+            }
+        }
+
+        if(requestCode == Helper.ADD_QUESTION_CODE){
+            if(resultCode == Helper.ADD_QUESTION_RESULT_CODE){
+                Bundle extras = data.getExtras();
+                String questionName = extras.getString(Helper.QUESTION_NAME);
+                Boolean required = extras.getBoolean(Helper.REQUIRED);
+                String type = extras.getString(Helper.QUESTION_TYPE_STRING);
+                String sectionName = extras.getString(Helper.QUESTION_SECTION);
+
+                for(Section section : formTemplate.getSections()){
+                    if(section.getSectionName().equals(sectionName)){
+                        section.addFields(new Field(questionName, type, required));
+                    }
+                }
+
+                updateView();
             }
         }
     }

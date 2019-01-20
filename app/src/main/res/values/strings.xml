@@ -121,7 +121,11 @@
     <string name="sectionName">Section Name</string>
     <string name="addSectionButton">Add Section</string>
 
-    <!-- EditSectionActivity -->
+    <!-- AddQuestionActivity -->
+    <string name="addQuestionTitle">Add Question</string>
+    <string name="questionName">Question</string>
+    <string name="addQuestionButton">Add Question</string>
+    <string name="required">Required</string>
 
     <!-- Overig -->
     <string name="refresh">Refresh</string>

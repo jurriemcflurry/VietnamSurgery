@@ -31,6 +31,13 @@ public class Helper {
     public final static int SECTION_ADDED_RESULT_CODE = 2;
     public final static String SECTION_ADDED = "SectionAdded";
 
+    public final static int ADD_QUESTION_CODE = 11;
+    public final static int ADD_QUESTION_RESULT_CODE = 12;
+    public final static String QUESTION_NAME = "questionName";
+    public final static String REQUIRED = "required";
+    public final static String QUESTION_TYPE_STRING = "Type";
+    public final static String QUESTION_SECTION = "Section";
+
     public final static int THUMBNAIL_SIZE = 400;
 
     public static void log(String logEntry) {
