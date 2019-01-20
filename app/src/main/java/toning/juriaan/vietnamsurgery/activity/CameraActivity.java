@@ -33,6 +33,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import toning.juriaan.vietnamsurgery.Utility.PhotoUtils;
 import toning.juriaan.vietnamsurgery.model.FormTemplate;
 import toning.juriaan.vietnamsurgery.R;
 
@@ -40,7 +41,7 @@ public class CameraActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_DELETE_IMAGE = 2;
     private final String TAG = this.getClass().getSimpleName();
-    private GridLayout gridLayout1;
+    private GridLayout pictureGrid;
     private ArrayList<Bitmap> mImages = new ArrayList<>();
     private FormTemplate form;
     private int noOfSections;
@@ -69,13 +70,19 @@ public class CameraActivity extends AppCompatActivity {
         checkForPictures();
     }
 
+    /**
+     * Method to load the intent
+     */
     private void loadIntent(){
         Intent i = getIntent();
         form = i.getParcelableExtra("obj_form");
     }
 
+    /**
+     * Method to set up the fields that we need in this activity
+     */
     private void setupFields(){
-        gridLayout1 = findViewById(R.id.gridLayout1);
+        pictureGrid = findViewById(R.id.gridLayout1);
         noOfSections = form.getSections().size();
         stepCounter = findViewById(R.id.step_counter);
         stepCounter.setText(getString(R.string.step_text, noOfSections + 1, noOfSections + 1));
@@ -87,6 +94,9 @@ public class CameraActivity extends AppCompatActivity {
         storageDirPng = new File(rootDir + File.separator + "/LenTab/lentab-susanne/VietnamSurgery/thumbs");
     }
 
+    /**
+     * Method to set up the toolbar for this activity
+     */
     private void setupToolbar() {
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
@@ -96,6 +106,9 @@ public class CameraActivity extends AppCompatActivity {
         ab.setTitle(getString(R.string.form_name, form.getFormName(), name, birthYear));
     }
 
+    /**
+     * Method to set up the FAB
+     */
     private void setupFloatingActionButton(){
         //onClick opent de native camera van de telefoon
         FloatingActionButton photoButton = this.findViewById(R.id.fab_camera);
@@ -104,6 +117,10 @@ public class CameraActivity extends AppCompatActivity {
         );
     }
 
+    /**
+     * The method that starts the intent to take a picture.
+     * It also creates a file for the picture that is going to be taken
+     */
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
@@ -156,10 +173,15 @@ public class CameraActivity extends AppCompatActivity {
         return image;
     }
 
-    //het resultaat van de camera (een foto) wordt hier in een nieuwe ImageView gestopt
-    //de imageview wordt toegevoegd aan een gridlayout
+    /**
+     * Method to handle the result from a startActivityForResult
+     * @param requestCode requestCode from the called activity
+     * @param resultCode resultCode from the called activity
+     * @param data the data that was sent back from the called activity
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // When an image is taken, try to create a thumb, add it to a list, save it and put it in a grid
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             int thumbSize = 400;
             try {
@@ -173,18 +195,23 @@ public class CameraActivity extends AppCompatActivity {
                 Log.i(TAG, getString(R.string.error, ex.getMessage()));
             }
         }
+        // When an image has to be deleted, delete this image
         if(requestCode == REQUEST_DELETE_IMAGE && resultCode == RESULT_OK) {
             String photoUrl = data.getStringExtra("photoUrl");
             if(deletePhoto(photoUrl)) {
                 emptyGrid();
                 checkForPictures();
             } else {
-                // Todo: Error
                 Toast.makeText(this, R.string.error_delete, Toast.LENGTH_LONG).show();
             }
         }
     }
 
+    /**
+     * Method to delete the photo & thumbimage
+     * @param photoUrl String that contains the absolute photoUrl
+     * @return boolean
+     */
     private boolean deletePhoto(String photoUrl) {
         File jpgFile = new File(photoUrl);
         if(jpgFile.exists() && jpgFile.delete()) {
@@ -204,6 +231,10 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Method to save the thumbImage
+     * @param thumb Bitmap of the thumbImage
+     */
     private void saveThumb(Bitmap thumb) {
         try {
             File mypath = null;
@@ -231,6 +262,10 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Method to check if it's allowed to go to the next page
+     * @return boolean
+     */
     private boolean goNext(){
         if(mImages.size() <= 0){
             Toast.makeText(getApplicationContext(), R.string.error_not_enough_pics, Toast.LENGTH_LONG).show();
@@ -241,13 +276,11 @@ public class CameraActivity extends AppCompatActivity {
         return true;
     }
 
-    private void goToDetailPage(File photoFile) {
-        Intent intent = new Intent(this, DetailPhotoActivity.class);
-        intent.putExtra("obj_form", form);
-        intent.putExtra("photoUrl", photoFile.getAbsolutePath());
-        startActivityForResult(intent, REQUEST_DELETE_IMAGE);
-    }
-
+    /**
+     * Method to add the picture in the picturegrid
+     * @param picture Bitmap of the picture that needs to be added
+     * @param path String with absolute path of the full picture
+     */
     private void putPictureInGridLayout(Bitmap picture, String path) {
         ImageView imageView = new ImageView(this);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -255,11 +288,15 @@ public class CameraActivity extends AppCompatActivity {
         imageView.setLayoutParams(lp);
         imageView.setImageBitmap(picture);
         imageView.setOnClickListener((View v) ->
-            goToDetailPage(new File(path))
+            PhotoUtils.goToDetailPage(new File(path), this, form)
         );
-        gridLayout1.addView(imageView);
+        pictureGrid.addView(imageView);
     }
 
+    /**
+     * Method to check if there are already pictures available in the form.
+     * If so, these are placed in the picturegrid
+     */
     private void checkForPictures() {
         if(form.getThumbImages().size() > 0) {
             int index = 0;
@@ -272,8 +309,11 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Method to empty the grid
+     */
     private void emptyGrid() {
-        gridLayout1.removeAllViews();
+        pictureGrid.removeAllViews();
         mImages.clear();
     }
 

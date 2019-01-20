@@ -2,7 +2,9 @@ package toning.juriaan.vietnamsurgery;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.support.design.widget.NavigationView;
@@ -25,14 +27,24 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.poi.hssf.model.InternalSheet;
+import org.apache.poi.hssf.record.DVRecord;
+import org.apache.poi.hssf.record.aggregates.DataValidityTable;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidations;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import toning.juriaan.vietnamsurgery.Utility.Utils;
 import toning.juriaan.vietnamsurgery.activity.FormActivity;
 import toning.juriaan.vietnamsurgery.activity.FormListActivity;
 import toning.juriaan.vietnamsurgery.activity.OverviewFormActivity;
@@ -60,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
     SheetAdapter mAdapterSheets;
     TextView chooseText;
     XSSFWorkbook mWorkbook;
+    //SharedPreferences prefs = this.getSharedPreferences("toning.juriaan.vietnamsurgery", Context.MODE_PRIVATE);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,15 +84,24 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
         setupFields();
         setupToolbar();
         setupNavigation();
-        chooseExcelFile();
+        // Check if we can read/write to the storage. If so, continue; if not; prompt the user
+        Utils.verifyStoragePermissions(this);
+        List<File> files = Utils.getListOfExcelFiles(root);
+        chooseExcelFile(files);
     }
 
+    /**
+     * Method to setup the fields
+     */
     private void setupFields(){
         toolbar = findViewById(R.id.form_toolbar);
         mRecyclerView = findViewById(R.id.grid_view_main);
         chooseText = findViewById(R.id.choose_text);
     }
 
+    /**
+     * Method to setup the toolbar
+     */
     private void setupToolbar() {
         setSupportActionBar(toolbar);
         ab = getSupportActionBar();
@@ -98,6 +120,9 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Method to setup the navigation
+     */
     private void setupNavigation(){
         mDrawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -125,27 +150,12 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
             });
     }
 
-    // Get all the files with xlsx extension
-    private List<File> getListFiles(File parentDir) {
-        // Check if we can read/write to the storage. If so, continue; if not; prompt the user
-        verifyStoragePermissions(this);
-
-        ArrayList<File> inFiles = new ArrayList<>();
-        File[] files = parentDir.listFiles();
-
-        for( File file : files) {
-            if(file.getName().substring(file.getName().lastIndexOf('.') + 1).equals("xlsx")) {
-                inFiles.add(file);
-            }
-        }
-
-        return inFiles;
-    }
-
-    private void chooseExcelFile() {
+    /**
+     * Method to choose the ExcelFile
+     * @param files List with filenames
+     */
+    private void chooseExcelFile(List<File> files) {
         try{
-            List<File> files = getListFiles(root);
-
             // Check if there are more than 1 file, if so, show clickables for all files. If not: load the first one directly
             if(files.size() > 1) {
                 chooseText.setText(R.string.choose_file_text);
@@ -163,6 +173,10 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
 
     }
 
+    /**
+     * Method to create an ExcelWorkbook
+     * @param file File that contains a xlsx
+     */
     private void createExcelWorkbook(File file) {
         try {
             // Create a workbook object
@@ -174,6 +188,10 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
         }
     }
 
+    /**
+     * Method to choose an Excelsheet
+     * @param workbook XSSFWorkbook of the file
+     */
     private void chooseExcelSheet(XSSFWorkbook workbook) {
         mWorkbook = workbook;
         if(workbook.getNumberOfSheets() == 1) {
@@ -190,6 +208,10 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
         }
     }
 
+    /**
+     * Method to read the Excelfile
+     * @param sheet XSSFSheet that holds the data
+     */
     private void readExcelFile(XSSFSheet sheet) {
         try {
             form.setSheetName(sheet.getSheetName());
@@ -270,27 +292,6 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
             finish();
         } catch (Exception ex) {
             Log.e(TAG, getString(R.string.error_while_reading_xlsx, ex.getMessage()));
-        }
-    }
-
-    // Storage Permissions
-    private static final int REQUEST_EXTERNAL_STORAGE = 1;
-    private static String[] PERMISSIONS_STORAGE = {
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-    };
-
-    public static void verifyStoragePermissions(Activity activity) {
-        // Check if we have write permission
-        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            // We don't have permission so prompt the user
-            ActivityCompat.requestPermissions(
-                activity,
-                PERMISSIONS_STORAGE,
-                REQUEST_EXTERNAL_STORAGE
-            );
         }
     }
 

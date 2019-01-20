@@ -71,12 +71,18 @@ public class FormActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Method to load the intent
+     */
     private void loadIntent(){
         Intent i = getIntent();
         form = i.getParcelableExtra("obj_form");
         tempNoOfSec = i.getIntExtra("step", 0);
     }
 
+    /**
+     * Method to set up the fields necessary for this activity
+     */
     private void setupFields(){
         sectionNameTv = findViewById(R.id.section_name);
         noOfSections = form.getSections().size();
@@ -85,6 +91,9 @@ public class FormActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.form_toolbar);
     }
 
+    /**
+     * Method to set up the toolbar for this activity
+     */
     private void setupToolbar() {
         setSupportActionBar(toolbar);
         ab = getSupportActionBar();
@@ -92,6 +101,10 @@ public class FormActivity extends AppCompatActivity {
         ab.setTitle(getString(R.string.new_form_name, form.getFormName()));
     }
 
+    /**
+     * Method to set up the UI for this activity
+     * @param view View that has to be set up
+     */
     public void setupUI(View view) {
 
         // Set up touch listener for non-text box views to hide keyboard.
@@ -113,6 +126,11 @@ public class FormActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Method to save all the filled in fields to the form and empty the form
+     * @param form FormTemplate that has to be edited
+     * @param layout LinearLayout that has to be empties
+     */
     private void emptyForm(FormTemplate form, LinearLayout layout) {
         for(Field f : form.getSections().get(noOfThisSection-1).getFields()) {
             Iterator i = idsMap.entrySet().iterator();
@@ -132,6 +150,11 @@ public class FormActivity extends AppCompatActivity {
         layout.removeAllViews();
     }
 
+    /**
+     * Method to generate the next piece of the form
+     * @param section Section that has to be loaded
+     * @param layout LinearLayout where the form has to be build in
+     */
     private void generateForm(Section section, LinearLayout layout) {
         sectionNameTv.setText(form.getSections().get(noOfThisSection-1).getSectionName());
         stepCounter.setText(getString(R.string.step_text, noOfThisSection, noOfSections + 1));
@@ -166,6 +189,13 @@ public class FormActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Method to create a TextField
+     * @param textFieldName String with the name of the textField
+     * @param column int of the column of this question
+     * @param answer String with an answer, could be null
+     * @return TextInputLayout textField that can be filled in
+     */
     private TextInputLayout createTextField(String textFieldName, int column, String answer) {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
@@ -186,6 +216,13 @@ public class FormActivity extends AppCompatActivity {
         return textInputLayout;
     }
 
+    /**
+     * Method to create a radiobutton
+     * @param text String with the question
+     * @param id int holding the id of this button
+     * @param answer String with an answer, could be null
+     * @return RadioButton
+     */
     private RadioButton createRadioButton(String text, int id, String answer) {
         RadioButton rb = new RadioButton(this);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -201,6 +238,10 @@ public class FormActivity extends AppCompatActivity {
         return rb;
     }
 
+    /**
+     * Method to hide the keyboard
+     * @param activity Activity that wants to hide the keyboard
+     */
     private void hideKeyboard(Activity activity) {
         InputMethodManager inputMethodManager =
                 (InputMethodManager) activity.getSystemService(

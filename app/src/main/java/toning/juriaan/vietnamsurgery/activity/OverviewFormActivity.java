@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import toning.juriaan.vietnamsurgery.MainActivity;
+import toning.juriaan.vietnamsurgery.Utility.PhotoUtils;
 import toning.juriaan.vietnamsurgery.model.Field;
 import toning.juriaan.vietnamsurgery.model.FormTemplate;
 import toning.juriaan.vietnamsurgery.R;
@@ -67,12 +68,18 @@ public class OverviewFormActivity extends AppCompatActivity {
         loadForm();
     }
 
-
+    /**
+     * Method to load the intent
+     */
     private void loadIntent(){
         Intent i = getIntent();
         form = i.getParcelableExtra("obj_form");
         requestCode = i.getIntExtra("requestCode", 0);
     }
+
+    /**
+     * Method to set up the fields
+     */
     private void setupFields() {
         mFormOverview = findViewById(R.id.formLayout);
         mInflator = getLayoutInflater();
@@ -82,6 +89,9 @@ public class OverviewFormActivity extends AppCompatActivity {
         mGallery = findViewById(R.id.photo_gallery);
     }
 
+    /**
+     * Method to set up the toolbar
+     */
     private void setupToolbar() {
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
@@ -91,11 +101,17 @@ public class OverviewFormActivity extends AppCompatActivity {
         ab.setTitle(getString(R.string.form_name, form.getFormName(), name, birthYear));
     }
 
+    /**
+     * Method to load the form
+     */
     private void loadForm(){
         placeFieldsInOverview();
         placePicturesInOverview();
     }
 
+    /**
+     * Method to place the fields in the overview
+     */
     private void placeFieldsInOverview() {
         for (Section sec : form.getSections()) {
             View view = mInflator.inflate(R.layout.overview_grid_item_list, mFormOverview, false);
@@ -121,6 +137,9 @@ public class OverviewFormActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Method to set up the pictures gallery part
+     */
     private void placePicturesInOverview() {
         View headerView = mInflator.inflate(R.layout.overview_grid_item_list, mFormOverview, false);
         TextView txtView = headerView.findViewById(R.id.section_name);
@@ -136,6 +155,9 @@ public class OverviewFormActivity extends AppCompatActivity {
         putPicturesInGallery();
     }
 
+    /**
+     * Methods to place the pictures in the gallery
+     */
     private void putPicturesInGallery(){
         mGallery.removeAllViews();
         LayoutInflater mInflator = getLayoutInflater();
@@ -145,7 +167,7 @@ public class OverviewFormActivity extends AppCompatActivity {
             ImageView imageView = view.findViewById(R.id.image_list_iv);
             File file = new File(form.getPictures().get(index));
             imageView.setOnClickListener((View v) ->
-                    goToDetailPage(file)
+                    PhotoUtils.goToDetailPage(file, this, form)
             );
 
             Bitmap pic = BitmapFactory.decodeFile(pathToFile);
@@ -155,6 +177,10 @@ public class OverviewFormActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Method to save the form
+     * @param form FormTemplate that has to be saevd
+     */
     private void saveForm(FormTemplate form) {
         Toast.makeText(OverviewFormActivity.this, R.string.saving_form, Toast.LENGTH_LONG).show();
         String root = Environment.getExternalStorageDirectory().toString() + "/LenTab/lentab-susanne";
@@ -235,6 +261,9 @@ public class OverviewFormActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Method to rename the pictureFiles if some of the information is changed
+     */
     private void renamePictureFiles() {
         // Todo: renameTo voor foutmelding!
         String patientName = form.getSections().get(0).getFields().get(1).getAnswer();
@@ -265,6 +294,12 @@ public class OverviewFormActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Method to get the last filled in rownumber
+     * @param startRow int with the row where it has to start
+     * @param s Sheet that contains the rows
+     * @return int with last Row number
+     */
     public static int getLastRowNum(int startRow, Sheet s) {
         if(startRow > s.getLastRowNum()) {
             return startRow;
@@ -285,6 +320,11 @@ public class OverviewFormActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Method to check if the row is empty
+     * @param row Row to check
+     * @return boolean
+     */
     public static boolean isRowEmpty(Row row) {
         for (int c = row.getFirstCellNum(); c < row.getLastCellNum(); c++) {
             Cell cell = row.getCell(c);
@@ -295,6 +335,9 @@ public class OverviewFormActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Method to go back to the start or fill in a next form
+     */
     public void goToTheStart() {
         String name = form.getSections().get(0).getFields().get(1).getAnswer();
         String birthYear = form.getSections().get(0).getFields().get(2).getAnswer();
@@ -337,6 +380,10 @@ public class OverviewFormActivity extends AppCompatActivity {
                 }).show();
     }
 
+    /**
+     * Method to create a deep copy of the sections
+     * @return List with sections
+     */
     private List<Section> createDeepCopyOfSections() {
         List<Section> l = new ArrayList<>();
 
@@ -360,13 +407,10 @@ public class OverviewFormActivity extends AppCompatActivity {
         return l;
     }
 
-    private void goToDetailPage(File photoFile) {
-        Intent intent = new Intent(this, DetailPhotoActivity.class);
-        intent.putExtra("obj_form", form);
-        intent.putExtra("photoUrl", photoFile.getAbsolutePath());
-        startActivityForResult(intent, REQUEST_DELETE_IMAGE);
-    }
-
+    /**
+     * Method to go back to the form
+     * @param step int stepNumber
+     */
     private void goBackToForm(int step) {
         if(step > form.getSections().size()) {
             Intent formIntent = new Intent(getApplicationContext(), CameraActivity.class);
@@ -383,6 +427,11 @@ public class OverviewFormActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Method to delete the picture
+     * @param photoUrl String with absolute path
+     * @return boolean
+     */
     private boolean deletePhoto(String photoUrl) {
         File jpgFile = new File(photoUrl);
         if(jpgFile.exists() && jpgFile.delete()) {

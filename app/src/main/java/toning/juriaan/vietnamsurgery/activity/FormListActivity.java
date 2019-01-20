@@ -77,6 +77,9 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
 
     }
 
+    /**
+     * Method to load the intent
+     */
     private void loadIntent() {
         Intent i = getIntent();
         if(i.hasExtra("fileName") && i.hasExtra("sheetName")) {
@@ -93,12 +96,18 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
         }
     }
 
+    /**
+     * Method to set up the fields
+     */
     private void setupFields(){
         toolbar = findViewById(R.id.form_toolbar);
         form = new FormTemplate();
         mRecyclerView = findViewById(R.id.grid_view_form_list_files);
     }
 
+    /**
+     * Method to set up the toolbar for this activity
+     */
     private void setupToolbar() {
         setSupportActionBar(toolbar);
         ab = getSupportActionBar();
@@ -117,6 +126,9 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Method to setup the navigation/menu for this activity
+     */
     private void setupNavigation(){
         mDrawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -144,6 +156,9 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
                 });
     }
 
+    /**
+     * Method to choose an Excel file
+     */
     private void chooseExcelFile() {
         try{
             List<File> files = getListFiles(root);
@@ -199,6 +214,10 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
         return inFiles;
     }
 
+    /**
+     * Method to create an Excel workbook
+     * @param file File that contains an xlsx file
+     */
     private void createExcelWorkbook(File file) {
         try {
             // Create a workbook object
@@ -210,6 +229,10 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
         }
     }
 
+    /**
+     * Method to choose an Excel sheet
+     * @param workbook XSSFWorkBook of the ExcelFile
+     */
     private void chooseExcelSheet(XSSFWorkbook workbook) {
         mWorkbook = workbook;
         if(workbook.getNumberOfSheets() == 1) {
@@ -225,6 +248,10 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
         }
     }
 
+    /**
+     * Method to read the ExcelFile
+     * @param sheet XSSFSheet that holds the sheet that needs to be read
+     */
     private void readExcelFile(XSSFSheet sheet) {
         try {
             form.setSheetName(sheet.getSheetName());
@@ -306,6 +333,10 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
         }
     }
 
+    /**
+     * Method to set the answers for all the filled in forms that are available
+     * @param sheet Sheet that holds the necessary data
+     */
     private void putAnswers(Sheet sheet) {
 
         int firstRowNum = 5;
@@ -362,6 +393,10 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
         mRecyclerView.setAdapter(mAdapter);
     }
 
+    /**
+     * Method that creates a deep copy of the sections available in the FormTemplate
+     * @return List of Section
+     */
     private List<Section> createDeepCopyOfSections() {
         List<Section> l = new ArrayList<>();
 
@@ -385,6 +420,11 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
         return l;
     }
 
+    /**
+     * Checks if a row is empty
+     * @param row Row that has to be checked
+     * @return boolean
+     */
     public static boolean isRowEmpty(Row row) {
         for (int c = row.getFirstCellNum(); c < row.getLastCellNum(); c++) {
             Cell cell = row.getCell(c);
@@ -395,6 +435,11 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
         return true;
     }
 
+    /**
+     * Method to set the list of Pictures and thums in a FormTemplate
+     * @param patientForm FormTemplate that has to be set
+     * @return FormTemplate with added information
+     */
     private FormTemplate setListOfPicturesAndThumbs(FormTemplate patientForm) {
         List<String> pictures = new ArrayList<>();
         List<String> thumbs = new ArrayList<>();
@@ -420,6 +465,9 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
         return patientForm;
     }
 
+    /**
+     * Method to reload the list
+     */
     private void reloadList() {
         try {
             XSSFWorkbook wb = new XSSFWorkbook(new File(root, form.getFileName()));

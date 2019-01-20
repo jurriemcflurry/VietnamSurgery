@@ -46,12 +46,18 @@ public class DetailPhotoActivity extends AppCompatActivity {
         setupPhoto();
     }
 
+    /**
+     * Method to load the intent
+     */
     private void loadIntent(){
         Intent i = getIntent();
         form = i.getParcelableExtra("obj_form");
         photoUrl = i.getStringExtra("photoUrl");
     }
 
+    /**
+     * Method to set up the fields that are necessary for this activity
+     */
     private void setupFields() {
         sectionNameTv = findViewById(R.id.section_name);
         sectionNameTv.setText(R.string.section_name_photo_detail);
@@ -80,6 +86,9 @@ public class DetailPhotoActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Method to set up the toolbar for this activity
+     */
     private void setupToolbar() {
         setSupportActionBar(toolbar);
         ab = getSupportActionBar();
@@ -90,6 +99,9 @@ public class DetailPhotoActivity extends AppCompatActivity {
         ab.setTitle(getString(R.string.form_name, form.getFormName(), name, birthYear));
     }
 
+    /**
+     * Method to set up the photo and place it in the ImageView
+     */
     private void setupPhoto() {
         File photo = new File(photoUrl);
         if(photo.exists()) {
