@@ -56,35 +56,35 @@ public class FormContent {
     }
 
     public void setFormContentName(String[] fieldNames, Context context) {
-        String name = "";
+        if (formContentName != null) return;
+        StringBuilder nameBuilder = new StringBuilder();
 
         for (String fieldName : fieldNames) {
-            for (Map.Entry<String, String> entry : formContent.entrySet()) {
-                if (entry.getKey().toLowerCase().equals(fieldName.toLowerCase())) {
-                    name += entry.getValue() + "_";
-                    break;
-                }
+            String value = getAnswer(fieldName);
+            if (!value.isEmpty()) {
+                nameBuilder.append(value);
+                nameBuilder.append("_");
             }
         }
 
-        name = name.toLowerCase().replaceAll(" ", "_");
+        String name = nameBuilder.toString().toLowerCase().replaceAll(" ", "_");
 
         name += Storage.getNextFormContentNumber(name, context);
 
-        this.formContentName = name;
+        formContentName = name;
     }
 
-    public boolean isValidInfo() {
-        String name = getAnswer("name");
-        String district = getAnswer("district");
-        String birthyear = getAnswer("birthyear");
-        String birthYear=  getAnswer("birth year");
+    public boolean isValidInfo(Context context) {
+        String name = getAnswer(context.getString(R.string.name));
+        String district = getAnswer(context.getString(R.string.district));
+        String birthYear = getAnswer(context.getString(R.string.birthYear));
+        String birthyear = getAnswer(context.getString(R.string.birthyear));
 
         return (!name.isEmpty() && !district.isEmpty() && (!birthYear.isEmpty() || !birthyear.isEmpty()));
     }
 
-    public boolean isValid() {
-        return imageNames.size() > 0 && isValidInfo();
+    public boolean isValid(Context context) {
+        return imageNames.size() > 0 && isValidInfo(context);
     }
 
     public int getFormId() {
@@ -103,11 +103,11 @@ public class FormContent {
         this.formContent = formContent;
     }
 
-    public void addAnswer(String key, String value) {
+    public void addAnswer(String fieldName, String value) {
         boolean add = true;
 
         for (Map.Entry<String, String> entry : formContent.entrySet()) {
-            if (entry.getKey().equals(key)) {
+            if (entry.getKey().equals(fieldName)) {
                 entry.setValue(value);
                 add = false;
                 break;
@@ -115,7 +115,7 @@ public class FormContent {
         }
 
         if (add) {
-            formContent.put(key, value);
+            formContent.put(fieldName, value);
         }
     }
 
@@ -129,6 +129,7 @@ public class FormContent {
     }
 
     public ArrayList<String> getImageNames() {
+        if (imageNames == null) imageNames = new ArrayList<>();
         return imageNames;
     }
 

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Pair;
@@ -72,9 +73,13 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
             finish();
         }
 
-        if (formContentName != null && !formContentName.equals("")) {
+        if (formContentName != null && !formContentName.isEmpty()) {
+            Helper.log("loadForm() loading formContent");
             formContent = Storage.getFormContent(formContentName, this);
-        } else {
+        }
+
+        if (formContent == null) {
+            Helper.log("loadForm() creating formContent");
             formContent = new FormContent(form.getId());
         }
 
@@ -86,11 +91,16 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
     private void updateView() {
         Section section = form.getFormTemplate().getSections()[sectionIndex];
         Field[] fields = section.getFields();
-        getSupportActionBar().setTitle(form.getFormName());
+        formContent.setFormContentName(getFieldNames(), this);
+        getSupportActionBar().setTitle(formContent.getFormContentName());
         sectionNameView.setText(section.getSectionName());
         fieldsView.removeAllViews();
         for (int i = 0; i < fields.length; i++) {
-            fieldsView.addView(createViewFromField(fields[i], i));
+            View view = createViewFromField(fields[i], i);
+            fieldsView.addView(view);
+            if (i == 0 && view != null) {
+                view.setFocusable(true);
+            }
         }
     }
 
@@ -116,7 +126,7 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
         editText.setHint(field.getFieldName());
         editText.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 
-        String value = getFieldValue(field);
+        String value = formContent.getAnswer(field.getFieldName());
         if (value != null) {
             editText.setText(value);
         }
@@ -149,6 +159,19 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
                     this, android.R.layout.simple_spinner_dropdown_item, field.getOptions());
             spinner.setAdapter(adapter);
             spinner.setOnItemSelectedListener(this);
+            String answer = formContent.getAnswer(field.getFieldName());
+            if (!answer.isEmpty()) {
+                int index = -1;
+                for (int j = 0; j < field.getOptions().length; j++) {
+                    if (field.getOptions()[j].toLowerCase().equals(answer.toLowerCase())) {
+                        index = j;
+                        break;
+                    }
+                }
+                if (index >= 0) {
+                    spinner.setSelection(index);
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -157,15 +180,6 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
         linearLayout.addView(spinner);
 
         return linearLayout;
-    }
-
-    private String getFieldValue(Field field) {
-        for (Map.Entry<String, String> entry : formContent.getFormContent().entrySet()) {
-            if (entry.getKey().equals(field.getFieldName())) {
-                return entry.getValue();
-            }
-        }
-        return null;
     }
 
 
@@ -181,14 +195,15 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
     }
 
     @Override
-    public boolean onSupportNavigateUp(){
+    public boolean onSupportNavigateUp() {
         previousSection();
         return true;
     }
 
     private void nextSection() {
-        if (validateSection()) {
-            saveAnswers();
+        saveAnswers();
+        ArrayList<String> errors = validateSection();
+        if (errors.size() == 0) {
             if (sectionIndex < form.getFormTemplate().getSections().length - 1) {
                 sectionIndex++;
                 updateView();
@@ -200,11 +215,32 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
                 cameraIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentName());
                 startActivityForResult(cameraIntent, Helper.FORM_ACTIVITY_CODE);
             }
+        } else {
+            String errorMessage = "";
+            for (String error : errors) {
+                errorMessage += error + "\n";
+            }
+            new AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.formErrorTitle))
+                    .setMessage(errorMessage)
+                    .setNegativeButton("Ok", null)
+                    .create().show();
         }
     }
 
-    private boolean validateSection() {
-        return true;
+    private ArrayList<String> validateSection() {
+        ArrayList<String> errors = new ArrayList<>();
+        Section section = form.getFormTemplate().getSections()[sectionIndex];
+        for (Field field : section.getFields()) {
+            if (field.isRequired()) {
+                String Answer = formContent.getAnswer(field.getFieldName());
+                if (Answer.isEmpty()) {
+                    errors.add(field.getFieldName() + " " + getString(R.string.isRequired));
+                }
+            }
+        }
+
+        return errors;
     }
 
     private void storeFormContent() {
@@ -233,17 +269,21 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
                 continue;
             }
 
+            Helper.log("saveAnswers() " + formContent);
             formContent.addAnswer(fieldName, fieldValue);
         }
     }
 
     private void previousSection() {
         saveAnswers();
-        if(sectionIndex > 0){
+        if (sectionIndex > 0) {
             sectionIndex--;
             updateView();
-        }
-        else{
+        } else {
+            String formContentName = formContent.getFormContentName();
+            if (formContentName != null) {
+                Storage.deleteFormContent(formContent, this);
+            }
             super.onBackPressed();
         }
     }
@@ -300,5 +340,16 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
     @Override
     public void onBackPressed() {
         previousSection();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String formContentName = formContent.getFormContentName();
+        if (formContentName != null && !isNew) {
+            Helper.log("names: " + formContentName + " formContent.getname() " + formContent.getFormContentName());
+            formContent = Storage.getFormContent(formContentName, this);
+            Helper.log("ooooooooooh " + formContent);
+        }
     }
 }

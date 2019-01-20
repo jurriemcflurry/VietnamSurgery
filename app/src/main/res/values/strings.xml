@@ -37,7 +37,10 @@
     <string name="forms">Forms</string>
     <string name="name">Name</string>
     <string name="district">District</string>
-    <string name="birthYear">Birthyear</string>
+    <string name="birthYear">Birth year</string>
+    <string name="birthyear">Birthyear</string>
+    <string name="isRequired">is required.</string>
+    <string name="formErrorTitle">Form Invalid:</string>
 
     <!-- FormListActivity -->
     <string name="formContentFormList">Filled in forms</string>
