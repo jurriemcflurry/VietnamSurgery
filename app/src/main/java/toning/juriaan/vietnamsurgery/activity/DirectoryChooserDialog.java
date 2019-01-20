@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import toning.juriaan.vietnamsurgery.R;
@@ -54,7 +53,7 @@ public class DirectoryChooserDialog {
 
     public void chooseDirectory(boolean cancelable)
     {
-        // Initial directory is sdcard directory
+        // Initial directory is root directory
         chooseDirectory(m_parentDir, cancelable);
     }
 
@@ -96,19 +95,14 @@ public class DirectoryChooserDialog {
         AlertDialog.Builder dialogBuilder =
                 createDirectoryChooserDialog(dir, m_subdirs, new DirectoryOnClickListener());
 
-        dialogBuilder.setPositiveButton(R.string.dialog_choose, new DialogInterface.OnClickListener()
-        {
-            @Override
-            public void onClick(DialogInterface dialog, int which)
+        dialogBuilder.setPositiveButton(R.string.dialog_choose, ((DialogInterface dialog, int which) -> {
+            if (m_chosenDirectoryListener != null)
             {
-                // Current directory chosen
-                if (m_chosenDirectoryListener != null)
-                {
-                    // Call registered listener supplied with the chosen directory
-                    m_chosenDirectoryListener.onChosenDir(m_dir);
-                }
+                // Call registered listener supplied with the chosen directory
+                m_chosenDirectoryListener.onChosenDir(m_dir);
             }
-        });
+        }));
+        
         if(cancelable) {
             dialogBuilder.setNegativeButton(R.string.dialog_cancel, null);
         }
@@ -183,13 +177,7 @@ public class DirectoryChooserDialog {
             }
         }
 
-        Collections.sort(dirs, new Comparator<String>()
-        {
-            public int compare(String o1, String o2)
-            {
-                return o1.compareTo(o2);
-            }
-        });
+        Collections.sort(dirs, (String o1, String o2)->o1.compareTo(o2));
 
         return dirs;
     }
@@ -206,8 +194,7 @@ public class DirectoryChooserDialog {
     {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(m_context);
 
-        // Create custom view for AlertDialog title containing
-        // current directory TextView and possible 'New folder' button.
+        // Create custom view for AlertDialog title
         // Current directory TextView allows long directory path to be wrapped to multiple lines.
         LinearLayout titleLayout = new LinearLayout(m_context);
         titleLayout.setOrientation(LinearLayout.VERTICAL);
