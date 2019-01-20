@@ -27,6 +27,10 @@ public class Helper {
     public final static int NO_IMAGE_DELETED = 9999;
     public final static int DELETE_IMAGE = 202;
 
+    public final static int ADD_SECTION_CODE = 1;
+    public final static int SECTION_ADDED_RESULT_CODE = 2;
+    public final static String SECTION_ADDED = "SectionAdded";
+
     public final static int THUMBNAIL_SIZE = 400;
 
     public static void log(String logEntry) {

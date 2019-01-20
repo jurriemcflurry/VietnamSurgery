@@ -98,35 +98,35 @@ public class Form {
         return Helper.getGson().toJson(this);
     }
 
-    public static Form getDummyForm() {
-        FormTemplate formTemplate = getDummyFormTemplate();
+//    public static Form getDummyForm() {
+//        FormTemplate formTemplate = getDummyFormTemplate();
+//
+//        return new Form("Dummy form", "Dummy region", formTemplate);
+//    }
 
-        return new Form("Dummy form", "Dummy region", formTemplate);
-    }
-
-    private static FormTemplate getDummyFormTemplate() {
-        ArrayList<Field> fields = new ArrayList<>();
-        fields.add(new Field("TextFieldName", FieldType.String.toString()));
-
-        fields.add(new Field("NumberFieldName", FieldType.Number.toString()));
-        ArrayList<String> options = new ArrayList<>();
-        for (int i = 1; i <= 3; i++) {
-            options.add("Option " + i);
-        }
-        fields.add(new Field("DropDownFieldName", FieldType.Choice.toString()));
-        try {
-            fields.get(fields.size() - 1).setOptions(options.toArray(new String[0]));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        Field[] fieldArray = fields.toArray(new Field[0]);
-
-        ArrayList<Section> sections = new ArrayList<>();
-        sections.add(new Section("SectionName", fieldArray));
-
-        Section[] sectionArray = sections.toArray(new Section[0]);
-
-        return new FormTemplate(sectionArray);
-    }
+//    private static FormTemplate getDummyFormTemplate() {
+//        ArrayList<Field> fields = new ArrayList<>();
+//        fields.add(new Field("TextFieldName", FieldType.String.toString()));
+//
+//        fields.add(new Field("NumberFieldName", FieldType.Number.toString()));
+//        ArrayList<String> options = new ArrayList<>();
+//        for (int i = 1; i <= 3; i++) {
+//            options.add("Option " + i);
+//        }
+//        fields.add(new Field("DropDownFieldName", FieldType.Choice.toString()));
+//        try {
+//            fields.get(fields.size() - 1).setOptions(options.toArray(new String[0]));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        Field[] fieldArray = fields.toArray(new Field[0]);
+//
+//        ArrayList<Section> sections = new ArrayList<>();
+//        sections.add(new Section("SectionName", fieldArray));
+//
+//        Section[] sectionArray = sections.toArray(new Section[0]);
+//
+//        return new FormTemplate(sectionArray);
+//    }
 }

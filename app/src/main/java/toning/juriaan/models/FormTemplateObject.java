@@ -16,8 +16,8 @@ public class FormTemplateObject {
     @SerializedName("FormTemplate")
     private String formTemplateString;
 
-    public FormTemplateObject(FormTemplate formTemplate) {
-        this.name = "test name";
+    public FormTemplateObject(String name, FormTemplate formTemplate) {
+        this.name = name;
         this.region = "test region";
         this.formTemplateString = formTemplate.toJson();//.replace("\"", "\\\"");
         Helper.log(this.formTemplateString);

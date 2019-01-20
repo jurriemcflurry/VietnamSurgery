@@ -24,10 +24,10 @@ public class Field {
     public Field() {
     }
 
-    public Field(String fieldName, String type) {
+    public Field(String fieldName, String type, boolean required) {
         this.fieldName = fieldName;
         this.type = type;
-        this.required = false;
+        this.required = required;
     }
 
     public String[] getOptions() throws Exception {

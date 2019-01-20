@@ -4,23 +4,25 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+
 public class FormTemplate {
 
     @Expose
     @SerializedName("Sections")
-    private Section[] sections;
+    private ArrayList<Section> sections;
 
     public FormTemplate(){}
 
-    public FormTemplate(Section[] sections) {
+    public FormTemplate(ArrayList<Section> sections) {
         this.sections = sections;
     }
 
-    public Section[] getSections() {
+    public ArrayList<Section> getSections() {
         return sections;
     }
 
-    public void setSections(Section[] sections) {
+    public void setSections(ArrayList<Section> sections) {
         this.sections = sections;
     }
 

@@ -3,6 +3,8 @@ package toning.juriaan.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+
 public class Section {
     @Expose
     @SerializedName("Name")
@@ -10,7 +12,7 @@ public class Section {
 
     @Expose
     @SerializedName("Fields")
-    private Field[] fields;
+    private ArrayList<Field> fields;
 
     public Section(){}
 
@@ -18,7 +20,7 @@ public class Section {
         this.sectionName = sectionName;
     }
 
-    public Section(String sectionName, Field[] fields) {
+    public Section(String sectionName, ArrayList<Field> fields) {
         this.sectionName = sectionName;
         this.fields = fields;
     }
@@ -31,11 +33,11 @@ public class Section {
         this.sectionName = sectionName;
     }
 
-    public Field[] getFields() {
+    public ArrayList<Field> getFields() {
         return fields;
     }
 
-    public void setFields(Field[] fields) {
+    public void setFields(ArrayList<Field> fields) {
         this.fields = fields;
     }
 

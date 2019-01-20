@@ -83,20 +83,20 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
             formContent = new FormContent(form.getId());
         }
 
-        if (sectionIndex >= form.getFormTemplate().getSections().length) {
+        if (sectionIndex >= form.getFormTemplate().getSections().size()) {
             sectionIndex = 0;
         }
     }
 
     private void updateView() {
-        Section section = form.getFormTemplate().getSections()[sectionIndex];
-        Field[] fields = section.getFields();
+        Section section = form.getFormTemplate().getSections().get(sectionIndex);
+        ArrayList<Field> fields = section.getFields();
         formContent.setFormContentName(getFieldNames(), this);
         getSupportActionBar().setTitle(formContent.getFormContentName());
         sectionNameView.setText(section.getSectionName());
         fieldsView.removeAllViews();
-        for (int i = 0; i < fields.length; i++) {
-            View view = createViewFromField(fields[i], i);
+        for (int i = 0; i < fields.size(); i++) {
+            View view = createViewFromField(fields.get(i), i);
             fieldsView.addView(view);
             if (i == 0 && view != null) {
                 view.setFocusable(true);
@@ -204,10 +204,10 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
         saveAnswers();
         ArrayList<String> errors = validateSection();
         if (errors.size() == 0) {
-            if (sectionIndex < form.getFormTemplate().getSections().length - 1) {
+            if (sectionIndex < form.getFormTemplate().getSections().size() - 1) {
                 sectionIndex++;
                 updateView();
-            } else if (sectionIndex >= form.getFormTemplate().getSections().length - 1) {
+            } else if (sectionIndex >= form.getFormTemplate().getSections().size() - 1) {
                 storeFormContent();
 
                 Intent cameraIntent = new Intent(getApplicationContext(), CameraActivity.class);
@@ -230,7 +230,7 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
 
     private ArrayList<String> validateSection() {
         ArrayList<String> errors = new ArrayList<>();
-        Section section = form.getFormTemplate().getSections()[sectionIndex];
+        Section section = form.getFormTemplate().getSections().get(sectionIndex);
         for (Field field : section.getFields()) {
             if (field.isRequired()) {
                 String Answer = formContent.getAnswer(field.getFieldName());
@@ -253,9 +253,9 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
     }
 
     private void saveAnswers() {
-        Field[] fields = form.getFormTemplate().getSections()[sectionIndex].getFields();
-        for (int i = 0; i < fields.length; i++) {
-            Field field = fields[i];
+        ArrayList<Field> fields = form.getFormTemplate().getSections().get(sectionIndex).getFields();
+        for (int i = 0; i < fields.size(); i++) {
+            Field field = fields.get(i);
             String fieldName = field.getFieldName();
             String fieldValue = "";
             if (field.getType().equals(FieldType.String.toString()) || field.getType().equals(FieldType.Number.toString())) {
