@@ -31,9 +31,9 @@ public class DirectoryChooserDialog {
     private ChosenDirectoryListener m_chosenDirectoryListener = null;
     private ArrayAdapter<String> m_listAdapter = null;
 
-    //////////////////////////////////////////////////////
-    // Callback interface for selected directory
-    //////////////////////////////////////////////////////
+    /**
+     * Callback interface for selected directory
+     */
     public interface ChosenDirectoryListener
     {
         void onChosenDir(String chosenDir);
@@ -55,10 +55,10 @@ public class DirectoryChooserDialog {
         }
     }
 
-    ///////////////////////////////////////////////////////////////////////
-    // chooseDirectory() - load directory chooser dialog for initial
-    // default sdcard directory
-    ///////////////////////////////////////////////////////////////////////
+    /**
+     * Load directory chooser dialog for initial default directory
+     * @param cancelable boolean if cancel button must be showed
+     */
 
     public void chooseDirectory(boolean cancelable)
     {
@@ -66,11 +66,11 @@ public class DirectoryChooserDialog {
         chooseDirectory(m_parentDir, cancelable);
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
-    // chooseDirectory(String dir) - load directory chooser dialog for initial
-    // input 'dir' directory
-    ////////////////////////////////////////////////////////////////////////////////
-
+    /**
+     * Load directory chooser dialog for initial input directory
+     * @param dir String with absolute path were directory chooser has to start
+     * @param cancelable boolean if cancel button must be showed
+     */
     public void chooseDirectory(String dir, boolean cancelable)
     {
         File dirFile = new File(dir);
@@ -126,6 +126,14 @@ public class DirectoryChooserDialog {
 
         dirsDialog.setOnKeyListener(new DialogInterface.OnKeyListener()
         {
+            /**
+             * Method to check if the current directory is the last, if so, don't go up
+             * Otherwise go back up to parentDir
+             * @param dialog DialogInterface
+             * @param keyCode int which key is pressed
+             * @param event KeyEvent that hangs to the key that's pressed
+             * @return boolean
+             */
             @Override
             public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event)
             {
@@ -157,6 +165,11 @@ public class DirectoryChooserDialog {
         dirsDialog.show();
     }
 
+    /**
+     * Method to get all the directories in current dir
+     * @param dir String absolute path to current dir
+     * @return List with strings of absolute paths
+     */
     private List<String> getDirectories(String dir)
     {
         List<String> dirs = new ArrayList<>();
@@ -196,6 +209,13 @@ public class DirectoryChooserDialog {
         return dirs;
     }
 
+    /**
+     * Builder to build the DirectoryChooserDialog
+     * @param title String with the title
+     * @param listItems List with directories that has to be shown
+     * @param onClickListener onClickListener
+     * @return AlertDialog
+     */
     private AlertDialog.Builder createDirectoryChooserDialog(String title, List<String> listItems,
                                                              DialogInterface.OnClickListener onClickListener)
     {
@@ -228,6 +248,9 @@ public class DirectoryChooserDialog {
         return dialogBuilder;
     }
 
+    /**
+     * Method to update the directory after a click on a directory
+     */
     private void updateDirectory()
     {
         m_subdirs.clear();
@@ -237,6 +260,11 @@ public class DirectoryChooserDialog {
         m_listAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Adapter for the list of directories
+     * @param items List with items
+     * @return ArrayAdapter
+     */
     private ArrayAdapter<String> createListAdapter(List<String> items)
     {
         return new ArrayAdapter<String>(m_context,
