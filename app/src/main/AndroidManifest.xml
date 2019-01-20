@@ -33,6 +33,8 @@
         <activity android:name="activities.FormBaseActivity"></activity>
         <activity android:name="activities.FormListActivity"></activity>
         <activity android:name="activities.CreateFormActivity"></activity>
+        <activity android:name="activities.AddSectionActivity"></activity>
+        <activity android:name="activities.AddQuestionActivity"></activity>
     </application>
 
 

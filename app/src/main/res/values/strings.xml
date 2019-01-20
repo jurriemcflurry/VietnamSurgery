@@ -110,13 +110,24 @@
     <!-- CreateFormActivity -->
     <string name="createFormTitle">Create New Form</string>
     <string name="saveNewForm">Save</string>
-    <string name="createFormHeaderText">In each form we have some fields that are necessary to fill in, so these subjects and fields are already set. To add more fields in a subject, you can click on the pencil. To add more subjects, you van press the plus-button on the bottom-right of this screen.</string>
+    <string name="createFormHeaderText">In each form we have some fields that are necessary to fill in, so these subjects and fields are already set. To add more fields in a subject, you can click on the pencil. To add more subjects, you can press the plus-button on the bottom-right of this screen.</string>
     <string name="createFormNameHint">Form name (district of use)</string>
     <string name="personalInfo">Personal Info</string>
     <string name="contactInfo">Contact Info</string>
     <string name="namePersonalInfo">Name</string>
     <string name="birthyearPersonalInfo">Birthyear</string>
     <string name="districtContactInfo">District</string>
+
+    <!-- AddSectionActivity -->
+    <string name="addSectionTitle">Add Section</string>
+    <string name="sectionName">Section Name</string>
+    <string name="addSectionButton">Add Section</string>
+
+    <!-- AddQuestionActivity -->
+    <string name="addQuestionTitle">Add Question</string>
+    <string name="questionName">Question</string>
+    <string name="addQuestionButton">Add Question</string>
+    <string name="required">Required</string>
 
     <!-- Overig -->
     <string name="refresh">Refresh</string>
