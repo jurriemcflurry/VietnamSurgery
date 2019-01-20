@@ -20,7 +20,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 import toning.juriaan.models.Field;
 import toning.juriaan.models.FieldType;
@@ -91,8 +90,7 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
     private void updateView() {
         Section section = form.getFormTemplate().getSections()[sectionIndex];
         Field[] fields = section.getFields();
-        formContent.setFormContentName(getFieldNames(), this);
-        getSupportActionBar().setTitle(formContent.getFormContentName());
+        updateViewTitle();
         sectionNameView.setText(section.getSectionName());
         fieldsView.removeAllViews();
         for (int i = 0; i < fields.length; i++) {
@@ -101,6 +99,14 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
             if (i == 0 && view != null) {
                 view.setFocusable(true);
             }
+        }
+    }
+
+    private void updateViewTitle() {
+        try {
+            getSupportActionBar().setTitle(formContent.updateFormContentName(this));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -124,7 +130,11 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
         EditText editText = new EditText(this);
         editText.setLayoutParams(layoutParams);
         editText.setHint(field.getFieldName());
-        editText.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        if (field.getType().equals(FieldType.String.toString())) {
+            editText.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        } else if (field.getType().equals(FieldType.Number.toString())) {
+            editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+        }
 
         String value = formContent.getAnswer(field.getFieldName());
         if (value != null) {
@@ -208,11 +218,12 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
                 sectionIndex++;
                 updateView();
             } else if (sectionIndex >= form.getFormTemplate().getSections().length - 1) {
+                formContent.updateFormContentName(this);
                 storeFormContent();
 
                 Intent cameraIntent = new Intent(getApplicationContext(), CameraActivity.class);
                 cameraIntent.putExtra(Helper.FORM, form.getFormattedFormName());
-                cameraIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentName());
+                cameraIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentId());
                 startActivityForResult(cameraIntent, Helper.FORM_ACTIVITY_CODE);
             }
         } else {
@@ -232,10 +243,21 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
         ArrayList<String> errors = new ArrayList<>();
         Section section = form.getFormTemplate().getSections()[sectionIndex];
         for (Field field : section.getFields()) {
+            String answer = formContent.getAnswer(field.getFieldName());
             if (field.isRequired()) {
-                String Answer = formContent.getAnswer(field.getFieldName());
-                if (Answer.isEmpty()) {
+                if (answer.isEmpty()) {
                     errors.add(field.getFieldName() + " " + getString(R.string.isRequired));
+                    continue;
+                }
+            }
+
+            if (field.getType().equals(FieldType.Number.toString()) && !answer.isEmpty()) {
+                try {
+                    Double.valueOf(answer);
+                } catch (NumberFormatException e) {
+                    errors.add(field.getFieldName() + " " + getString(R.string.isNotANumber));
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -245,7 +267,6 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
 
     private void storeFormContent() {
         if (isNew) {
-            formContent.setFormContentName(getFieldNames(), this);
             isNew = false;
         }
 
@@ -280,7 +301,7 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
             sectionIndex--;
             updateView();
         } else {
-            String formContentName = formContent.getFormContentName();
+            String formContentName = formContent.getFormContentId();
             if (formContentName != null) {
                 Storage.deleteFormContent(formContent, this);
             }
@@ -345,11 +366,12 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
     @Override
     protected void onResume() {
         super.onResume();
-        String formContentName = formContent.getFormContentName();
+        String formContentName = formContent.getFormContentId();
         if (formContentName != null && !isNew) {
-            Helper.log("names: " + formContentName + " formContent.getname() " + formContent.getFormContentName());
+            Helper.log("names: " + formContentName + " formContent.getname() " + formContent.getFormContentId());
             formContent = Storage.getFormContent(formContentName, this);
             Helper.log("ooooooooooh " + formContent);
         }
+        updateView();
     }
 }

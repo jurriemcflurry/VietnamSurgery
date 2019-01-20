@@ -118,7 +118,7 @@ public class Storage {
         Boolean success = false;
 
         try {
-            File file = getFormContentFile(formContent.getFormContentName(), context);
+            File file = getFormContentFile(formContent.getFormContentId(), context);
             OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file, false));
 
             writer.write(formContent.toJson());
@@ -199,7 +199,7 @@ public class Storage {
     public static boolean deleteFormContent(FormContent formContent, Context context) {
         boolean success = true;
         try {
-            File file = getFormContentFile(formContent.getFormContentName(), context);
+            File file = getFormContentFile(formContent.getFormContentId(), context);
             if (file == null) return false;
 
             for (String imageName : formContent.getImageNames()) {
@@ -296,7 +296,7 @@ public class Storage {
             File[] imageFiles = imageDir.listFiles();
 
             for (File image : imageFiles) {
-                if (image.getName().toLowerCase().contains(formContent.getFormContentName().toLowerCase())) {
+                if (image.getName().toLowerCase().contains(formContent.getFormContentId().toLowerCase())) {
                     images.add(getImage(image, context));
                 }
             }

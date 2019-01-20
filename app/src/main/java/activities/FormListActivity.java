@@ -122,7 +122,7 @@ public class FormListActivity extends BaseActivity implements FormListAdapter.Fo
         Form form = Storage.getFormById(formContent.getFormId(), this);
         Intent formOverviewIntent = new Intent(getApplicationContext(), FormOverviewActivity.class);
         formOverviewIntent.putExtra(Helper.FORM, form.getFormattedFormName());
-        formOverviewIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentName());
+        formOverviewIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentId());
         startActivityForResult(formOverviewIntent, Helper.FORM_OVERVIEW_CODE);
     }
 
