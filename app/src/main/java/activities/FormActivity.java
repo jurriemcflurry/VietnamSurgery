@@ -88,16 +88,10 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
     }
 
     private void updateView() {
-<<<<<<< HEAD
         Section section = form.getFormTemplate().getSections().get(sectionIndex);
         ArrayList<Field> fields = section.getFields();
-        formContent.setFormContentName(getFieldNames(), this);
         getSupportActionBar().setTitle(formContent.getFormContentName());
-=======
-        Section section = form.getFormTemplate().getSections()[sectionIndex];
-        Field[] fields = section.getFields();
         updateViewTitle();
->>>>>>> master
         sectionNameView.setText(section.getSectionName());
         fieldsView.removeAllViews();
         for (int i = 0; i < fields.size(); i++) {
@@ -224,12 +218,10 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
             if (sectionIndex < form.getFormTemplate().getSections().size() - 1) {
                 sectionIndex++;
                 updateView();
-<<<<<<< HEAD
+
             } else if (sectionIndex >= form.getFormTemplate().getSections().size() - 1) {
-=======
-            } else if (sectionIndex >= form.getFormTemplate().getSections().length - 1) {
                 formContent.updateFormContentName(this);
->>>>>>> master
+
                 storeFormContent();
 
                 Intent cameraIntent = new Intent(getApplicationContext(), CameraActivity.class);
