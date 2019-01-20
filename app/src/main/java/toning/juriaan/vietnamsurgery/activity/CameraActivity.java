@@ -173,6 +173,11 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Method to create an ImageFile
+     * @return File imageFile
+     * @throws IOException if creating file fails
+     */
     private File createImageFile() throws IOException {
         // Create an image file name - At this moment we're using the name, birthday & dateTimeformat
         // Todo: Create a possibility to get a name out of the Excel or let the user choose.
