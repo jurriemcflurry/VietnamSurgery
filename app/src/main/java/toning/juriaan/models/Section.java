@@ -14,10 +14,9 @@ public class Section {
     @SerializedName("Fields")
     private ArrayList<Field> fields;
 
-    public Section(){}
-
     public Section(String sectionName){
         this.sectionName = sectionName;
+        fields = new ArrayList<>();
     }
 
     public Section(String sectionName, ArrayList<Field> fields) {
@@ -39,6 +38,10 @@ public class Section {
 
     public void setFields(ArrayList<Field> fields) {
         this.fields = fields;
+    }
+
+    public void addFields(Field field){
+        fields.add(field);
     }
 
     @Override

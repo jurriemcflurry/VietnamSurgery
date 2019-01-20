@@ -37,7 +37,6 @@ import webinterfaces.FormWebInterface;
 public class CreateFormActivity extends FormBaseActivity implements AdapterView.OnItemSelectedListener {
 
     private LinearLayout formView;
-    private ArrayList<Section> sections;
     private FormTemplate formTemplate;
     private ArrayList<Pair> dropDownValues;
     private TextInputEditText formNameEditText;
@@ -62,12 +61,11 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
             }
         });
 
-        sections = new ArrayList<>();
-
-        formTemplate = new FormTemplate(loadStandardItems());
+        formTemplate = new FormTemplate();
+        loadStandardItems();
     }
 
-    private ArrayList<Section> loadStandardItems(){
+    private void loadStandardItems(){
         ArrayList<Field> personalInfoFields = makePersonalInfoFields();
         Section personalInfoSection = new Section(getString(R.string.personalInfo), personalInfoFields);
         TextView personalInfoSectionView = makeSectionView(personalInfoSection);
@@ -92,10 +90,8 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
         formView.addView(contactInfoSectionView);
         formView.addView(fieldsView2);
 
-        sections.add(personalInfoSection);
-        sections.add(contactInfoSection);
-
-        return sections;
+        formTemplate.getSections().add(personalInfoSection);
+        formTemplate.getSections().add(contactInfoSection);
     }
 
     private TextView makeSectionView(final Section section){
@@ -123,7 +119,7 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
     }
 
     private ArrayList<Field> makePersonalInfoFields(){
-        ArrayList<Field> personalInfoFields = new ArrayList<Field>();
+        ArrayList<Field> personalInfoFields = new ArrayList<>();
         personalInfoFields.add(new Field(getString(R.string.namePersonalInfo), FieldType.String.toString(), true));
         personalInfoFields.add(new Field(getString(R.string.birthYear), FieldType.String.toString(), true));
 
@@ -131,7 +127,7 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
     }
 
     private ArrayList<Field> makeContactInfoFields(){
-        ArrayList<Field> contactInfoFields = new ArrayList<Field>();
+        ArrayList<Field> contactInfoFields = new ArrayList<>();
         contactInfoFields.add(new Field(getString(R.string.districtContactInfo), FieldType.String.toString(), true));
         return contactInfoFields;
     }
@@ -262,12 +258,11 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == Helper.ADD_SECTION_CODE){
             if(resultCode == Helper.SECTION_ADDED_RESULT_CODE){
-                Bundle extras = data.getExtras();
+               Bundle extras = data.getExtras();
                String sectionName = extras.getString(Helper.SECTION_ADDED);
                Section newSection = new Section(sectionName);
-               sections.add(newSection);
                formView.addView(makeSectionView(newSection));
-               formTemplate.setSections(sections);
+               formTemplate.addSection(newSection);
             }
         }
     }

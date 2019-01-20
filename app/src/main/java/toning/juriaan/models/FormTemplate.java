@@ -12,7 +12,9 @@ public class FormTemplate {
     @SerializedName("Sections")
     private ArrayList<Section> sections;
 
-    public FormTemplate(){}
+    public FormTemplate(){
+        sections = new ArrayList<>();
+    }
 
     public FormTemplate(ArrayList<Section> sections) {
         this.sections = sections;
@@ -24,6 +26,10 @@ public class FormTemplate {
 
     public void setSections(ArrayList<Section> sections) {
         this.sections = sections;
+    }
+
+    public void addSection(Section section) {
+        sections.add(section);
     }
 
     public String toJson() {
