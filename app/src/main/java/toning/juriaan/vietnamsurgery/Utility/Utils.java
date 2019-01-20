@@ -2,6 +2,8 @@ package toning.juriaan.vietnamsurgery.Utility;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 
@@ -10,6 +12,52 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class Utils {
+
+    /**
+     * Fields that we use around this application
+     */
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static final String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+    private static final String chosenDirKey = "toning.juriaan.vietnamSurgery.chosenDir";
+    private static SharedPreferences prefs;
+
+    /**
+     * Function to get chosenDirKey
+     */
+    public static String getChosenDirKey() {
+        return chosenDirKey;
+    }
+
+    /**
+     * Function to set sharedPrefs
+     */
+    public static void setSharedPrefs(Context context) {
+        prefs = context.getSharedPreferences("toning.juriaan.vietnamsurgery", Context.MODE_PRIVATE);
+    }
+
+    /**
+     * Method to get the rootDir for the files
+     */
+    public static String getRootDir() {
+        return prefs.getString(getChosenDirKey(), null);
+    }
+
+    /**
+     * Method to remove the rootDir for the files
+     */
+    public static boolean removeRootDirFromPrefs() {
+        return prefs.edit().remove(getChosenDirKey()).commit();
+    }
+
+    /**
+     * Method to edit the rootDir in sharedPrefs
+     */
+    public static boolean editRootDirInPrefs(String dir) {
+        return prefs.edit().putString(getChosenDirKey(), dir).commit();
+    }
 
     /**
      * Function to check permissions. If we don't have these permissions, we're going to ask for them
@@ -46,13 +94,4 @@ public final class Utils {
 
         return inFiles;
     }
-
-    /**
-     * Fields that we use around this application
-     */
-    private static final int REQUEST_EXTERNAL_STORAGE = 1;
-    private static final String[] PERMISSIONS_STORAGE = {
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-    };
 }

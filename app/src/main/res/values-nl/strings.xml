@@ -8,6 +8,7 @@
     <string name="step_text">Stap %1$d van %2$d</string>
     <string name="section_name_photos">Foto\'s</string>
     <string name="section_name_photo_detail">Detail foto</string>
+    <string name="dialog_choose">Kies</string>
 
     <string name="name_placeholder_item_list">((NAAM))</string>
     <string name="name_district_item_list">Wijk: </string>

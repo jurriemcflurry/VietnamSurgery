@@ -45,6 +45,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import toning.juriaan.vietnamsurgery.Utility.Utils;
+import toning.juriaan.vietnamsurgery.activity.DirectoryChooserDialog;
 import toning.juriaan.vietnamsurgery.activity.FormActivity;
 import toning.juriaan.vietnamsurgery.activity.FormListActivity;
 import toning.juriaan.vietnamsurgery.activity.OverviewFormActivity;
@@ -65,14 +66,13 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
     private List<Section> sections = new ArrayList<>();
     Toolbar toolbar;
     private ActionBar ab;
-    File root = new File(Environment.getExternalStorageDirectory().toString() + "/LenTab/lentab-susanne");
+    File root;
     RecyclerView mRecyclerView;
     LinearLayoutManager mLayoutManager = new GridLayoutManager(this, 1);
     FileNameAdapter mAdapterFiles;
     SheetAdapter mAdapterSheets;
     TextView chooseText;
     XSSFWorkbook mWorkbook;
-    //SharedPreferences prefs = this.getSharedPreferences("toning.juriaan.vietnamsurgery", Context.MODE_PRIVATE);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,10 +84,43 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
         setupFields();
         setupToolbar();
         setupNavigation();
+
         // Check if we can read/write to the storage. If so, continue; if not; prompt the user
         Utils.verifyStoragePermissions(this);
-        List<File> files = Utils.getListOfExcelFiles(root);
-        chooseExcelFile(files);
+
+
+        if(Utils.getRootDir() == null) {
+            chooseDir();
+        } else {
+            root = new File(Utils.getRootDir());
+            Utils.removeRootDirFromPrefs();
+            List<File> files = Utils.getListOfExcelFiles(root);
+            chooseExcelFile(files);
+        }
+
+
+
+    }
+
+
+    public void chooseDir() {
+        // Create DirectoryChooserDialog and register a callback
+        DirectoryChooserDialog directoryChooserDialog =
+                new DirectoryChooserDialog(this,
+                        new DirectoryChooserDialog.ChosenDirectoryListener()
+                        {
+                            @Override
+                            public void onChosenDir(String chosenDir)
+                            {
+                                if(Utils.editRootDirInPrefs(chosenDir)){
+                                    root = new File(chosenDir);
+                                    List<File> files = Utils.getListOfExcelFiles(root);
+                                    chooseExcelFile(files);
+                                }
+                            }
+                        });
+
+        directoryChooserDialog.chooseDirectory(false);
     }
 
     /**
@@ -97,6 +130,7 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
         toolbar = findViewById(R.id.form_toolbar);
         mRecyclerView = findViewById(R.id.grid_view_main);
         chooseText = findViewById(R.id.choose_text);
+        Utils.setSharedPrefs(this);
     }
 
     /**
