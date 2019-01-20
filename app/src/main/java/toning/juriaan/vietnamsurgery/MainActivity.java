@@ -43,18 +43,14 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
 
     private final int PERMISSION_READ_STORAGE = 1;
     private DrawerLayout mDrawerLayout;
-    private static final String TAG = "MyActivity";
+    private final String TAG = this.getClass().getSimpleName();
     private FormTemplate form = new FormTemplate();
     private List<Section> sections = new ArrayList<>();
-    Toolbar toolbar;
-    private ActionBar ab;
-    File root;
-    RecyclerView mRecyclerView;
-    LinearLayoutManager mLayoutManager = new GridLayoutManager(this, 1);
-    FileNameAdapter mAdapterFiles;
-    SheetAdapter mAdapterSheets;
-    TextView chooseText;
-    XSSFWorkbook mWorkbook;
+    private File root;
+    private RecyclerView mRecyclerView;
+    private LinearLayoutManager mLayoutManager = new GridLayoutManager(this, 1);
+    private TextView chooseText;
+    private XSSFWorkbook mWorkbook;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,37 +69,12 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
         }
     }
 
-    private void chooseDirOrLoadList() {
-        if(Utils.getRootDir() == null) {
-            chooseDir();
-        } else {
-            root = new File(Utils.getRootDir());
-            // Todo: Remove this item!
-            Utils.removeRootDirFromPrefs();
-            List<File> files = Utils.getListOfExcelFiles(root);
-            chooseExcelFile(files);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSION_READ_STORAGE: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    chooseDirOrLoadList();
-                }
-            }
-        }
-    }
 
     /**
      * Method to setup the fields
      */
     private void setupFields(){
-        toolbar = findViewById(R.id.form_toolbar);
+
         mRecyclerView = findViewById(R.id.grid_view_main);
         chooseText = findViewById(R.id.choose_text);
         Utils.setSharedPrefs(this);
@@ -113,8 +84,9 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
      * Method to setup the toolbar
      */
     private void setupToolbar() {
+        Toolbar toolbar = findViewById(R.id.form_toolbar);
         setSupportActionBar(toolbar);
-        ab = getSupportActionBar();
+        ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setTitle(R.string.main_title_name);
@@ -139,25 +111,56 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
         Menu menu = navigationView.getMenu();
         menu.findItem(R.id.main_activity).setVisible(false);
 
-        navigationView.setNavigationItemSelectedListener(
-            new NavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(MenuItem menuItem) {
-                    // close drawer when item is tapped
-                    mDrawerLayout.closeDrawers();
+        navigationView.setNavigationItemSelectedListener((MenuItem menuItem)->{
+            // close drawer when item is tapped
+            mDrawerLayout.closeDrawers();
 
-                    switch(menuItem.getItemId()){
-                        case R.id.filled_in_forms:
-                            Intent formOverview = new Intent(MainActivity.this, FormListActivity.class);
-                            startActivity(formOverview);
-                            finish();
-                            break;
-                        default: break;
-                    }
+            switch(menuItem.getItemId()){
+                case R.id.filled_in_forms:
+                    Intent formOverview = new Intent(MainActivity.this, FormListActivity.class);
+                    startActivity(formOverview);
+                    finish();
+                    break;
+                default: break;
+            }
 
-                    return true;
+            return true;
+        });
+    }
+
+    /**
+     * Method to choose a dir or load the list with files if dir is already chosen
+     */
+    private void chooseDirOrLoadList() {
+        if(Utils.getRootDir() == null) {
+            chooseDir();
+        } else {
+            root = new File(Utils.getRootDir());
+            List<File> files = Utils.getListOfExcelFiles(root);
+            chooseExcelFile(files);
+        }
+    }
+
+    /**
+     * OnResult after the user clicked on permission
+     * @param requestCode int
+     * @param permissions String
+     * @param grantResults int
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_READ_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    chooseDirOrLoadList();
+                } else {
+                    Utils.verifyStoragePermissions(this);
                 }
-            });
+            }
+        }
     }
 
     /**
@@ -193,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
             if(files.size() > 1) {
                 chooseText.setText(R.string.choose_file_text);
                 mRecyclerView.setLayoutManager(mLayoutManager);
-                mAdapterFiles = new FileNameAdapter(this, files, this);
+                FileNameAdapter mAdapterFiles = new FileNameAdapter(this, files, this);
                 mRecyclerView.setAdapter(mAdapterFiles);
             } else {
                 form.setFileName(files.get(0).getName());
@@ -236,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
             }
             chooseText.setText(R.string.choose_sheet_text);
             mRecyclerView.setLayoutManager(mLayoutManager);
-            mAdapterSheets = new SheetAdapter(this, sheets, this);
+            SheetAdapter mAdapterSheets = new SheetAdapter(this, sheets, this);
             mRecyclerView.setAdapter(mAdapterSheets);
         }
     }

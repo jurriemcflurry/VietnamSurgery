@@ -134,25 +134,21 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
         Menu menu = navigationView.getMenu();
         menu.findItem(R.id.filled_in_forms).setVisible(false);
 
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        // close drawer when item is tapped
-                        mDrawerLayout.closeDrawers();
+        navigationView.setNavigationItemSelectedListener((MenuItem menuItem)->{
+            // close drawer when item is tapped
+            mDrawerLayout.closeDrawers();
 
-                        switch(menuItem.getItemId()){
-                            case R.id.main_activity:
-                                Intent mainActivity = new Intent(FormListActivity.this, MainActivity.class);
-                                startActivity(mainActivity);
-                                finish();
-                                break;
-                            default: break;
-                        }
+            switch(menuItem.getItemId()){
+                case R.id.main_activity:
+                    Intent mainActivity = new Intent(FormListActivity.this, MainActivity.class);
+                    startActivity(mainActivity);
+                    finish();
+                    break;
+                default: break;
+            }
 
-                        return true;
-                    }
-                });
+            return true;
+        });
     }
 
     /**
