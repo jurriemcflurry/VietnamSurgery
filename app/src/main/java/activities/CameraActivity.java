@@ -2,9 +2,7 @@ package activities;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -41,9 +39,9 @@ public class CameraActivity extends FormBaseActivity {
 
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.formbase_framelayout);
         getLayoutInflater().inflate(R.layout.activity_camera, contentFrameLayout);
-        getSupportActionBar().setTitle(getString(R.string.camera_title));
 
         loadIntent();
+        getSupportActionBar().setTitle(formContent.getFormContentName());
         updateNextImage();
         imageGridLayout = findViewById(R.id.image_grid_layout);
         imageGridLayout.setColumnCount(2);
@@ -185,7 +183,7 @@ public class CameraActivity extends FormBaseActivity {
                 } else {
                     Intent formOverviewIntent = new Intent(getApplicationContext(), FormOverviewActivity.class);
                     formOverviewIntent.putExtra(Helper.FORM, formName);
-                    formOverviewIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentName());
+                    formOverviewIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentId());
                     startActivityForResult(formOverviewIntent, Helper.CAMERA_ACTIVITY_CODE);
                 }
                 return true;

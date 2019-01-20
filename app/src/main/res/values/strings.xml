@@ -38,8 +38,9 @@
     <string name="name">Name</string>
     <string name="district">District</string>
     <string name="birthYear">Birth year</string>
-    <string name="birthyear">Birthyear</string>
+    <string name="date">Date</string>
     <string name="isRequired">is required.</string>
+    <string name="isNotANumber">is not a number.</string>
     <string name="formErrorTitle">Form Invalid:</string>
 
     <!-- FormListActivity -->

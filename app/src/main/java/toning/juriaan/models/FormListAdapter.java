@@ -45,10 +45,17 @@ public class FormListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final FormContent formContent = Storage.getFormContent(formContentNames.get(i), context);
         FormListViewHolder vh = (FormListViewHolder) viewHolder;
 
-        String name = "Name: " + formContent.getAnswer("name");
-        String birthyear = "Birthyear: " + formContent.getAnswer("birthyear");
-        String district = "District: " + formContent.getAnswer("district");
-        String dateTime = "Date: " + formContent.getFormContentDate();
+        String name = context.getString(R.string.name) + ": " +
+                formContent.getAnswer(context.getString(R.string.name));
+
+        String birthyear = context.getString(R.string.birthYear) + ": " +
+                formContent.getAnswer(context.getString(R.string.birthYear));
+
+        String district = context.getString(R.string.district) + ": " +
+                formContent.getAnswer(context.getString(R.string.district));
+
+        String dateTime = context.getString(R.string.date) + ": " +
+                formContent.getFormContentDate();
 
         vh.formListNameView.setText(name);
         vh.formListBirthyearView.setText(birthyear);

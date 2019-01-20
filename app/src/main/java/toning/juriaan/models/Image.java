@@ -3,7 +3,6 @@ package toning.juriaan.models;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.provider.MediaStore;
 
 import java.io.ByteArrayOutputStream;
 
@@ -51,6 +50,6 @@ public class Image {
     }
 
     public static String getNextImageName(FormContent formContent, Context context) {
-        return formContent.getFormContentName() + "_image_" + Storage.getNextImageNumber(formContent, context);
+        return formContent.getFormContentId() + "_image_" + Storage.getNextImageNumber(formContent, context);
     }
 }

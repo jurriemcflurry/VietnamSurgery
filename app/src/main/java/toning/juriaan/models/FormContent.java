@@ -13,6 +13,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class FormContent {
     @Expose
@@ -35,10 +36,16 @@ public class FormContent {
     @SerializedName("FormContentDate")
     private Date formContentDate;
 
+    @Expose
+    @SerializedName("formContentId")
+    private UUID formContentId;
+
     public FormContent(int formId) {
         this.formId = formId;
         formContent = new HashMap<>();
         imageNames = new ArrayList<>();
+        formContentId = UUID.randomUUID();
+        Helper.log(formContentId.toString());
         updateDate();
     }
 
@@ -51,36 +58,42 @@ public class FormContent {
         return format.format(formContentDate);
     }
 
+    public String updateFormContentName(Context context) {
+        StringBuilder nameBuilder = new StringBuilder();
+
+        String[] nameComponents = new String[]{
+                getAnswer(context.getString(R.string.name)),
+                getAnswer(context.getString(R.string.district)),
+                getAnswer(context.getString(R.string.birthYear))
+        };
+
+        for (String s : nameComponents) {
+            if (!s.isEmpty()) {
+                nameBuilder.append(s);
+                nameBuilder.append(" ");
+            }
+        }
+
+        formContentName = nameBuilder.toString().trim();
+        return formContentName;
+    }
+
     public String getFormContentName() {
         return formContentName;
     }
 
-    public void setFormContentName(String[] fieldNames, Context context) {
-        if (formContentName != null) return;
-        StringBuilder nameBuilder = new StringBuilder();
-
-        for (String fieldName : fieldNames) {
-            String value = getAnswer(fieldName);
-            if (!value.isEmpty()) {
-                nameBuilder.append(value);
-                nameBuilder.append("_");
-            }
-        }
-
-        String name = nameBuilder.toString().toLowerCase().replaceAll(" ", "_");
-
-        name += Storage.getNextFormContentNumber(name, context);
-
-        formContentName = name;
+    public String getFormContentId() {
+        return formContentId.toString();
     }
 
     public boolean isValidInfo(Context context) {
         String name = getAnswer(context.getString(R.string.name));
         String district = getAnswer(context.getString(R.string.district));
         String birthYear = getAnswer(context.getString(R.string.birthYear));
-        String birthyear = getAnswer(context.getString(R.string.birthyear));
 
-        return (!name.isEmpty() && !district.isEmpty() && (!birthYear.isEmpty() || !birthyear.isEmpty()));
+        boolean isValid = (!name.isEmpty() && !district.isEmpty() && !birthYear.isEmpty());
+        Helper.log("isValidInfo " + isValid);
+        return isValid;
     }
 
     public boolean isValid(Context context) {
@@ -121,7 +134,8 @@ public class FormContent {
 
     public String getAnswer(String fieldName) {
         for (Map.Entry<String, String> entry : formContent.entrySet()) {
-            if (entry.getKey().toLowerCase().equals(fieldName.toLowerCase())) {
+            if (entry.getKey().toLowerCase().replaceAll(" ", "").equals(
+                    fieldName.toLowerCase().replaceAll(" ", ""))) {
                 return entry.getValue();
             }
         }

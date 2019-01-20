@@ -11,8 +11,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import toning.juriaan.models.Field;
 import toning.juriaan.models.Form;
 import toning.juriaan.models.FormContent;
@@ -67,11 +65,10 @@ public class FormOverviewActivity extends FormBaseActivity {
         photoGallery.setOrientation(LinearLayout.HORIZONTAL);
         photoGallery.setLayoutParams(layoutParams);
 
-        ArrayList<Image> images = Storage.getImagesForFormContent(formContent, this);
-        for (Image image : images) {
+        for (String imageName : formContent.getImageNames()) {
+            Image image = Storage.getThumbnailForImage(imageName, this);
+            if (image == null) continue;
             ImageView imageView = new ImageView(this);
-            imageView.setMaxWidth(80);
-            imageView.setMaxHeight(80);
             imageView.setImageBitmap(image.getBitmap());
             photoGallery.addView(imageView);
         }
