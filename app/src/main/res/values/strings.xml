@@ -9,6 +9,7 @@
     <string name="section_name_photos">Photos</string>
     <string name="section_name_photo_detail">Photo detail</string>
     <string name="dialog_choose">Choose</string>
+    <string name="directory_chooser_text">Below you can choose a folder containing the Excel files\n\nCurrent folder:\n%1$s</string>
 
     <string name="name_placeholder_item_list">((NAME))</string>
     <string name="name_district_item_list">District: </string>

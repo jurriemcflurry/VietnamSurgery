@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
         } else {
             root = new File(Utils.getRootDir());
             // Todo: Remove this item!
-            //Utils.removeRootDirFromPrefs();
+            Utils.removeRootDirFromPrefs();
             List<File> files = Utils.getListOfExcelFiles(root);
             chooseExcelFile(files);
         }

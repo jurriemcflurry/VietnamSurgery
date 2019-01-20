@@ -22,13 +22,13 @@ import java.util.List;
 import toning.juriaan.vietnamsurgery.R;
 
 public class DirectoryChooserDialog {
-    private String m_parentDir = "";
+    private String m_parentDir;
     private Context m_context;
     private TextView m_titleView;
 
     private String m_dir = "";
     private List<String> m_subdirs = null;
-    private ChosenDirectoryListener m_chosenDirectoryListener = null;
+    private ChosenDirectoryListener m_chosenDirectoryListener;
     private ArrayAdapter<String> m_listAdapter = null;
 
     /**
@@ -45,14 +45,6 @@ public class DirectoryChooserDialog {
         m_parentDir = Environment.getExternalStorageDirectory().getAbsolutePath();
         m_chosenDirectoryListener = chosenDirectoryListener;
 
-        try
-        {
-            m_parentDir = new File(m_parentDir).getCanonicalPath();
-        }
-        catch (IOException ioe)
-        {
-            // Todo: Foutmelding
-        }
     }
 
     /**
@@ -174,28 +166,21 @@ public class DirectoryChooserDialog {
     {
         List<String> dirs = new ArrayList<>();
 
-        try
+        File dirFile = new File(dir);
+        if (! dirFile.exists() || ! dirFile.isDirectory())
         {
-            File dirFile = new File(dir);
-            if (! dirFile.exists() || ! dirFile.isDirectory())
-            {
-                return dirs;
-            }
+            return dirs;
+        }
 
-            for (File file : dirFile.listFiles())
+        for (File file : dirFile.listFiles())
+        {
+            if ( file.isDirectory() )
             {
-                if ( file.isDirectory() )
-                {
-                    // Only show dirs that not start with a dot
-                    if(!file.getName().contains(".")) {
-                        dirs.add( file.getName() );
-                    }
+                // Only show dirs that not start with a dot
+                if(!file.getName().contains(".")) {
+                    dirs.add( file.getName() );
                 }
             }
-        }
-        catch (Exception e)
-        {
-            // Todo: Errormessage
         }
 
         Collections.sort(dirs, new Comparator<String>()
@@ -229,11 +214,11 @@ public class DirectoryChooserDialog {
 
         m_titleView = new TextView(m_context);
         m_titleView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        m_titleView.setTextAppearance(m_context, android.R.style.TextAppearance_Large);
+        m_titleView.setTextAppearance(m_context, android.R.style.TextAppearance_Medium);
         m_titleView.setPadding(0, 50, 0, 50);
         m_titleView.setTextColor( m_context.getResources().getColor(android.R.color.black) );
         m_titleView.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
-        m_titleView.setText("Kies een map om de Excels uit te lezen. Dit kan later nog gewijzigd worden\nHuidige map:" + title);
+        m_titleView.setText(m_context.getString(R.string.directory_chooser_text, title));
         m_titleView.setBackgroundResource(R.color.colorPrimary);
 
         titleLayout.addView(m_titleView);
@@ -255,7 +240,7 @@ public class DirectoryChooserDialog {
     {
         m_subdirs.clear();
         m_subdirs.addAll( getDirectories(m_dir) );
-        m_titleView.setText(m_dir);
+        m_titleView.setText(m_context.getString(R.string.directory_chooser_text, m_dir));
 
         m_listAdapter.notifyDataSetChanged();
     }

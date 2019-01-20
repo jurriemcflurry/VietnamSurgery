@@ -9,6 +9,7 @@
     <string name="section_name_photos">Hình ảnh</string>
     <string name="section_name_photo_detail">Ảnh chi tiết</string>
     <string name="dialog_choose">Chọn</string>
+    <string name="directory_chooser_text">Dưới đây bạn có thể chọn một thư mục chứa các tệp Excel\n\nThư mục hiện tại:\n%1$s</string>
 
     <string name="name_placeholder_item_list">((TÊN))</string>
     <string name="name_district_item_list">Huyện: </string>
