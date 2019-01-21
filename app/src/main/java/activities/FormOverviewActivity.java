@@ -101,6 +101,7 @@ public class FormOverviewActivity extends FormBaseActivity {
                     intent.putExtra(Helper.FORM, form.getFormattedFormName());
                 }
                 intent.putExtra(Helper.FORM_CONTENT_ID, formContent.getFormContentId());
+                intent.putExtra(Helper.SECTION_INDEX, sectionIndex);
 
                 setResult(Helper.EDIT_SECTION_CODE, intent);
                 finish();
@@ -154,7 +155,7 @@ public class FormOverviewActivity extends FormBaseActivity {
 
     private LinearLayout getSectionView(Section section) {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         LinearLayout sectionView = new LinearLayout(this);
         sectionView.setLayoutParams(layoutParams);
         sectionView.setOrientation(LinearLayout.VERTICAL);
@@ -165,23 +166,48 @@ public class FormOverviewActivity extends FormBaseActivity {
         sectionView.addView(sectionNameTextView);
 
         for (Field field : section.getFields()) {
+            LinearLayout.LayoutParams linearLayoutParams = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
             LinearLayout fieldView = new LinearLayout(this);
+            fieldView.setLayoutParams(linearLayoutParams);
             fieldView.setOrientation(LinearLayout.HORIZONTAL);
+
+            LinearLayout.LayoutParams textViewLayout = new LinearLayout.LayoutParams(
+                    0, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
+
             TextView fieldNameText = new TextView(this);
+            fieldNameText.setLayoutParams(textViewLayout);
             String fieldName = field.getFieldName() + ":";
             fieldNameText.setText(fieldName);
             fieldNameText.setTextSize(17);
             fieldNameText.setTextColor(Color.BLACK);
 
             TextView fieldValueText = new TextView(this);
+            fieldValueText.setLayoutParams(textViewLayout);
             fieldValueText.setText(formContent.getAnswer(field.getFieldName()));
+            fieldValueText.setWidth(0);
             fieldValueText.setTextColor(Color.BLACK);
             fieldValueText.setTextSize(17);
 
             fieldView.addView(fieldNameText);
             fieldView.addView(fieldValueText);
 
-            sectionView.addView(fieldView);
+            LinearLayout fieldsAndDivider = new LinearLayout(this);
+            fieldsAndDivider.setLayoutParams(linearLayoutParams);
+            fieldsAndDivider.setOrientation(LinearLayout.VERTICAL);
+
+            ViewGroup.LayoutParams dividerLayout = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, 1);
+
+            View divider = new View(this);
+            divider.setLayoutParams(dividerLayout);
+            divider.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+
+            fieldsAndDivider.addView(fieldView);
+            fieldsAndDivider.addView(divider);
+
+            sectionView.addView(fieldsAndDivider);
         }
         return sectionView;
     }

@@ -16,6 +16,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -89,7 +91,7 @@ public class CameraActivity extends FormBaseActivity {
 
     private void askPermission() {
         ActivityCompat.requestPermissions(
-                this, new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                 Helper.CAMERA_ACTIVITY_CODE);
     }
 
@@ -133,7 +135,7 @@ public class CameraActivity extends FormBaseActivity {
             });
         } else {
             ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             ImageView imageView = new ImageView(this);
             imageView.setLayoutParams(layoutParams);
             Drawable refreshImage = getDrawable(R.drawable.image_refresh_bg);
@@ -148,11 +150,14 @@ public class CameraActivity extends FormBaseActivity {
                 }
             });
 
+            RelativeLayout.LayoutParams textLayoutParams = new RelativeLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
             TextView textView = new TextView(this);
+            textView.setEllipsize(TextUtils.TruncateAt.MIDDLE);
             textView.setText(R.string.tapInstruction);
             textView.setTextColor(Color.BLACK);
-            textView.setLayoutParams(layoutParams);
+            textView.setLayoutParams(textLayoutParams);
             relativeImageView.addView(textView);
         }
     }
@@ -184,7 +189,7 @@ public class CameraActivity extends FormBaseActivity {
             } else if (resultCode == Helper.NO_IMAGE_DELETED) {
                 updateView();
             } else if (resultCode == Helper.EDIT_SECTION_CODE) {
-                int sectionIndex = data.getIntExtra(Helper.SECTION_INDEX, 123);
+                int sectionIndex = data.getIntExtra(Helper.SECTION_INDEX, 0);
                 getIntent().putExtra(Helper.SECTION_INDEX, sectionIndex);
                 setResult(Helper.EDIT_SECTION_CODE, getIntent());
                 Helper.log("Camera put " + sectionIndex);

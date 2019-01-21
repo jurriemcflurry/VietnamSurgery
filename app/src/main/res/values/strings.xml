@@ -28,7 +28,7 @@
     <string name="imageLoss">Going back without saving erases the pictures</string>
     <string name="exitPhotos">Exit Photos</string>
     <string name="cancel">Cancel</string>
-    <string name="tapInstruction">Image loading. Tap to refresh</string>
+    <string name="tapInstruction">Image loading. \nTap to refresh</string>
 
     <!-- ChangePasswordActivity -->
     <string name="oldPassword">Old Password</string>
