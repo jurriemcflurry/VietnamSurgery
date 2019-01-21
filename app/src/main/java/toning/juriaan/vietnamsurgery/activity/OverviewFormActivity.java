@@ -277,7 +277,6 @@ public class OverviewFormActivity extends AppCompatActivity {
      * Method to rename the pictureFiles if some of the information is changed
      */
     private void renamePictureFiles() {
-        // Todo: renameTo voor foutmelding!
         String patientName = form.getSections().get(0).getFields().get(1).getAnswer();
         String birthYear = form.getSections().get(0).getFields().get(2).getAnswer();
         String district = form.getSections().get(1).getFields().get(3).getAnswer();
@@ -448,13 +447,20 @@ public class OverviewFormActivity extends AppCompatActivity {
                 form.setThumbImages(thumbs);
                 return true;
             } else {
-                // Todo: ErrorMsg
                 Log.e(TAG, getString(R.string.error_delete_thumb));
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.dialog_warning_title)
+                        .setMessage(getString(R.string.error_delete_thumb))
+                        .setPositiveButton(getString(R.string.dialog_ok), null).show();
                 return false;
             }
         }
         else {
             Log.e(TAG, getString(R.string.error_delete_pic));
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.dialog_warning_title)
+                    .setMessage(getString(R.string.error_delete_pic))
+                    .setPositiveButton(getString(R.string.dialog_ok), null).show();
             return false;
         }
     }
