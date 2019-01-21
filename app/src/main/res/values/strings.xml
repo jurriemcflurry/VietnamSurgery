@@ -32,6 +32,9 @@
     <string name="error_delete_pic">There was an error deleting the picture. Please try again.</string>
     <string name="error_not_enough_pics">You have to make at least one picture.</string>
 
+    <string name="dialog_warning_photosave">Something went wrong while saving the photo.</string>
+    <string name="dialog_warning_creatingfile">Something went wrong while creating the photo.</string>
+
     <string name="dialog_delete_picture_title">Delete photo?</string>
     <string name="dialog_delete_picture_text">Are you sure you want to delete this photo?</string>
     <string name="dialog_confirm_title">Confirm</string>

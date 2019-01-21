@@ -32,6 +32,9 @@
     <string name="error_delete_pic">Có một lỗi xóa hình ảnh. Vui lòng thử lại.</string>
     <string name="error_not_enough_pics">Bạn phải làm ít nhất một hình ảnh.</string>
 
+    <string name="dialog_warning_photosave">Đã xảy ra lỗi trong khi lưu ảnh.</string>
+    <string name="dialog_warning_creatingfile">Đã xảy ra lỗi khi tạo ảnh.</string>
+
     <string name="dialog_delete_picture_title">Xóa ảnh??</string>
     <string name="dialog_delete_picture_text">Bạn có chắc chắn muốn xóa ảnh này?</string>
     <string name="dialog_confirm_title">Xác nhận</string>
