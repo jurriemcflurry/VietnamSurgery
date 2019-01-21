@@ -21,11 +21,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import toning.juriaan.vietnamsurgery.Utility.Utils;
@@ -225,7 +230,17 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
             // Create a workbook object
             XSSFWorkbook workbook = new XSSFWorkbook(file);
 
-            chooseExcelSheet(workbook);
+            XSSFSheet sh = workbook.getSheetAt(2);
+            List<XSSFDataValidation> dv = sh.getDataValidations();
+
+            for( XSSFDataValidation dataValidation : dv) {
+                String[] test = dataValidation.getValidationConstraint().getExplicitListValues();
+                Log.i("TESTT", String.valueOf(test.length));
+            }
+
+            Log.i("TESTT", String.valueOf(dv.toString()));
+
+            //chooseExcelSheet(workbook);
         } catch (Exception ex) {
             Log.i(TAG, getString(R.string.error_while_opening_xlsx, ex.getMessage()));
         }

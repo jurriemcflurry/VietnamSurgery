@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.StatFs;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -108,6 +109,6 @@ public final class Utils {
     public static boolean isEnoughSpaceLeftOnOnDevice(String path) {
         StatFs stats = new StatFs(path);
         long bytes = stats.getAvailableBytes();
-        return (bytes <= 104857600L);
+        return bytes >= 104857600;
     }
 }
