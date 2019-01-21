@@ -64,13 +64,6 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
         setupToolbar();
         setupNavigation();
 
-        if(!Utils.isEnoughSpaceLeftOnOnDevice(root.getAbsolutePath())){
-            new AlertDialog.Builder(this)
-                    .setTitle(R.string.dialog_warning_title)
-                    .setMessage(R.string.dialog_warning_text)
-                    .setPositiveButton(getString(R.string.dialog_ok), null).show();
-        }
-
         // Check if we can read/write to the storage. If so, continue; if not; prompt the user
         if(Utils.verifyStoragePermissions(this)) {
             chooseDirOrLoadList();
@@ -186,6 +179,12 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
                                 if(Utils.editRootDirInPrefs(chosenDir)){
                                     root = new File(chosenDir);
                                     List<File> files = Utils.getListOfExcelFiles(root);
+                                    if(!Utils.isEnoughSpaceLeftOnOnDevice(root.getAbsolutePath())){
+                                        new AlertDialog.Builder(getApplicationContext())
+                                                .setTitle(R.string.dialog_warning_title)
+                                                .setMessage(R.string.dialog_warning_text)
+                                                .setPositiveButton(getString(R.string.dialog_ok), null).show();
+                                    }
                                     chooseExcelFile(files);
                                 }
                             }

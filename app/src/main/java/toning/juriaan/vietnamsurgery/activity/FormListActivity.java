@@ -48,17 +48,13 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
 
     final static int REQUEST_ADJUST_FORM = 3;
     private final String TAG = this.getClass().getSimpleName();
-    FormTemplate form;
+    private FormTemplate form;
     private List<Section> sections = new ArrayList<>();
     private ArrayList<FormTemplate> formList = new ArrayList<>();
-    Toolbar toolbar;
-    private ActionBar ab;
     private DrawerLayout mDrawerLayout;
     private File root;
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager = new GridLayoutManager(this, 1);
-    private FileNameAdapter mAdapterFiles;
-    private SheetAdapter mAdapterSheets;
     private XSSFWorkbook mWorkbook;
 
     @Override
@@ -97,7 +93,6 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
      * Method to set up the fields
      */
     private void setupFields(){
-        toolbar = findViewById(R.id.form_toolbar);
         form = new FormTemplate();
         mRecyclerView = findViewById(R.id.grid_view_form_list_files);
         Utils.setSharedPrefs(this);
@@ -108,8 +103,9 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
      * Method to set up the toolbar for this activity
      */
     private void setupToolbar() {
+        Toolbar toolbar = findViewById(R.id.form_toolbar);
         setSupportActionBar(toolbar);
-        ab = getSupportActionBar();
+        ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setTitle(R.string.filled_in_forms_name);
@@ -156,12 +152,12 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
      */
     private void chooseExcelFile() {
         try{
-            List<File> files = getListFiles(root);
+            List<File> files = Utils.getListOfExcelFiles(root);
 
             // Check if there are more than 1 file, if so, show clickables for all files. If not: load the first one directly
             if(files.size() > 1) {
                 mRecyclerView.setLayoutManager(mLayoutManager);
-                mAdapterFiles = new FileNameAdapter(this, files, this);
+                FileNameAdapter mAdapterFiles = new FileNameAdapter(this, files, this);
                 mRecyclerView.setAdapter(mAdapterFiles);
             } else {
                 form.setFileName(files.get(0).getName());
@@ -171,42 +167,6 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
         } catch (Exception ex) {
             Toast.makeText(this, getString(R.string.error_while_finding_xlsx, ex.getMessage(), root.getPath()), Toast.LENGTH_LONG).show();
         }
-    }
-
-    private static final int REQUEST_EXTERNAL_STORAGE = 1;
-    private static String[] PERMISSIONS_STORAGE = {
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-    };
-
-    public static void verifyStoragePermissions(Activity activity) {
-        // Check if we have write permission
-        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            // We don't have permission so prompt the user
-            ActivityCompat.requestPermissions(
-                    activity,
-                    PERMISSIONS_STORAGE,
-                    REQUEST_EXTERNAL_STORAGE
-            );
-        }
-    }
-
-    private List<File> getListFiles(File parentDir) {
-        // Check if we can read/write to the storage. If so, continue; if not; prompt the user
-        verifyStoragePermissions(this);
-
-        ArrayList<File> inFiles = new ArrayList<>();
-        File[] files = parentDir.listFiles();
-
-        for( File file : files) {
-            if(file.getName().substring(file.getName().lastIndexOf('.') + 1).equals("xlsx")) {
-                inFiles.add(file);
-            }
-        }
-
-        return inFiles;
     }
 
     /**
@@ -238,7 +198,7 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
                 sheets.add(workbook.getSheetAt(sheetNumber).getSheetName());
             }
             mRecyclerView.setLayoutManager(mLayoutManager);
-            mAdapterSheets = new SheetAdapter(this, sheets, this);
+            SheetAdapter mAdapterSheets = new SheetAdapter(this, sheets, this);
             mRecyclerView.setAdapter(mAdapterSheets);
         }
     }
