@@ -57,7 +57,7 @@ public class PhotoDetailActivity extends FormBaseActivity {
     @Override
     public void onBackPressed(){
         getIntent().putExtra(Helper.IMAGE_NAME, Helper.NO_IMAGE_DELETED);
-        setResult(Helper.DELETE_IMAGE, getIntent());
+        setResult(Helper.NO_IMAGE_DELETED, getIntent());
         finish();
     }
 }

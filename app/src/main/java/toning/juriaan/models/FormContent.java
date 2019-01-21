@@ -155,6 +155,21 @@ public class FormContent {
         imageNames.add(imageName);
     }
 
+    public String getNextImageName() {
+        int nextImageNumber = 0;
+
+        for (String imageName : imageNames) {
+            Helper.log("imageNames " + imageName);
+            String[] splitImageName = imageName.replaceAll(Helper.IMAGE_EXTENSION, "").split("_");
+            int imageNumber = Integer.valueOf(splitImageName[splitImageName.length - 1]);
+            if (imageNumber >= nextImageNumber) {
+                nextImageNumber = imageNumber + 1;
+            }
+        }
+
+        return getFormContentId() + "_image_" + nextImageNumber;
+    }
+
     public String toJson() {
         return Helper.getGson().toJson(this);
     }

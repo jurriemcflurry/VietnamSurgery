@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -19,10 +20,12 @@ import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.io.File;
 
@@ -99,9 +102,9 @@ public class CameraActivity extends FormBaseActivity {
     private void updateView() {
         imageGridLayout.removeAllViews();
         for (String imageName : formContent.getImageNames()) {
-            ImageView imageView = new ImageView(this);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            RelativeLayout imageView = new RelativeLayout(this);
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(10, 10, 10, 10);
             imageView.setLayoutParams(layoutParams);
             loadImageView(imageName, imageView);
@@ -109,17 +112,18 @@ public class CameraActivity extends FormBaseActivity {
         }
     }
 
-    private void loadImageView(final String imageName, final ImageView imageView) {
+    private void loadImageView(final String imageName, final RelativeLayout relativeImageView) {
         Image image = Storage.getImageByName(imageName, this);
         if (image == null) return;
 
-        imageView.setImageResource(0);
+        relativeImageView.removeAllViews();
 
-        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         Bitmap bitmap = image.getThumbnailBitmap(this);
         if (bitmap != null) {
+            ImageView imageView = new ImageView(this);
             imageView.setImageBitmap(bitmap);
-            imageView.setOnClickListener(new View.OnClickListener() {
+            relativeImageView.addView(imageView);
+            relativeImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent photoDetailIntent = new Intent(getApplicationContext(), PhotoDetailActivity.class);
@@ -128,16 +132,28 @@ public class CameraActivity extends FormBaseActivity {
                 }
             });
         } else {
-            Drawable refreshImage = getDrawable(R.drawable.refresh_icon_black);
+            ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            ImageView imageView = new ImageView(this);
+            imageView.setLayoutParams(layoutParams);
+            Drawable refreshImage = getDrawable(R.drawable.image_refresh_bg);
             bitmap = ((BitmapDrawable) refreshImage).getBitmap();
             bitmap = Bitmap.createScaledBitmap(bitmap, Helper.THUMBNAIL_SIZE, Helper.THUMBNAIL_SIZE, true);
             imageView.setImageBitmap(bitmap);
-            imageView.setOnClickListener(new View.OnClickListener() {
+            relativeImageView.addView(imageView);
+            relativeImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    loadImageView(imageName, imageView);
+                    loadImageView(imageName, relativeImageView);
                 }
             });
+
+
+            TextView textView = new TextView(this);
+            textView.setText(R.string.tapInstruction);
+            textView.setTextColor(Color.BLACK);
+            textView.setLayoutParams(layoutParams);
+            relativeImageView.addView(textView);
         }
     }
 
@@ -164,6 +180,8 @@ public class CameraActivity extends FormBaseActivity {
                 finish();
             } else if (resultCode == Helper.DELETE_IMAGE) {
                 handleDeleteImage(data);
+                updateView();
+            } else if (resultCode == Helper.NO_IMAGE_DELETED) {
                 updateView();
             } else if (resultCode == Helper.EDIT_SECTION_CODE) {
                 int sectionIndex = data.getIntExtra(Helper.SECTION_INDEX, 123);
@@ -195,7 +213,7 @@ public class CameraActivity extends FormBaseActivity {
     }
 
     private void updateNextImage() {
-        String imageName = Image.getNextImageName(formContent, this);
+        String imageName = formContent.getNextImageName();
         nextImageFile = Storage.getImageFileWithName(imageName + Helper.IMAGE_EXTENSION, this);
         nextImageUri = Uri.fromFile(nextImageFile);
     }

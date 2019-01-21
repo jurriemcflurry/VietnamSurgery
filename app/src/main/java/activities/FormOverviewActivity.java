@@ -10,9 +10,12 @@ import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -108,32 +111,44 @@ public class FormOverviewActivity extends FormBaseActivity {
     private LinearLayout getPhotoGalleryView() {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(10, 10, 10, 10);
+
         LinearLayout photoGalleryView = new LinearLayout(this);
         photoGalleryView.setOrientation(LinearLayout.VERTICAL);
+        photoGalleryView.setLayoutParams(layoutParams);
+
 
         TextView photoGalleryTitleTextView = new TextView(this);
         photoGalleryTitleTextView.setText(R.string.photoGalleryTitle);
         setTitleTextView(photoGalleryTitleTextView);
-
-        ScrollView scrollView = new ScrollView(this);
         photoGalleryView.addView(photoGalleryTitleTextView);
-        photoGalleryView.addView(scrollView);
 
-        LinearLayout photoGallery = new LinearLayout(this);
-        photoGallery.setOrientation(LinearLayout.HORIZONTAL);
+//        ScrollView.LayoutParams scrollLayoutParams = new ScrollView.LayoutParams(
+//                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//        ScrollView scrollView = new ScrollView(this);
+//        photoGalleryView.addView(scrollView);
+//        scrollView.setLayoutParams(scrollLayoutParams);
+//
+        GridLayout photoGallery = new GridLayout(this);
+        photoGallery.setColumnCount(2);
         photoGallery.setLayoutParams(layoutParams);
+
+        RelativeLayout.LayoutParams layoutParams1 = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams1.setMargins(10, 10, 10, 10);
 
         for (String imageName : formContent.getImageNames()) {
             Image image = Storage.getImageByName(imageName, this);
             if (image == null) continue;
             ImageView imageView = new ImageView(this);
+            imageView.setLayoutParams(layoutParams1);
             Bitmap bitmap = image.getThumbnailBitmap(this);
 
             imageView.setImageBitmap(bitmap);
             photoGallery.addView(imageView);
         }
 
-        scrollView.addView(photoGallery);
+        photoGalleryView.addView(photoGallery);
         return photoGalleryView;
     }
 
@@ -150,17 +165,23 @@ public class FormOverviewActivity extends FormBaseActivity {
         sectionView.addView(sectionNameTextView);
 
         for (Field field : section.getFields()) {
+            LinearLayout fieldView = new LinearLayout(this);
+            fieldView.setOrientation(LinearLayout.HORIZONTAL);
             TextView fieldNameText = new TextView(this);
             String fieldName = field.getFieldName() + ":";
             fieldNameText.setText(fieldName);
+            fieldNameText.setTextSize(17);
             fieldNameText.setTextColor(Color.BLACK);
-            sectionView.addView(fieldNameText);
 
             TextView fieldValueText = new TextView(this);
             fieldValueText.setText(formContent.getAnswer(field.getFieldName()));
             fieldValueText.setTextColor(Color.BLACK);
             fieldValueText.setTextSize(17);
-            sectionView.addView(fieldValueText);
+
+            fieldView.addView(fieldNameText);
+            fieldView.addView(fieldValueText);
+
+            sectionView.addView(fieldView);
         }
         return sectionView;
     }
@@ -185,6 +206,7 @@ public class FormOverviewActivity extends FormBaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.next_menu_item:
+                getSaveDialog().show();
                 return true;
             case R.id.delete_menu_item:
                 getDeleteDialog().show();
@@ -198,11 +220,12 @@ public class FormOverviewActivity extends FormBaseActivity {
         return new AlertDialog.Builder(this)
                 .setTitle(R.string.saveDialogTitle)
                 .setMessage(R.string.saveDialogMessage)
-                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         setResult(Helper.CONTENT_SAVED_CODE);
                         formContent.updateDate();
+                        Storage.saveFormContent(formContent, getApplicationContext());
                         Storage.cleanImgDir(getApplicationContext());
                         finish();
                     }
