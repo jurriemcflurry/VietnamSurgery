@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -57,6 +58,14 @@ public class FormAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
         });
 
+        viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                context.onItemLongClick(form);
+                return true;
+            }
+        });
+
         vh.formName.setText(form.getFormName());
         vh.contentAmount.setText(getContentAmount(form.getId()).toString());
     }
@@ -73,6 +82,10 @@ public class FormAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public int getItemCount() {
         return forms.size();
+    }
+
+    public Form getItem(int position){
+        return forms.get(position);
     }
 
     public static class FormViewHolder extends RecyclerView.ViewHolder {

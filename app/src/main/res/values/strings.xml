@@ -74,6 +74,11 @@
     <string name="formTemplateUse"># Used</string>
     <string name="homeTitle">Home</string>
     <string name="exit">Please click BACK again to exit</string>
+    <string name="deleteFormTitle">Delete Form Template?</string>
+    <string name="deleteFormMessage">Are you sure you want to delete form:&#160;</string>
+    <string name="cancelDeleteForm">Cancel</string>
+    <string name="confirmDeleteForm">Delete</string>
+    <string name="noAccessDeleteForm">Please log in as Admin to delete Forms</string>
 
     <!-- PhotoDetailActivity -->
     <string name="camera_title">Pictures</string>
