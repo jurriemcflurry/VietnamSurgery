@@ -104,7 +104,7 @@ public class MainActivity extends BaseActivity implements FormAdapter.FormListen
     }
 
     public void onItemLongClick(final Form form){
-        if(!AccessToken.userrole.equals(getString(R.string.adminCheck))){
+        if(AccessToken.userrole == null || !AccessToken.userrole.equals(getString(R.string.adminCheck))){
             Snackbar.make(recyclerView, getString(R.string.noAccessDeleteForm), Snackbar.LENGTH_LONG)
                     .show();
             return;
