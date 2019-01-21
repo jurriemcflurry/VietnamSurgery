@@ -32,6 +32,9 @@
     <string name="error_delete_pic">Er is iets foutgegaan tijdens het verwijderen van de foto. Probeer het opnieuw.</string>
     <string name="error_not_enough_pics">Je moet ten minste 1 foto maken.</string>
 
+    <string name="dialog_warning_photosave">Er is iets foutgegaan tijdens het opslaan van de foto.</string>
+    <string name="dialog_warning_creatingfile">Er is iets foutgegaan tijdens het creëren van de foto.</string>
+
     <string name="dialog_delete_picture_title">Foto verwijderen?</string>
     <string name="dialog_delete_picture_text">Weet je zeker dat je de foto wilt verwijderen?</string>
     <string name="dialog_confirm_title">Bevestigen</string>

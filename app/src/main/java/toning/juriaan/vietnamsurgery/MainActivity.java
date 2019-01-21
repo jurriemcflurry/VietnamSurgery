@@ -217,6 +217,10 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
             }
         } catch (Exception ex) {
             Toast.makeText(this, getString(R.string.error_while_finding_xlsx, ex.getMessage(), root.getPath()), Toast.LENGTH_LONG).show();
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.dialog_warning_title)
+                    .setMessage(getString(R.string.error_while_finding_xlsx, ex.getMessage(), root.getPath()))
+                    .setPositiveButton(getString(R.string.dialog_ok), null).show();
         }
 
     }
@@ -232,6 +236,10 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
             chooseExcelSheet(workbook);
         } catch (Exception ex) {
             Log.i(TAG, getString(R.string.error_while_opening_xlsx, ex.getMessage()));
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.dialog_warning_title)
+                    .setMessage(getString(R.string.error_while_opening_xlsx, ex.getMessage()))
+                    .setPositiveButton(getString(R.string.dialog_ok), null).show();
         }
     }
 
@@ -339,6 +347,10 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
             finish();
         } catch (Exception ex) {
             Log.e(TAG, getString(R.string.error_while_reading_xlsx, ex.getMessage()));
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.dialog_warning_title)
+                    .setMessage(getString(R.string.error_while_reading_xlsx, ex.getMessage()))
+                    .setPositiveButton(getString(R.string.dialog_ok), null).show();
         }
     }
 

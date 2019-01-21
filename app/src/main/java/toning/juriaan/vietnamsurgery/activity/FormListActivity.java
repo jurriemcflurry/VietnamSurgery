@@ -10,6 +10,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -83,6 +84,10 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
                 readExcelFile(workbook.getSheet(sheetName));
             } catch (Exception ex) {
                 Log.e(TAG, ex.getMessage());
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.dialog_warning_title)
+                        .setMessage(getString(R.string.error_while_opening_xlsx, ex.getMessage()))
+                        .setPositiveButton(getString(R.string.dialog_ok), null).show();
             }
         } else {
             chooseExcelFile();
@@ -166,6 +171,10 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
             }
         } catch (Exception ex) {
             Toast.makeText(this, getString(R.string.error_while_finding_xlsx, ex.getMessage(), root.getPath()), Toast.LENGTH_LONG).show();
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.dialog_warning_title)
+                    .setMessage(getString(R.string.error_while_finding_xlsx, ex.getMessage(), root.getPath()))
+                    .setPositiveButton(getString(R.string.dialog_ok), null).show();
         }
     }
 
@@ -181,6 +190,10 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
             chooseExcelSheet(workbook);
         } catch (Exception ex) {
             Log.i(TAG, getString(R.string.error_while_opening_xlsx, ex.getMessage()));
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.dialog_warning_title)
+                    .setMessage(getString(R.string.error_while_opening_xlsx, ex.getMessage()))
+                    .setPositiveButton(getString(R.string.dialog_ok), null).show();
         }
     }
 
@@ -285,6 +298,10 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
             wb.close();
         } catch (Exception ex) {
             Log.e(TAG, getString(R.string.error_while_reading_xlsx, ex.getMessage()));
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.dialog_warning_title)
+                    .setMessage(getString(R.string.error_while_reading_xlsx, ex.getMessage()))
+                    .setPositiveButton(getString(R.string.dialog_ok), null).show();
         }
     }
 
@@ -441,6 +458,10 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
             readExcelFile(sheet);
         } catch (Exception ex) {
             Log.e(TAG, getString(R.string.error_while_reading_xlsx, ex.getMessage()));
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.dialog_warning_title)
+                    .setMessage(getString(R.string.error_while_reading_xlsx, ex.getMessage()))
+                    .setPositiveButton(getString(R.string.dialog_ok), null).show();
         }
 
     }

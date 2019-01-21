@@ -266,6 +266,10 @@ public class OverviewFormActivity extends AppCompatActivity {
             }
         } catch (Exception ex) {
             Log.i(TAG, getString(R.string.error_default, ex.getMessage(), ex.getCause()));
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.dialog_warning_title)
+                    .setMessage(getString(R.string.error_default, ex.getMessage(), ex.getCause()))
+                    .setPositiveButton(getString(R.string.dialog_ok), null).show();
         }
     }
 

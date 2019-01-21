@@ -11,6 +11,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -149,7 +150,10 @@ public class CameraActivity extends AppCompatActivity {
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
-                // Error occurred while creating the File
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.dialog_warning_title)
+                        .setMessage(R.string.dialog_warning_photosave)
+                        .setPositiveButton(getString(R.string.dialog_ok), null).show();
             }
 
             Uri photoURI;
@@ -216,6 +220,10 @@ public class CameraActivity extends AppCompatActivity {
                 form.setPictures(pictures);
             } catch (Exception ex) {
                 Log.i(TAG, getString(R.string.error, ex.getMessage()));
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.dialog_warning_title)
+                        .setMessage(R.string.dialog_warning_photosave)
+                        .setPositiveButton(getString(R.string.dialog_ok), null).show();
             }
         }
         // When an image has to be deleted, delete this image
