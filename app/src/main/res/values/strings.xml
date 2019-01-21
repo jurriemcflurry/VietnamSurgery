@@ -178,5 +178,6 @@
     <string name="refresh">Refresh</string>
     <string name="save">Save</string>
     <string name="upload">Upload</string>
+    <string name="unavailable">Unavailable</string>
     <string name="test">Test</string>
 </resources>

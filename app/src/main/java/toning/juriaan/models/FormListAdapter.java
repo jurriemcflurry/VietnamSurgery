@@ -54,8 +54,14 @@ public class FormListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         String district = context.getString(R.string.district) + ": " +
                 formContent.getAnswer(context.getString(R.string.district));
 
-        String dateTime = context.getString(R.string.date) + ": " +
-                formContent.getFormContentDate();
+        String date;
+        try {
+            date = formContent.getFormContentDate();
+        } catch (Exception e) {
+            date = context.getString(R.string.unavailable);
+        }
+
+        String dateTime = context.getString(R.string.date) + ": " + date;
 
         vh.formListNameView.setText(name);
         vh.formListBirthyearView.setText(birthyear);
