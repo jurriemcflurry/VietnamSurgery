@@ -72,9 +72,9 @@ public class Image {
         this.uri = uri;
     }
 
-    public byte[] getByteArray() {
+    public byte[] getByteArray(Context context) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        getImageBitmap(context).compress(Bitmap.CompressFormat.JPEG, 100, stream);
         return stream.toByteArray();
     }
 

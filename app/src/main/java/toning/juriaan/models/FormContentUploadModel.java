@@ -33,7 +33,7 @@ public class FormContentUploadModel {
         ArrayList<Image> imgs = Storage.getImagesForFormContent(formContent, context);
         images = new ArrayList<>();
         for (Image img : imgs) {
-            images.add(img.getByteArray());
+            images.add(img.getByteArray(context));
         }
 
     }

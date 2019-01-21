@@ -35,7 +35,7 @@ import toning.juriaan.models.Storage;
 @SuppressLint("Registered")
 public class FormActivity extends FormBaseActivity implements AdapterView.OnItemSelectedListener {
 
-    private boolean isNew;
+    private boolean isEditing;
     private Toolbar toolbar;
     private TextView sectionNameView;
     private LinearLayout fieldsView;
@@ -54,20 +54,24 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
         getSupportActionBar().setTitle(getString(R.string.forms));
 
         dropDownValues = new ArrayList<>();
-        loadIntent();
+        try {
+            loadIntent();
 
-        sectionNameView = findViewById(R.id.section_name);
-        fieldsView = findViewById(R.id.fields_linear_view);
+            sectionNameView = findViewById(R.id.section_name);
+            fieldsView = findViewById(R.id.fields_linear_view);
 
-        updateView();
+            updateView();
+        } catch (Exception e) {
+            e.printStackTrace();
+            finish();
+        }
     }
 
     protected void loadIntent() {
         Intent intent = getIntent();
         String formName = intent.getStringExtra(Helper.FORM);
-        String formContentName = intent.getStringExtra(Helper.FORM_CONTENT);
-        isNew = intent.getBooleanExtra(Helper.IS_NEW, false);
-        Helper.log("Form load with " + isNew);
+        String formContentId = intent.getStringExtra(Helper.FORM_CONTENT_ID);
+        boolean goToCamera = intent.getBooleanExtra(Helper.GO_TO_CAMERA, false);
         sectionIndex = intent.getIntExtra(Helper.SECTION_INDEX, 0);
 
         form = Storage.getForm(formName, this);
@@ -75,16 +79,22 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
             finish();
         }
 
-        if (formContentName != null && !formContentName.isEmpty()) {
-            formContent = Storage.getFormContent(formContentName, this);
+        if (formContentId != null && !formContentId.isEmpty()) {
+            formContent = Storage.getFormContentById(formContentId, this);
+            isEditing = false;
         }
 
         if (formContent == null) {
             formContent = new FormContent(form.getId());
+            isEditing = true;
         }
 
         if (sectionIndex >= form.getFormTemplate().getSections().size()) {
             sectionIndex = 0;
+        }
+
+        if (goToCamera) {
+            goToCameraActivity();
         }
     }
 
@@ -139,7 +149,8 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
         }
 
         String value = formContent.getAnswer(field.getFieldName());
-        if (value != null) {
+        Helper.log("value: " + value);
+        if (!value.isEmpty()) {
             editText.setText(value);
         }
         editText.setId(i);
@@ -222,16 +233,7 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
                 updateView();
 
             } else if (sectionIndex >= form.getFormTemplate().getSections().size() - 1) {
-                formContent.updateFormContentName(this);
-
-                storeFormContent();
-
-                Intent cameraIntent = new Intent(getApplicationContext(), CameraActivity.class);
-                cameraIntent.putExtra(Helper.FORM, form.getFormattedFormName());
-                cameraIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentId());
-                cameraIntent.putExtra(Helper.IS_NEW, isNew);
-                Helper.log("Form start with " + isNew);
-                startActivityForResult(cameraIntent, Helper.FORM_ACTIVITY_CODE);
+                goToCameraActivity();
             }
         } else {
             String errorMessage = "";
@@ -244,6 +246,18 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
                     .setNegativeButton(getString(R.string.ok), null)
                     .create().show();
         }
+    }
+
+    private void goToCameraActivity() {
+        formContent.updateFormContentName(this);
+
+        storeFormContent();
+
+        Intent cameraIntent = new Intent(getApplicationContext(), CameraActivity.class);
+        cameraIntent.putExtra(Helper.FORM, form.getFormattedFormName());
+        cameraIntent.putExtra(Helper.FORM_CONTENT_ID, formContent.getFormContentId());
+        cameraIntent.putExtra(Helper.IS_EDITING, isEditing);
+        startActivityForResult(cameraIntent, Helper.FORM_ACTIVITY_CODE);
     }
 
     private ArrayList<String> validateSection() {
@@ -292,7 +306,6 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
                 continue;
             }
 
-            Helper.log("saveAnswers() " + formContent);
             formContent.addAnswer(fieldName, fieldValue);
         }
     }
@@ -364,8 +377,13 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == Helper.FORM_ACTIVITY_CODE) {
             if (resultCode == Helper.CONTENT_SAVED_CODE) {
+                setResult(Helper.CONTENT_SAVED_CODE);
                 finish();
             } else if (resultCode == Helper.UPDATE_CODE) {
+                updateView();
+            } else if (resultCode == Helper.EDIT_SECTION_CODE && data != null) {
+                sectionIndex = data.getIntExtra(Helper.SECTION_INDEX, 0);
+                Helper.log("Form " + sectionIndex);
                 updateView();
             }
         }
@@ -379,8 +397,11 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
     @Override
     protected void onResume() {
         super.onResume();
-        String formContentName = formContent.getFormContentId();
-        formContent = Storage.getFormContent(formContentName, this);
+        String formContentId = formContent.getFormContentId();
+        FormContent formContent = Storage.getFormContentById(formContentId, this);
+        if (formContent != null) {
+            this.formContent = formContent;
+        }
         updateView();
     }
 

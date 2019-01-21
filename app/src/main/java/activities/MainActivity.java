@@ -19,7 +19,6 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import toning.juriaan.models.Form;
 import toning.juriaan.models.FormAdapter;
-import toning.juriaan.models.FormTemplateObject;
 import toning.juriaan.models.Helper;
 import toning.juriaan.models.R;
 import toning.juriaan.models.Storage;
@@ -90,8 +89,8 @@ public class MainActivity extends BaseActivity implements FormAdapter.FormListen
     public void onItemClick(Form form) {
         Intent toFormActivityIntent = new Intent(MainActivity.this, FormActivity.class);
         toFormActivityIntent.putExtra(Helper.FORM, form.getFormattedFormName());
-        toFormActivityIntent.putExtra(Helper.IS_NEW, true);
-        Helper.log("main start with true" + true);
+        toFormActivityIntent.putExtra(Helper.IS_EDITING, true);
+        Helper.log("main start with " + true);
         startActivity(toFormActivityIntent);
     }
 

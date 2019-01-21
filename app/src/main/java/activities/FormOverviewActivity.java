@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -27,7 +28,7 @@ public class FormOverviewActivity extends FormBaseActivity {
     private LinearLayout sectionsView;
     private FormContent formContent;
     private Form form;
-    private boolean isNew;
+    private boolean isEditing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +39,7 @@ public class FormOverviewActivity extends FormBaseActivity {
         FrameLayout contentFrameLayout = findViewById(R.id.formbase_framelayout);
         getLayoutInflater().inflate(R.layout.activity_form_overview, contentFrameLayout);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(formContent.getFormContentName());
+        actionBar.setTitle(formContent.updateFormContentName(this));
 
         sectionsView = findViewById(R.id.overview_content_view);
         updateView();
@@ -46,27 +47,76 @@ public class FormOverviewActivity extends FormBaseActivity {
 
     private void loadIntent() {
         Intent intent = getIntent();
-        String formContentName = intent.getStringExtra(Helper.FORM_CONTENT);
+        String formContentName = intent.getStringExtra(Helper.FORM_CONTENT_ID);
         String formName = intent.getStringExtra(Helper.FORM);
-        isNew = intent.getBooleanExtra(Helper.IS_NEW, false);
-        Helper.log("FormOverview load with " + isNew);
+        isEditing = intent.getBooleanExtra(Helper.IS_EDITING, false);
 
         form = Storage.getForm(formName, this);
-        formContent = Storage.getFormContent(formContentName, this);
+        formContent = Storage.getFormContentById(formContentName, this);
     }
 
     private void updateView() {
-        for (Section section : form.getFormTemplate().getSections()) {
+        sectionsView.removeAllViews();
+        for (int i = 0; i < form.getFormTemplate().getSections().size(); i++) {
+            Section section = form.getFormTemplate().getSections().get(i);
             LinearLayout sectionView = getSectionView(section);
+            sectionView.setOnClickListener(getSectionOnClickListener(i));
             sectionsView.addView(sectionView);
         }
-        sectionsView.addView(getImagesView());
+        LinearLayout photoGallery = getPhotoGalleryView();
+        photoGallery.setOnClickListener(getPhotoOnClickListener());
+        sectionsView.addView(photoGallery);
     }
 
-    private ScrollView getImagesView() {
+    private View.OnClickListener getPhotoOnClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = getIntent();
+                Form form = Storage.getFormById(formContent.getFormId(), getApplicationContext());
+                if (form != null) {
+                    intent.putExtra(Helper.SECTION_INDEX, form.getFormTemplate().getSections().size() - 1);
+                    intent.putExtra(Helper.FORM, form.getFormattedFormName());
+                }
+                intent.putExtra(Helper.FORM_CONTENT_ID, formContent.getFormContentId());
+
+                setResult(Helper.EDIT_PHOTOS_CODE, intent);
+                finish();
+            }
+        };
+    }
+
+    private View.OnClickListener getSectionOnClickListener(final int sectionIndex) {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = getIntent();
+                Form form = Storage.getFormById(formContent.getFormId(), getApplicationContext());
+                if (form != null) {
+                    intent.putExtra(Helper.FORM, form.getFormattedFormName());
+                }
+                intent.putExtra(Helper.FORM_CONTENT_ID, formContent.getFormContentId());
+
+                setResult(Helper.EDIT_SECTION_CODE, intent);
+                finish();
+            }
+        };
+    }
+
+    private LinearLayout getPhotoGalleryView() {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout photoGalleryView = new LinearLayout(this);
+        photoGalleryView.setOrientation(LinearLayout.VERTICAL);
+
+        TextView photoGalleryTitleTextView = new TextView(this);
+        photoGalleryTitleTextView.setText(R.string.photoGalleryTitle);
+        setTitleTextView(photoGalleryTitleTextView);
+
         ScrollView scrollView = new ScrollView(this);
+        photoGalleryView.addView(photoGalleryTitleTextView);
+        photoGalleryView.addView(scrollView);
+
         LinearLayout photoGallery = new LinearLayout(this);
         photoGallery.setOrientation(LinearLayout.HORIZONTAL);
         photoGallery.setLayoutParams(layoutParams);
@@ -82,7 +132,7 @@ public class FormOverviewActivity extends FormBaseActivity {
         }
 
         scrollView.addView(photoGallery);
-        return scrollView;
+        return photoGalleryView;
     }
 
     private LinearLayout getSectionView(Section section) {
@@ -92,11 +142,10 @@ public class FormOverviewActivity extends FormBaseActivity {
         sectionView.setLayoutParams(layoutParams);
         sectionView.setOrientation(LinearLayout.VERTICAL);
 
-        TextView sectionNameText = new TextView(this);
-        sectionNameText.setText(section.getSectionName());
-        sectionNameText.setTextSize(25);
-        sectionNameText.setTextColor(Color.BLACK);
-        sectionView.addView(sectionNameText);
+        TextView sectionNameTextView = new TextView(this);
+        sectionNameTextView.setText(section.getSectionName());
+        setTitleTextView(sectionNameTextView);
+        sectionView.addView(sectionNameTextView);
 
         for (Field field : section.getFields()) {
             TextView fieldNameText = new TextView(this);
@@ -114,9 +163,14 @@ public class FormOverviewActivity extends FormBaseActivity {
         return sectionView;
     }
 
+    private void setTitleTextView(TextView textView) {
+        textView.setTextSize(25);
+        textView.setTextColor(Color.BLACK);
+    }
+
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (isNew) {
+        if (isEditing) {
             getMenuInflater().inflate(R.menu.form_activity_menu, menu);
         } else {
             getMenuInflater().inflate(R.menu.form_overview_activity_menu, menu);
@@ -134,7 +188,7 @@ public class FormOverviewActivity extends FormBaseActivity {
                 Storage.cleanImgDir(this);
                 finish();
                 return true;
-            case 0:
+            case R.id.delete_menu_item:
                 Storage.deleteFormContent(formContent, this);
                 setResult(Helper.CONTENT_SAVED_CODE);
                 finish();

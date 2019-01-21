@@ -47,8 +47,13 @@
     <!-- FormListActivity -->
     <string name="formContentFormList">Filled in forms</string>
     <string name="uploadCountText">Upload progress: %s of %s.</string>
+    <string name="uploadDialogTitle">Do you want to upload local content?</string>
+    <string name="uploadDialogMessage">The local content that is uploaded will be deleted!</string>
+    <string name="uploadLoginDialogTitle">You are not logged in.</string>
+    <string name="uploadLoginDialogMessage">To upload local content you must log in first.</string>
 
     <!-- FormOverviewActivity -->
+    <string name="photoGalleryTitle">Photos</string>
 
     <!-- LoginActivity -->
     <string name="loginTitle">Login</string>
@@ -70,7 +75,7 @@
     <string name="exit">Please click BACK again to exit</string>
 
     <!-- PhotoDetailActivity -->
-    <string name="camera_title">Pictures</string>
+    <string name="camera_title">Photos</string>
 
     <!-- RegisterActivity -->
     <string name="addUserTitle">Add User</string>
