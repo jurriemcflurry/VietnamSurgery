@@ -229,18 +229,8 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
         try {
             // Create a workbook object
             XSSFWorkbook workbook = new XSSFWorkbook(file);
-
-            XSSFSheet sh = workbook.getSheetAt(2);
-            List<XSSFDataValidation> dv = sh.getDataValidations();
-
-            for( XSSFDataValidation dataValidation : dv) {
-                String[] test = dataValidation.getValidationConstraint().getExplicitListValues();
-                Log.i("TESTT", String.valueOf(test.length));
-            }
-
-            Log.i("TESTT", String.valueOf(dv.toString()));
-
-            //chooseExcelSheet(workbook);
+            
+            chooseExcelSheet(workbook);
         } catch (Exception ex) {
             Log.i(TAG, getString(R.string.error_while_opening_xlsx, ex.getMessage()));
         }
