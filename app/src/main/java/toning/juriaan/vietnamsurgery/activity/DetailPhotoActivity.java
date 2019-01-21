@@ -32,6 +32,7 @@ public class DetailPhotoActivity extends AppCompatActivity {
     ActionBar ab;
     String photoUrl;
     ImageView imageView;
+    TextView textView;
     FloatingActionButton fab;
 
     @Override
@@ -66,23 +67,18 @@ public class DetailPhotoActivity extends AppCompatActivity {
         stepCounter.setText(getString(R.string.step_text, noOfSections + 1, noOfSections + 1));
         toolbar = findViewById(R.id.form_toolbar);
         imageView = findViewById(R.id.photo_detail_iv);
+        textView = findViewById(R.id.photo_name);
         fab = findViewById(R.id.delete_btn);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        fab.setOnClickListener((View v)-> {
                 new AlertDialog.Builder(DetailPhotoActivity.this)
                         .setTitle(R.string.dialog_delete_picture_title)
                         .setMessage(R.string.dialog_delete_picture_text)
                         .setNegativeButton(R.string.dialog_cancel, null)
-                        .setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                        .setPositiveButton(R.string.dialog_ok, (DialogInterface dialog, int which) -> {
                                 getIntent().putExtra("photoUrl", photoUrl);
                                 setResult(RESULT_OK, getIntent());
                                 finish();
-                            }
                         }).create().show();
-            }
         });
     }
 
@@ -106,28 +102,9 @@ public class DetailPhotoActivity extends AppCompatActivity {
         File photo = new File(photoUrl);
         if(photo.exists()) {
             Bitmap bitmap = BitmapFactory.decodeFile(photoUrl);
-
+            textView.setText(photo.getName());
             imageView.setImageBitmap(bitmap);
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_next:
-                // Go back to previous activity
-                onSupportNavigateUp();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.actionbar_menu, menu);
-        return true;
     }
 
     @Override

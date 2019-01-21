@@ -62,7 +62,7 @@ public class DirectoryChooserDialog {
      * @param dir String with absolute path were directory chooser has to start
      * @param cancelable boolean if cancel button must be showed
      */
-    public void chooseDirectory(String dir, boolean cancelable)
+    private void chooseDirectory(String dir, boolean cancelable)
     {
         File dirFile = new File(dir);
         if (! dirFile.exists() || ! dirFile.isDirectory())
