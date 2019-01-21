@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -206,6 +207,7 @@ public class FormActivity extends AppCompatActivity {
         textInputLayout.setLayoutParams(layoutParams);
 
         EditText editText = new EditText(textInputLayout.getContext());
+        editText.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
         editText.setLayoutParams(layoutParams);
         editText.setHint(textFieldName);
         editText.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES );
