@@ -42,7 +42,7 @@ public class FormListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-        final FormContent formContent = Storage.getFormContent(formContentNames.get(i), context);
+        final FormContent formContent = Storage.getFormContentById(formContentNames.get(i), context);
         FormListViewHolder vh = (FormListViewHolder) viewHolder;
 
         String name = context.getString(R.string.name) + ": " +

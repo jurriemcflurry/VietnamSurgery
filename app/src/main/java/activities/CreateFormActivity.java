@@ -285,7 +285,7 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
     }
 
     private String getFieldValue(Field field) {
-//        for (Map.Entry<String, String> entry : formContent.getFormContent().entrySet()) {
+//        for (Map.Entry<String, String> entry : formContent.getFormContentById().entrySet()) {
 //            if (entry.getKey().equals(field.getFieldName())) {
 //                return entry.getValue();
 //            }

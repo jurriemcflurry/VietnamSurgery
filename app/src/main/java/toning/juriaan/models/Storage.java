@@ -136,17 +136,37 @@ public class Storage {
         Boolean success = false;
 
         try {
-            FileOutputStream fos = new FileOutputStream(
-                    getImageFile(image.getImageName(), context));
+            saveThumbnail(image, context);
+            Bitmap fullImageBitMap = image.getImageBitmap(context);
 
-            Bitmap imageBitMap = image.getImageBitmap(context);
-
-            if (imageBitMap == null) {
-                image.setImageBitmap(MediaStore.Images.Media.getBitmap(context.getContentResolver(), image.getUri()));
+            int newWidth = fullImageBitMap.getWidth();
+            int newHeight = fullImageBitMap.getHeight();
+            if (fullImageBitMap.getWidth() > fullImageBitMap.getHeight()) {
+                if (fullImageBitMap.getWidth() > 1000) {
+                    newWidth = 1000;
+                    newHeight = (1000 * fullImageBitMap.getHeight()) / fullImageBitMap.getWidth();
+                }
+            } else {
+                if (fullImageBitMap.getHeight() > 1000) {
+                    newWidth = (1000 * fullImageBitMap.getWidth()) / fullImageBitMap.getHeight();
+                    newHeight = 1000;
+                }
             }
 
-            image.getImageBitmap(context).compress(Bitmap.CompressFormat.PNG, 100, fos);
-            saveThumbnail(image, context);
+            Bitmap resizedImageBitmap = ThumbnailUtils.extractThumbnail(
+                    fullImageBitMap, newWidth, newHeight);
+            Helper.log("new size " + newWidth + " " + newHeight);
+            Helper.log("resized " + resizedImageBitmap.getWidth() + " " + resizedImageBitmap.getHeight());
+            image.setImageBitmap(resizedImageBitmap);
+
+
+            FileOutputStream fos = new FileOutputStream(
+                    getImageFile(image.getImageName(), context));
+            Bitmap resetImage = image.getImageBitmap(context);
+
+            Helper.log("reset " + resetImage.getWidth() + " " + resetImage.getHeight());
+
+            resetImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -350,7 +370,7 @@ public class Storage {
     public static void getImageBitmap(Image image, Context context) {
         try {
             File imageFile = getImageFile(image.getImageName(), context);
-            Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), Uri.fromFile(imageFile));
             image.setImageBitmap(bitmap);
         } catch (Exception e) {
             e.printStackTrace();
@@ -383,7 +403,7 @@ public class Storage {
         return null;
     }
 
-    public static FormContent getFormContent(String formContentName, Context context) {
+    public static FormContent getFormContentById(String formContentName, Context context) {
         try {
             File file = getFormContentFile(formContentName, context);
             return FormContent.fromJson(readFile(file));
@@ -398,7 +418,7 @@ public class Storage {
 
         ArrayList<String> names = getFormContentNames(context);
         for (String name : names) {
-            formContents.add(getFormContent(name, context));
+            formContents.add(getFormContentById(name, context));
         }
 
         return formContents;

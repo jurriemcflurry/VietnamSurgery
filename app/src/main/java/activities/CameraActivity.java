@@ -1,14 +1,19 @@
 package activities;
 
+import android.Manifest;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.DisplayMetrics;
 import android.view.Menu;
@@ -57,22 +62,41 @@ public class CameraActivity extends FormBaseActivity {
 
             @Override
             public void onClick(View v) {
-                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (cameraIntent.resolveActivity(getPackageManager()) != null) {
-                    ContentValues values = new ContentValues();
-                    values.put(MediaStore.Images.Media.TITLE, nextImageFile.getName());
-                    nextImageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-
-                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, nextImageUri);
-//                    cameraIntent.putExtra(MediaStore.Images.ImageColumns.ORIENTATION, );
-                    startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
-                }
+                goToCamera();
             }
         });
         updateView();
     }
 
-    private synchronized void updateView() {
+    private void goToCamera() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Images.Media.TITLE, nextImageFile.getName());
+                nextImageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, nextImageUri);
+                startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        } else {
+            askPermission();
+        }
+    }
+
+    private void askPermission() {
+        ActivityCompat.requestPermissions(
+                this, new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                Helper.CAMERA_ACTIVITY_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Helper.log("permissionResult()");
+    }
+
+    private void updateView() {
         imageGridLayout.removeAllViews();
         for (String imageName : formContent.getImageNames()) {
             ImageView imageView = new ImageView(this);
@@ -80,7 +104,6 @@ public class CameraActivity extends FormBaseActivity {
                     LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(10, 10, 10, 10);
             imageView.setLayoutParams(layoutParams);
-
             loadImageView(imageName, imageView);
             imageGridLayout.addView(imageView);
         }
@@ -121,8 +144,8 @@ public class CameraActivity extends FormBaseActivity {
     private void loadIntent() {
         Intent intent = getIntent();
         formName = intent.getStringExtra(Helper.FORM);
-        formContent = Storage.getFormContent(intent.getStringExtra(Helper.FORM_CONTENT), this);
-        isNew = intent.getBooleanExtra(Helper.IS_NEW, false);
+        formContent = Storage.getFormContentById(intent.getStringExtra(Helper.FORM_CONTENT_ID), this);
+        isNew = intent.getBooleanExtra(Helper.IS_EDITING, false);
         Helper.log("Camera load with " + isNew);
     }
 
@@ -142,6 +165,12 @@ public class CameraActivity extends FormBaseActivity {
             } else if (resultCode == Helper.DELETE_IMAGE) {
                 handleDeleteImage(data);
                 updateView();
+            } else if (resultCode == Helper.EDIT_SECTION_CODE) {
+                int sectionIndex = data.getIntExtra(Helper.SECTION_INDEX, 123);
+                getIntent().putExtra(Helper.SECTION_INDEX, sectionIndex);
+                setResult(Helper.EDIT_SECTION_CODE, getIntent());
+                Helper.log("Camera put " + sectionIndex);
+                finish();
             }
         }
     }
@@ -154,7 +183,6 @@ public class CameraActivity extends FormBaseActivity {
             e.printStackTrace();
         }
         if (bitmap == null) return;
-
 
         formContent.addImageName(nextImageFile.getName());
         Image image = new Image(nextImageFile.getName(), bitmap, nextImageUri);
@@ -201,8 +229,8 @@ public class CameraActivity extends FormBaseActivity {
                 } else {
                     Intent formOverviewIntent = new Intent(getApplicationContext(), FormOverviewActivity.class);
                     formOverviewIntent.putExtra(Helper.FORM, formName);
-                    formOverviewIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentId());
-                    formOverviewIntent.putExtra(Helper.IS_NEW, isNew);
+                    formOverviewIntent.putExtra(Helper.FORM_CONTENT_ID, formContent.getFormContentId());
+                    formOverviewIntent.putExtra(Helper.IS_EDITING, isNew);
                     Helper.log("Camera start with " + isNew);
                     startActivityForResult(formOverviewIntent, Helper.CAMERA_ACTIVITY_CODE);
                 }

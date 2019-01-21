@@ -1,8 +1,10 @@
 package activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -13,6 +15,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import toning.juriaan.models.AccessToken;
+import toning.juriaan.models.FormContentUploadHandler;
 import webinterfaces.FormWebInterface;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -69,24 +73,8 @@ public class FormListActivity extends BaseActivity implements FormListAdapter.Fo
         FormWebInterface client = retrofit.create(FormWebInterface.class);
 
         ArrayList<FormContent> formContents = Storage.getFormContents(this);
-        for (FormContent formContent : formContents) {
-            FormContentUploadModel uploadModel = new FormContentUploadModel(formContent, this);
-            Call<Void> call = client.postFormContent(uploadModel);
-            call.enqueue(new Callback<Void>() {
-                @Override
-                public void onResponse(Call<Void> call, Response<Void> response) {
-                    Helper.log("onResponse() " + response.code());
-                    if (response.code() == 200) {
-                        incrementUploadCount();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<Void> call, Throwable t) {
-                    t.printStackTrace();
-                }
-            });
-        }
+        FormContentUploadHandler handler = new FormContentUploadHandler(formContents, this, client);
+        new Thread(handler).start();
     }
 
     private synchronized void incrementUploadCount() {
@@ -122,13 +110,30 @@ public class FormListActivity extends BaseActivity implements FormListAdapter.Fo
         Form form = Storage.getFormById(formContent.getFormId(), this);
         Intent formOverviewIntent = new Intent(getApplicationContext(), FormOverviewActivity.class);
         formOverviewIntent.putExtra(Helper.FORM, form.getFormattedFormName());
-        formOverviewIntent.putExtra(Helper.FORM_CONTENT, formContent.getFormContentId());
+        formOverviewIntent.putExtra(Helper.FORM_CONTENT_ID, formContent.getFormContentId());
         startActivityForResult(formOverviewIntent, Helper.FORM_OVERVIEW_CODE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == Helper.FORM_OVERVIEW_CODE) {
+            if (resultCode == Helper.CONTENT_SAVED_CODE) {
+                updateView();
+            } else if ((resultCode == Helper.EDIT_SECTION_CODE && data != null) || resultCode == Helper.EDIT_PHOTOS_CODE) {
+                Intent formIntent = new Intent(getApplicationContext(), FormActivity.class);
+                int sectionIndex = data.getIntExtra(Helper.SECTION_INDEX, 0);
+                formIntent.putExtra(Helper.SECTION_INDEX, sectionIndex);
+                formIntent.putExtra(Helper.FORM, data.getStringExtra(Helper.FORM));
+                formIntent.putExtra(Helper.FORM_CONTENT_ID, data.getStringExtra(Helper.FORM_CONTENT_ID));
+                if (resultCode == Helper.EDIT_PHOTOS_CODE) {
+                    formIntent.putExtra(Helper.GO_TO_CAMERA, true);
+                    startActivityForResult(formIntent, Helper.EDIT_PHOTOS_CODE);
+                } else {
+                    startActivityForResult(formIntent, Helper.EDIT_SECTION_CODE);
+                }
+
+            }
+        } else if (requestCode == Helper.EDIT_SECTION_CODE) {
             if (resultCode == Helper.CONTENT_SAVED_CODE) {
                 updateView();
             }
@@ -143,10 +148,48 @@ public class FormListActivity extends BaseActivity implements FormListAdapter.Fo
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.upload_menu_item:
-                postFormContentList();
+                tryPostFormContentList();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void tryPostFormContentList() {
+        if (AccessToken.access_token != null) {
+            getUploadDialog().show();
+        } else {
+            getLoginDialog().show();
+        }
+
+    }
+
+    private AlertDialog getLoginDialog() {
+        return new AlertDialog.Builder(this)
+                .setTitle(R.string.uploadLoginDialogTitle)
+                .setMessage(R.string.uploadLoginDialogMessage)
+                .setPositiveButton(R.string.login, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                        startActivity(loginIntent);
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .create();
+    }
+
+    private AlertDialog getUploadDialog() {
+        return new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.uploadDialogTitle))
+                .setMessage(R.string.uploadDialogMessage)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        postFormContentList();
+                    }
+                })
+                .setNegativeButton(getString(R.string.cancel), null)
+                .create();
     }
 }
