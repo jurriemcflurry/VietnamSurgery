@@ -47,7 +47,7 @@
 
     <string name="no_filled_in_forms">There are no filled in forms yet.</string>
 
-    <string name="saving_form">Saving the form. Wait a moment until it\'s finished.</string>
+    <string name="saving_form_success">Form saved successfully</string>
     <string name="dialog_save_form_title">Success</string>
     <string name="dialog_save_form_text">form %1$s is saved successfully.</string>
     <string name="dialog_save_form_positive">Fill in next form</string>

@@ -191,7 +191,6 @@ public class OverviewFormActivity extends AppCompatActivity {
      * @param form FormTemplate that has to be saevd
      */
     private void saveForm(FormTemplate form) {
-        Toast.makeText(OverviewFormActivity.this, R.string.saving_form, Toast.LENGTH_LONG).show();
         File file = new File(root, form.getFileName());
         try{
             Workbook wb = WorkbookFactory.create(file);
@@ -256,6 +255,7 @@ public class OverviewFormActivity extends AppCompatActivity {
             out.flush();
             out.close();
             if(form.getRowNumber() > 0) {
+                Toast.makeText(this, R.string.saving_form_success, Toast.LENGTH_SHORT).show();
                 renamePictureFiles();
                 Intent formListActivity = new Intent(this, FormListActivity.class);
                 formListActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);

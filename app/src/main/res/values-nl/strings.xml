@@ -47,7 +47,7 @@
 
     <string name="no_filled_in_forms">Er zijn nog geen ingevulde formulieren.</string>
 
-    <string name="saving_form">Formulier opslaan. Wacht totdat dit klaar is.</string>
+    <string name="saving_form_success">Formulier succesvol opgeslagen.</string>
     <string name="dialog_save_form_title">Succes</string>
     <string name="dialog_save_form_text">Formulier %1$s is succesvol opgeslagen.</string>
     <string name="dialog_save_form_positive">Volgende formulier</string>

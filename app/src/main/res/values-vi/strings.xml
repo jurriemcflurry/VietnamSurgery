@@ -47,7 +47,7 @@
 
     <string name="no_filled_in_forms">Không có điền vào mẫu.</string>
 
-    <string name="saving_form">Lưu mẫu. Đợi một lát cho đến khi nó kết thúc.</string>
+    <string name="saving_form_success">Mẫu đã được lưu thành công</string>
     <string name="dialog_save_form_title">Sự thành công</string>
     <string name="dialog_save_form_text">Mẫu %1$s được lưu thành công.</string>
     <string name="dialog_save_form_positive">Điền vào mẫu tiếp theo</string>
