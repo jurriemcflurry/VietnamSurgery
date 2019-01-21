@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.util.Pair;
 import android.view.MenuItem;
@@ -16,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -41,10 +43,12 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
 
     private LinearLayout formView;
     private FormTemplate formTemplate;
+    private FrameLayout createFormFrameLayout;
     private ArrayList<Pair> dropDownValues;
     private TextInputEditText formNameEditText;
     private FloatingActionButton addSectionFAB;
     private String[] options;
+    private ProgressBar createFormSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +59,8 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
         getSupportActionBar().setTitle(getString(R.string.createFormTitle));
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
+        createFormFrameLayout = findViewById(R.id.create_form_frame_layout);
+        createFormSpinner = findViewById(R.id.createFormSpinner);
         formView = findViewById(R.id.create_form_section_view);
         formNameEditText = findViewById(R.id.form_name_edittext);
         addSectionFAB = findViewById(R.id.addSectionFAB);
@@ -71,9 +77,11 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
         formTemplate = new FormTemplate();
         loadStandardItems();
         updateView();
+        hideSpinner();
     }
 
     private void updateView(){
+        showSpinner();
         formView.removeAllViews();
 
         for(final Section section : formTemplate.getSections()){
@@ -98,23 +106,20 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
             sectionView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    new AlertDialog.Builder(CreateFormActivity.this)
-                            .setTitle("Delete this subject?")
-                            .setMessage("Are you sure you want to delete the subject: " + section.getSectionName())
-                            .setNegativeButton("Cancel", null)
-                            .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    deleteSection(section);
-                                }
-                            })
-                            .create().show();
+                    if(section.getSectionName().equals(getString(R.string.personalInfo)) || section.getSectionName().equals(getString(R.string.contactInfo))){
+                        return false;
+                    }
+                    else{
+                        deleteSection(section);
+                    }
                     return false;
                 }
             });
             formView.addView(sectionView);
             formView.addView(fieldsView);
         }
+
+        hideSpinner();
     }
 
     private void loadStandardItems(){
@@ -135,7 +140,7 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
 
         TextView sectionHeader = new TextView(this);
         sectionHeader.setLayoutParams(layoutParams);
-        sectionHeader.setTextSize(20);
+        sectionHeader.setTextSize(25);
         sectionHeader.setTextColor(getResources().getColor(R.color.black));
         sectionHeader.setText(section.getSectionName());
 
@@ -183,7 +188,7 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
         LinearLayout.LayoutParams textViewLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        textViewLayoutParams.setMargins(0, 20, 20, 0);
+        textViewLayoutParams.setMargins(0, 30, 20, 0);
 
         LinearLayout linearLayout = new LinearLayout(this);
         linearLayout.setLayoutParams(layoutParams);
@@ -193,12 +198,13 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
         fieldName.setLayoutParams(textViewLayoutParams);
         String labelText = field.getFieldName() + ":";
         fieldName.setText(labelText);
-        fieldName.setTextSize(17);
+        fieldName.setTextSize(20);
 
         TextView fieldType = new TextView(this);
         fieldType.setLayoutParams(textViewLayoutParams);
-        fieldType.setText(setLabelTextFieldType(field.getType()));
-        fieldType.setTextSize(17);
+        String fieldTypeLabelText = getString(R.string.answerType) + setLabelTextFieldType(field.getType());
+        fieldType.setText(fieldTypeLabelText);
+        fieldType.setTextSize(20);
 
         String value = getFieldValue(field);
         if (value != null) {
@@ -221,6 +227,7 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
     private LinearLayout createDropDownField(final Field field, int i) {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(0,30,20,0);
 
         LinearLayout linearLayout = new LinearLayout(this);
         linearLayout.setLayoutParams(layoutParams);
@@ -229,11 +236,12 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
         TextView textView = new TextView(this);
         String labelText = field.getFieldName() + ": ";
         textView.setText(labelText);
-        textView.setTextSize(17);
+        textView.setTextSize(20);
 
         TextView fieldType = new TextView(this);
-        fieldType.setText(setLabelTextFieldType(field.getType()));
-        fieldType.setTextSize(17);
+        String fieldTypeLabelText = getString(R.string.answerType) + setLabelTextFieldType(field.getType());
+        fieldType.setText(fieldTypeLabelText);
+        fieldType.setTextSize(20);
 
         linearLayout.addView(textView);
         linearLayout.addView(fieldType);
@@ -310,13 +318,28 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
         }
     }
 
-    private void deleteSection(Section section){
-        if(section.getSectionName().equals(getString(R.string.personalInfo)) || section.getSectionName().equals(getString(R.string.contactInfo))){
-            return;
-        }
+    private void deleteSection(final Section section){
 
-        formTemplate.removeSection(section);
-        updateView();
+        new AlertDialog.Builder(CreateFormActivity.this)
+                .setTitle(getString(R.string.deleteSubjectTitle))
+                .setMessage(getString(R.string.deleteSubjectMessage) + section.getSectionName())
+                .setNegativeButton(getString(R.string.cancelDeleteQuestion), null)
+                .setPositiveButton(getString(R.string.deleteQuestion), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        formTemplate.removeSection(section);
+                        updateView();
+                    }
+                })
+                .create().show();
+    }
+
+    private void showSpinner(){
+        createFormSpinner.setVisibility(View.VISIBLE);
+    }
+
+    private void hideSpinner(){
+        createFormSpinner.setVisibility(View.GONE);
     }
 
     @Override
@@ -333,6 +356,7 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        Helper.hideKeyboard(this);
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == Helper.ADD_SECTION_CODE){
             if(resultCode == Helper.SECTION_ADDED_RESULT_CODE){
@@ -350,7 +374,7 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
                 Boolean required = extras.getBoolean(Helper.REQUIRED);
                 String type = extras.getString(Helper.QUESTION_TYPE_STRING);
                 if(type.equals(FieldType.Choice.toString())){
-                    options = extras.getStringArray("Options");
+                    options = extras.getStringArray(Helper.OPTIONS);
                 }
                 String sectionName = extras.getString(Helper.QUESTION_SECTION);
 
@@ -361,7 +385,8 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
                             try{
                                 newQuestion.setOptions(options);
                             }catch(Exception e){
-
+                                Snackbar.make(createFormFrameLayout, e.getMessage(), Snackbar.LENGTH_LONG)
+                                        .show();
                             }
                         }
                         section.addFields(newQuestion);
@@ -388,16 +413,16 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
     private void postForm(final String formName, final FormTemplate formTemplate) {
         if(formNameEditText.getText().toString().isEmpty()){
             new AlertDialog.Builder(this)
-                    .setTitle("Formname is not filled in")
-                    .setMessage("Please fill in a formname")
-                    .setNegativeButton("Back", null)
+                    .setTitle(getString(R.string.formNameEmpty))
+                    .setMessage(getString(R.string.formNameEmptyMessage))
+                    .setNegativeButton(getString(R.string.back), null)
                     .create().show();
         }else{
             new AlertDialog.Builder(this)
-                    .setTitle("Save Form")
-                    .setMessage("Do you want to save this form?")
-                    .setNegativeButton("Back", null)
-                    .setPositiveButton("Save Form", new DialogInterface.OnClickListener() {
+                    .setTitle(getString(R.string.saveForm))
+                    .setMessage(getString(R.string.saveFormMessage))
+                    .setNegativeButton(getString(R.string.back), null)
+                    .setPositiveButton(getString(R.string.saveForm), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Retrofit.Builder builder = new Retrofit.Builder()
@@ -424,5 +449,26 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
                     })
                     .create().show();
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.exitCreateForm))
+                .setMessage(getString(R.string.exitCreateFormMessage))
+                .setNegativeButton(getString(R.string.back), null)
+                .setPositiveButton(getString(R.string.exitCreateFormConfirm), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        CreateFormActivity.this.finish();
+                    }
+                })
+                .create().show();
     }
 }

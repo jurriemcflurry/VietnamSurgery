@@ -8,6 +8,7 @@ import android.support.design.widget.TextInputEditText;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 
 import responsemodels.ChangePasswordResponse;
 import webinterfaces.UserWebInterface;
@@ -23,10 +24,12 @@ import toning.juriaan.models.R;
 
 public class ChangePasswordActivity extends BaseActivity implements Callback<ChangePasswordResponse> {
 
+    private FrameLayout changePasswordFrameLayout;
     private TextInputEditText oldPassword;
     private TextInputEditText newPassword;
     private TextInputEditText confirmNewPassword;
     private Button changePassword;
+    private ProgressBar changePasswordSpinner;
     private UserWebInterface userWebInterface;
     private Helper helper;
 
@@ -50,10 +53,13 @@ public class ChangePasswordActivity extends BaseActivity implements Callback<Cha
     }
 
     private void setupLayout(){
+        changePasswordFrameLayout = findViewById(R.id.changePassword_frame_layout);
+        changePasswordSpinner = findViewById(R.id.changePasswordSpinner);
         oldPassword = findViewById(R.id.oldPasswordEditText);
         newPassword = findViewById(R.id.newPasswordEditText);
         confirmNewPassword = findViewById(R.id.confirmNewPasswordEditText);
         changePassword = findViewById(R.id.changePassword_button);
+        hideSpinner();
 
         changePassword.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,14 +78,36 @@ public class ChangePasswordActivity extends BaseActivity implements Callback<Cha
         String newPasswordText = newPassword.getText().toString();
         String confirmNewPasswordText = confirmNewPassword.getText().toString();
 
+        if(oldPasswordText.isEmpty() || newPasswordText.isEmpty() || confirmNewPasswordText.isEmpty()){
+            Snackbar.make(changePasswordFrameLayout, getString(R.string.changePasswordEmptyFields), Snackbar.LENGTH_LONG)
+                    .show();
+            return;
+        }
+
+        if(!newPasswordText.equals(confirmNewPasswordText)){
+            Snackbar.make(changePasswordFrameLayout, getString(R.string.noPasswordMatch), Snackbar.LENGTH_LONG)
+                    .show();
+            return;
+        }
+
+        showSpinner();
         ChangePasswordObject changePasswordObject = new ChangePasswordObject(oldPasswordText, newPasswordText, confirmNewPasswordText);
 
         userWebInterface.changePassword(AccessToken.access_token, changePasswordObject).enqueue(this);
     }
 
+    private void showSpinner(){
+        changePasswordSpinner.setVisibility(View.VISIBLE);
+    }
+
+    private void hideSpinner(){
+        changePasswordSpinner.setVisibility(View.GONE);
+    }
+
     @Override
     public void onResponse(Call<ChangePasswordResponse> call, Response<ChangePasswordResponse> response) {
         helper.hideKeyboard(this);
+        hideSpinner();
 
         if(response.isSuccessful() && response.body() == null){
             AccessToken.access_token = null;

@@ -1,5 +1,7 @@
 package activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -146,7 +148,18 @@ public class BaseActivity extends AppCompatActivity {
         menu.add(getString(R.string.logout)).setIcon(R.drawable.logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                logout();
+                new AlertDialog.Builder(BaseActivity.this)
+                        .setTitle(getString(R.string.logoutTitle))
+                        .setMessage(getString(R.string.logoutMessage))
+                        .setNegativeButton(getString(R.string.cancelLogout), null)
+                        .setPositiveButton(getString(R.string.confirmLogout), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                logout();
+                            }
+                        })
+                        .create().show();
+
                 return false;
             }
         });

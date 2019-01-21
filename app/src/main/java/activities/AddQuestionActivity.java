@@ -1,7 +1,10 @@
 package activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.text.InputType;
@@ -14,6 +17,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -26,6 +30,7 @@ import toning.juriaan.models.R;
 public class AddQuestionActivity extends FormBaseActivity implements AdapterView.OnItemSelectedListener {
 
     private boolean required = false;
+    private RelativeLayout addQuestionRelativeLayout;
     private TextInputEditText questionName;
     private CheckBox requiredCheckbox;
     private String sectionName;
@@ -46,6 +51,7 @@ public class AddQuestionActivity extends FormBaseActivity implements AdapterView
         getLayoutInflater().inflate(R.layout.activity_add_question, contentFrameLayout);
         getSupportActionBar().setTitle(getString(R.string.addQuestionTitle));
 
+        addQuestionRelativeLayout = findViewById(R.id.addQuestionRelativeLayout);
         optionsLayout = findViewById(R.id.optionsLayout);
         questionTypeSpinner = findViewById(R.id.questionTypeSpinner);
         String[] items = new String[FieldType.values().length];
@@ -71,21 +77,34 @@ public class AddQuestionActivity extends FormBaseActivity implements AdapterView
 
     private void addQuestion(){
         if(questionName.getText().toString().isEmpty()){
+            Snackbar.make(addQuestionRelativeLayout, getString(R.string.questionNameEmpty), Snackbar.LENGTH_LONG)
+                    .show();
             return;
+        }
+
+        if(questionTypeSpinner.getSelectedItem().toString().equals(FieldType.Choice.toString())){
+            if(optionsEditTexts.size() < 2){
+                Snackbar.make(addQuestionRelativeLayout, getString(R.string.notEnoughOptions), Snackbar.LENGTH_LONG)
+                        .show();
+                return;
+            }
+
+            options = new String[optionsEditTexts.size()];
+            int i = 0;
+            for(EditText e : optionsEditTexts){
+                if(e.getText().toString().isEmpty()){
+                    Snackbar.make(addQuestionRelativeLayout, getString(R.string.notEnoughOptions), Snackbar.LENGTH_LONG)
+                            .show();
+                    return;
+                }
+                options[i] = e.getText().toString();
+                i++;
+            }
+            getIntent().putExtra(Helper.OPTIONS, options);
         }
 
         if(requiredCheckbox.isChecked()){
             required = true;
-        }
-
-        if(questionTypeSpinner.getSelectedItem().toString().equals(FieldType.Choice.toString())){
-            options = new String[optionsEditTexts.size()];
-            int i = 0;
-            for(EditText e : optionsEditTexts){
-                options[i] = e.getText().toString();
-                i++;
-            }
-            getIntent().putExtra("Options", options);
         }
 
         getIntent().putExtra(Helper.QUESTION_NAME, questionName.getText().toString());
@@ -93,6 +112,7 @@ public class AddQuestionActivity extends FormBaseActivity implements AdapterView
         getIntent().putExtra(Helper.QUESTION_TYPE_STRING, questionTypeSpinner.getSelectedItem().toString());
         getIntent().putExtra(Helper.QUESTION_SECTION, sectionName);
         setResult(Helper.ADD_QUESTION_RESULT_CODE, getIntent());
+        Helper.hideKeyboard(this);
         finish();
     }
 
@@ -108,7 +128,7 @@ public class AddQuestionActivity extends FormBaseActivity implements AdapterView
 
         EditText editText = new EditText(this);
         editText.setLayoutParams(layoutParams);
-        editText.setHint("Option");
+        editText.setHint(getString(R.string.option));
         optionsEditTexts.add(editText);
 
         textInputLayout.addView(editText);
@@ -119,7 +139,7 @@ public class AddQuestionActivity extends FormBaseActivity implements AdapterView
 
         final TextView addExtraOption = new TextView(this);
         addExtraOption.setLayoutParams(addOptionParams);
-        addExtraOption.setText("Add another option       +");
+        addExtraOption.setText(getString(R.string.addOptions));
         addExtraOption.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -154,5 +174,27 @@ public class AddQuestionActivity extends FormBaseActivity implements AdapterView
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.exitCreateForm))
+                .setMessage(getString(R.string.exitCreateFormMessage))
+                .setNegativeButton(getString(R.string.back), null)
+                .setPositiveButton(getString(R.string.exitCreateFormConfirm), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Helper.hideKeyboard(AddQuestionActivity.this);
+                        AddQuestionActivity.this.finish();
+                    }
+                })
+                .create().show();
     }
 }
