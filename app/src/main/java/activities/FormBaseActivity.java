@@ -27,7 +27,6 @@ public class FormBaseActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.form_activity_menu, menu);
         return super.onPrepareOptionsMenu(menu);
     }
 

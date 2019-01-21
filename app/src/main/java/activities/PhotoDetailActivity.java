@@ -14,13 +14,13 @@ import toning.juriaan.models.Image;
 import toning.juriaan.models.R;
 import toning.juriaan.models.Storage;
 
-public class PhotoDetailActivity extends BaseActivity {
+public class PhotoDetailActivity extends FormBaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
+        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.formbase_framelayout);
         getLayoutInflater().inflate(R.layout.activity_photo_detail, contentFrameLayout);
         getSupportActionBar().setTitle(getString(R.string.camera_title));
 
@@ -32,7 +32,7 @@ public class PhotoDetailActivity extends BaseActivity {
         if (image == null) onBackPressed();
 
         ImageView imageView = findViewById(R.id.photo_detail_iv);
-        imageView.setImageBitmap(image.getBitmap());
+        imageView.setImageBitmap(image.getImageBitmap(this));
 
         FloatingActionButton deleteButton = findViewById(R.id.delete_btn);
         deleteButton.setOnClickListener(new View.OnClickListener() {

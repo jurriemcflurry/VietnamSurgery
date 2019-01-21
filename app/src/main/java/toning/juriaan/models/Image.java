@@ -9,13 +9,24 @@ import java.io.ByteArrayOutputStream;
 public class Image {
     private String imageName;
 
-    private Bitmap bitmap;
+    private Bitmap imageBitmap;
+
+    private Bitmap thumbnailBitmap;
 
     private Uri uri;
 
+    public Image(String imageName) {
+        this.imageName = imageName;
+    }
+
+    public Image(String imageName, Uri uri) {
+        this.imageName = imageName;
+        this.uri = uri;
+    }
+
     public Image(String imageName, Bitmap bitmap, Uri uri) {
         this.imageName = imageName;
-        this.bitmap = bitmap;
+        this.imageBitmap = bitmap;
         this.uri = uri;
     }
 
@@ -27,12 +38,30 @@ public class Image {
         this.imageName = imageName;
     }
 
-    public Bitmap getBitmap() {
-        return bitmap;
+    public Bitmap getImageBitmap(Context context) {
+        if (imageBitmap == null) {
+            Storage.getImageBitmap(this, context);
+        }
+        return imageBitmap;
     }
 
-    public void setBitmap(Bitmap bitmap) {
-        this.bitmap = bitmap;
+    public void setImageBitmap(Bitmap imageBitmap) {
+        this.imageBitmap = imageBitmap;
+    }
+
+    public Bitmap getThumbnailBitmap(Context context) {
+        if (thumbnailBitmap == null) {
+            Storage.getThumbnailBitmap(this, context);
+        }
+        return thumbnailBitmap;
+    }
+
+    public String getThumbnailName() {
+        return imageName.replaceAll("image", "thumbnail");
+    }
+
+    public void setThumbnailBitmap(Bitmap thumbnailBitmap) {
+        this.thumbnailBitmap = thumbnailBitmap;
     }
 
     public Uri getUri() {
@@ -45,7 +74,7 @@ public class Image {
 
     public byte[] getByteArray() {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
         return stream.toByteArray();
     }
 

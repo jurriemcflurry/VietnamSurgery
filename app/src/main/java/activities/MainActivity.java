@@ -41,7 +41,7 @@ public class MainActivity extends BaseActivity implements FormAdapter.FormListen
         getLayoutInflater().inflate(R.layout.activity_main, contentFrameLayout);
         getSupportActionBar().setTitle(getString(R.string.homeTitle));
 
-        forms = new ArrayList<>();
+        forms = Storage.getForms(this);
         recyclerView = findViewById(R.id.form_recycler);
         formAdapter = new FormAdapter(forms, this);
         recyclerView.setAdapter(formAdapter);
@@ -90,6 +90,8 @@ public class MainActivity extends BaseActivity implements FormAdapter.FormListen
     public void onItemClick(Form form) {
         Intent toFormActivityIntent = new Intent(MainActivity.this, FormActivity.class);
         toFormActivityIntent.putExtra(Helper.FORM, form.getFormattedFormName());
+        toFormActivityIntent.putExtra(Helper.IS_NEW, true);
+        Helper.log("main start with true" + true);
         startActivity(toFormActivityIntent);
     }
 
