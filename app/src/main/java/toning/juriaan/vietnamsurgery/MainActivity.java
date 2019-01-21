@@ -229,7 +229,6 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
         try {
             // Create a workbook object
             XSSFWorkbook workbook = new XSSFWorkbook(file);
-            
             chooseExcelSheet(workbook);
         } catch (Exception ex) {
             Log.i(TAG, getString(R.string.error_while_opening_xlsx, ex.getMessage()));
