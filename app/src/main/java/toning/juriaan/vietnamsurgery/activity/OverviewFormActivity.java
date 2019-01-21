@@ -125,13 +125,21 @@ public class OverviewFormActivity extends AppCompatActivity {
 
             GridLayout mGridLayout = view.findViewById(R.id.grid_view);
             for( Field f : sec.getFields()) {
-                View itemView = getLayoutInflater().inflate(R.layout.overview_grid_item, mGridLayout, false);
-                TextView fieldName = itemView.findViewById(R.id.field_name);
-                fieldName.setText(f.getFieldName());
+                if(!f.getAnswer().equals("false")){
+                    View itemView = getLayoutInflater().inflate(R.layout.overview_grid_item, mGridLayout, false);
+                    TextView fieldName = itemView.findViewById(R.id.field_name);
+                    fieldName.setText(f.getFieldName());
 
-                TextView fieldAnswer = itemView.findViewById(R.id.field_answer);
-                fieldAnswer.setText(f.getAnswer());
-                mGridLayout.addView(itemView);
+                    TextView fieldAnswer = itemView.findViewById(R.id.field_answer);
+                    if(f.getAnswer().equals("true")) {
+                        fieldAnswer.setText("");
+                    } else {
+                        fieldAnswer.setText(f.getAnswer());
+                    }
+
+                    mGridLayout.addView(itemView);
+                }
+
             }
 
             mFormOverview.addView(view);

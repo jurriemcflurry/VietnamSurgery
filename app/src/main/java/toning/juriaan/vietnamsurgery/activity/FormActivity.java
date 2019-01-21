@@ -71,9 +71,6 @@ public class FormActivity extends AppCompatActivity {
             noOfThisSection = tempNoOfSec;
             generateForm(form.getSections().get(tempNoOfSec-1), layout);
         }
-
-
-
     }
 
     /**

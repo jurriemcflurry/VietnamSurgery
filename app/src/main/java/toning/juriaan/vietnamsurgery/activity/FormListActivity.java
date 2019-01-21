@@ -316,13 +316,21 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
                         String answer;
                         if (row.getCell(f.getColumn()) != null) {
                             answer = row.getCell(f.getColumn()).getStringCellValue();
-                            if(f.getRow() == 4 && f.getColumn() == 2 && !row.getCell(f.getColumn()).getStringCellValue().isEmpty()) {
-                                birthYear = answer;
-                                answer = "true";
+                            if(f.getRow() == 4 && f.getColumn() == 2) {
+                                if(!row.getCell(f.getColumn()).getStringCellValue().isEmpty()) {
+                                    birthYear = answer;
+                                    answer = "true";
+                                } else {
+                                    answer = "false";
+                                }
                             }
-                            if(f.getRow() == 4 && f.getColumn() == 3 && !row.getCell(f.getColumn()).getStringCellValue().isEmpty()) {
-                                birthYear = answer;
-                                answer = "true";
+                            if(f.getRow() == 4 && f.getColumn() == 3) {
+                                if(!row.getCell(f.getColumn()).getStringCellValue().isEmpty()) {
+                                    birthYear = answer;
+                                    answer = "true";
+                                } else {
+                                    answer = "false";
+                                }
                             }
                         } else {
                             answer = "";
