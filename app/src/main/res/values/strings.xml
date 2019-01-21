@@ -68,7 +68,7 @@
     <string name="loginPageButton">Login</string>
 
     <!-- MainActivity -->
-    <string name="chooseForm">Choose a form:</string>
+    <string name="chooseForm">Choose a form to fill in:</string>
     <string name="formName">Form template name:</string>
     <string name="formTemplateUse"># Used</string>
     <string name="homeTitle">Home</string>

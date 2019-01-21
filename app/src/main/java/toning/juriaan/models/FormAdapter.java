@@ -90,7 +90,7 @@ public class FormAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
 
         private void setupTextView(TextView textView) {
-            textView.setTextSize(15);
+            textView.setTextSize(25);
             textView.setTextColor(Color.BLACK);
             textView.setPadding(0, 10, 0, 0);
         }
