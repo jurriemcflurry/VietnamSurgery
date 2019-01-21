@@ -10,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.util.Pair;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -21,6 +22,8 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -183,27 +186,39 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
         }
     }
 
-    private LinearLayout createTextField(final Field field, int i) {
+    private RelativeLayout createTextField(final Field field, int i) {
+        RelativeLayout.LayoutParams relativeLayoutParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+        RelativeLayout relativeLayout = new RelativeLayout(this);
+        relativeLayout.setLayoutParams(relativeLayoutParams);
+
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
         LinearLayout.LayoutParams textViewLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        textViewLayoutParams.setMargins(0, 30, 20, 0);
 
         LinearLayout linearLayout = new LinearLayout(this);
         linearLayout.setLayoutParams(layoutParams);
         linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+        linearLayout.setGravity(Gravity.RIGHT);
 
         TextView fieldName = new TextView(this);
         fieldName.setLayoutParams(textViewLayoutParams);
-        String labelText = field.getFieldName() + ":";
+        String labelText = field.getFieldName();
         fieldName.setText(labelText);
         fieldName.setTextSize(20);
 
         TextView fieldType = new TextView(this);
         fieldType.setLayoutParams(textViewLayoutParams);
-        String fieldTypeLabelText = getString(R.string.answerType) + setLabelTextFieldType(field.getType());
-        fieldType.setText(fieldTypeLabelText);
+        if(field.isRequired()){
+            String required = getString(R.string.requiredOverview);
+            fieldType.setText(required + setLabelTextFieldType(field.getType()));
+        }
+        else{
+            fieldType.setText(setLabelTextFieldType(field.getType()));
+        }
+
         fieldType.setTextSize(20);
 
         String value = getFieldValue(field);
@@ -212,7 +227,7 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
         }
         fieldType.setId(i);
 
-        linearLayout.addView(fieldName);
+
         linearLayout.addView(fieldType);
         linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -220,30 +235,42 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
                 deleteField(field);
             }
         });
+        relativeLayout.addView(fieldName);
+        relativeLayout.addView(linearLayout);
 
-        return linearLayout;
+        return relativeLayout;
     }
 
-    private LinearLayout createDropDownField(final Field field, int i) {
+    private RelativeLayout createDropDownField(final Field field, int i) {
+        RelativeLayout.LayoutParams relativeLayoutParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+        RelativeLayout relativeLayout = new RelativeLayout(this);
+        relativeLayout.setLayoutParams(relativeLayoutParams);
+
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(0,30,20,0);
 
         LinearLayout linearLayout = new LinearLayout(this);
         linearLayout.setLayoutParams(layoutParams);
         linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+        linearLayout.setGravity(Gravity.RIGHT);
 
-        TextView textView = new TextView(this);
-        String labelText = field.getFieldName() + ": ";
-        textView.setText(labelText);
-        textView.setTextSize(20);
+        TextView fieldName = new TextView(this);
+        String labelText = field.getFieldName();
+        fieldName.setText(labelText);
+        fieldName.setTextSize(20);
 
         TextView fieldType = new TextView(this);
-        String fieldTypeLabelText = getString(R.string.answerType) + setLabelTextFieldType(field.getType());
-        fieldType.setText(fieldTypeLabelText);
+        if(field.isRequired()){
+            String required = getString(R.string.requiredOverview);
+            fieldType.setText(required + setLabelTextFieldType(field.getType()));
+        }
+        else{
+            fieldType.setText(setLabelTextFieldType(field.getType()));
+        }
         fieldType.setTextSize(20);
 
-        linearLayout.addView(textView);
         linearLayout.addView(fieldType);
         linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -251,8 +278,10 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
                 deleteField(field);
             }
         });
+        relativeLayout.addView(fieldName);
+        relativeLayout.addView(linearLayout);
 
-        return linearLayout;
+        return relativeLayout;
     }
 
     private String getFieldValue(Field field) {

@@ -47,7 +47,7 @@
     <string name="date">Date</string>
     <string name="isRequired">is required.</string>
     <string name="isNotANumber">is not a number.</string>
-    <string name="formErrorTitle">Form Invalid:</string>
+    <string name="formErrorTitle">Form Invalid:&#160;</string>
     <string name="ok">Ok</string>
 
     <!-- FormListActivity -->
@@ -109,7 +109,7 @@
     <string name="loginSnackbar">Login</string>
     <string name="adminCheck">Admin</string>
     <string name="deleteUserTitle">Delete user?</string>
-    <string name="deleteUserMessage">Are you sure you want to delete user </string>
+    <string name="deleteUserMessage">Are you sure you want to delete user&#160;</string>
     <string name="cancelDelete">Cancel</string>
     <string name="confirmDelete">Delete</string>
 
@@ -126,7 +126,7 @@
     <string name="stringToText">Text</string>
     <string name="choiceToDropDown">DropDown</string>
     <string name="deleteQuestionTitle">Delete Question?</string>
-    <string name="deleteQuestionMessage">Are you sure you want to delete question: </string>
+    <string name="deleteQuestionMessage">Are you sure you want to delete question:&#160;</string>
     <string name="deleteQuestion">Delete</string>
     <string name="cancelDeleteQuestion">Cancel</string>
     <string name="formNameEmpty">Formname is not filled in</string>
@@ -135,11 +135,12 @@
     <string name="saveForm">Save Form</string>
     <string name="saveFormMessage">Do you want to save this form?</string>
     <string name="deleteSubjectTitle">Delete this subject?</string>
-    <string name="deleteSubjectMessage">Are you sure you want to delete the subject: </string>
-    <string name="answerType">Input: </string>
+    <string name="deleteSubjectMessage">Are you sure you want to delete the subject:&#160;</string>
+    <string name="answerType">Input</string>
     <string name="exitCreateForm">Exit?</string>
     <string name="exitCreateFormMessage">Are you sure you want to exit? Unsaved changes will be lost.</string>
     <string name="exitCreateFormConfirm">Exit</string>
+    <string name="requiredOverview">(Required)&#160;</string>
 
     <!-- AddSectionActivity -->
     <string name="addSectionTitle">Add Section</string>
