@@ -17,6 +17,10 @@
 
     <!-- BaseActivity -->
     <string name="BaseAdminCheck">Admin</string>
+    <string name="logoutTitle">Log out?</string>
+    <string name="logoutMessage">Are you sure you want to log out?</string>
+    <string name="cancelLogout">Cancel</string>
+    <string name="confirmLogout">Log out</string>
 
     <!-- CameraActivity -->
     <string name="imagesSaved">Images successfully saved!</string>
@@ -32,6 +36,8 @@
     <string name="changePassword">Change Password</string>
     <string name="passwordChanged">Password is changed, please login again</string>
     <string name="loginCaps">LOGIN</string>
+    <string name="changePasswordEmptyFields">Please make sure all the fields are filled in</string>
+    <string name="noPasswordMatch">New Password does not match Confirm New Password</string>
 
     <!-- FormActivity -->
     <string name="forms">Forms</string>
@@ -41,7 +47,7 @@
     <string name="date">Date</string>
     <string name="isRequired">is required.</string>
     <string name="isNotANumber">is not a number.</string>
-    <string name="formErrorTitle">Form Invalid:</string>
+    <string name="formErrorTitle">Form Invalid:&#160;</string>
     <string name="ok">Ok</string>
 
     <!-- FormListActivity -->
@@ -72,11 +78,16 @@
     <string name="loginPageButton">Login</string>
 
     <!-- MainActivity -->
-    <string name="chooseForm">Choose a form:</string>
+    <string name="chooseForm">Choose a form to fill in:</string>
     <string name="formName">Form template name:</string>
     <string name="formTemplateUse"># Used</string>
     <string name="homeTitle">Home</string>
     <string name="exit">Please click BACK again to exit</string>
+    <string name="deleteFormTitle">Delete Form Template?</string>
+    <string name="deleteFormMessage">Are you sure you want to delete form:&#160;</string>
+    <string name="cancelDeleteForm">Cancel</string>
+    <string name="confirmDeleteForm">Delete</string>
+    <string name="noAccessDeleteForm">Please log in as Admin to delete Forms</string>
 
     <!-- PhotoDetailActivity -->
     <string name="camera_title">Photos</string>
@@ -112,31 +123,55 @@
     <string name="loginSnackbar">Login</string>
     <string name="adminCheck">Admin</string>
     <string name="deleteUserTitle">Delete user?</string>
-    <string name="deleteUserMessage">Are you sure you want to delete user </string>
+    <string name="deleteUserMessage">Are you sure you want to delete user&#160;</string>
     <string name="cancelDelete">Cancel</string>
     <string name="confirmDelete">Delete</string>
 
     <!-- CreateFormActivity -->
     <string name="createFormTitle">Create New Form</string>
     <string name="saveNewForm">Save</string>
-    <string name="createFormHeaderText">In each form we have some fields that are necessary to fill in, so these subjects and fields are already set. To add more fields in a subject, you can click on the pencil. To add more subjects, you can press the plus-button on the bottom-right of this screen.</string>
+    <string name="createFormHeaderText">In each form we have some fields that are necessary to fill in, so these subjects and fields are already set. To add more fields in a subject, you can click on the subject title. To add more subjects, you can press the plus-button on the bottom-right of this screen. To delete a question or section, keep it shortly pressed (mandatory fields can not be deleted).</string>
     <string name="createFormNameHint">Form name (district of use)</string>
     <string name="personalInfo">Personal Info</string>
     <string name="contactInfo">Contact Info</string>
     <string name="namePersonalInfo">Name</string>
     <string name="birthyearPersonalInfo">Birthyear</string>
     <string name="districtContactInfo">District</string>
+    <string name="stringToText">Text</string>
+    <string name="choiceToDropDown">DropDown</string>
+    <string name="deleteQuestionTitle">Delete Question?</string>
+    <string name="deleteQuestionMessage">Are you sure you want to delete question:&#160;</string>
+    <string name="deleteQuestion">Delete</string>
+    <string name="cancelDeleteQuestion">Cancel</string>
+    <string name="formNameEmpty">Formname is not filled in</string>
+    <string name="formNameEmptyMessage">Please fill in a formname</string>
+    <string name="back">Back</string>
+    <string name="saveForm">Save Form</string>
+    <string name="saveFormMessage">Do you want to save this form?</string>
+    <string name="deleteSubjectTitle">Delete this subject?</string>
+    <string name="deleteSubjectMessage">Are you sure you want to delete the subject:&#160;</string>
+    <string name="answerType">Input</string>
+    <string name="exitCreateForm">Exit?</string>
+    <string name="exitCreateFormMessage">Are you sure you want to exit? Unsaved changes will be lost.</string>
+    <string name="exitCreateFormConfirm">Exit</string>
+    <string name="requiredOverview">(Required)&#160;</string>
 
     <!-- AddSectionActivity -->
     <string name="addSectionTitle">Add Section</string>
     <string name="sectionName">Section Name</string>
     <string name="addSectionButton">Add Section</string>
+    <string name="noSectionName">Please fill in a name for this section</string>
 
     <!-- AddQuestionActivity -->
     <string name="addQuestionTitle">Add Question</string>
     <string name="questionName">Question</string>
     <string name="addQuestionButton">Add Question</string>
     <string name="required">Required</string>
+    <string name="addOptions">Add another option       +</string>
+    <string name="option">Option</string>
+    <string name="desiredInput">Desired inputtype:</string>
+    <string name="questionNameEmpty">Please fill in a question name</string>
+    <string name="notEnoughOptions">For a dropdown field, please fill in at least 2 options</string>
 
     <!-- Overig -->
     <string name="refresh">Refresh</string>

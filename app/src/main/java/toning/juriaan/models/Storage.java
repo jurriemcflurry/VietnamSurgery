@@ -204,6 +204,17 @@ public class Storage {
         return null;
     }
 
+    public static void deleteAllForms(Context context){
+        try{
+            File[] formFiles = getFormTemplateDir(context).listFiles();
+            for(File file : formFiles){
+                file.delete();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public static boolean deleteFormContent(FormContent formContent, Context context) {
         boolean success = true;
         try {

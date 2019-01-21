@@ -44,6 +44,10 @@ public class Section {
         fields.add(field);
     }
 
+    public void removeFields(Field field){
+        fields.remove(field);
+    }
+
     @Override
     public String toString() {
         String s = getSectionName() + "\n";

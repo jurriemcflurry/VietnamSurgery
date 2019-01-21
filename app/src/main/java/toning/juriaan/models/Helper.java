@@ -40,6 +40,7 @@ public class Helper {
     public final static int ADD_QUESTION_RESULT_CODE = 12;
     public final static String QUESTION_NAME = "questionName";
     public final static String REQUIRED = "required";
+    public final static String OPTIONS = "Options";
     public final static String QUESTION_TYPE_STRING = "Type";
     public final static String QUESTION_SECTION = "Section";
 
