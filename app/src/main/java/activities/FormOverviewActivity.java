@@ -1,10 +1,12 @@
 package activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -183,18 +185,45 @@ public class FormOverviewActivity extends FormBaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.next_menu_item:
-                setResult(Helper.CONTENT_SAVED_CODE);
-                formContent.updateDate();
-                Storage.cleanImgDir(this);
-                finish();
                 return true;
             case R.id.delete_menu_item:
-                Storage.deleteFormContent(formContent, this);
-                setResult(Helper.CONTENT_SAVED_CODE);
-                finish();
+                getDeleteDialog().show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private AlertDialog getSaveDialog() {
+        return new AlertDialog.Builder(this)
+                .setTitle(R.string.saveDialogTitle)
+                .setMessage(R.string.saveDialogMessage)
+                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        setResult(Helper.CONTENT_SAVED_CODE);
+                        formContent.updateDate();
+                        Storage.cleanImgDir(getApplicationContext());
+                        finish();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .create();
+    }
+
+    private AlertDialog getDeleteDialog() {
+        return new AlertDialog.Builder(this)
+                .setTitle(R.string.deleteDialogTitle)
+                .setMessage(R.string.deleteDialogMessage)
+                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Storage.deleteFormContent(formContent, getApplicationContext());
+                        setResult(Helper.CONTENT_SAVED_CODE);
+                        finish();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .create();
     }
 }
