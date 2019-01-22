@@ -34,6 +34,7 @@ import java.util.List;
 
 import toning.juriaan.vietnamsurgery.MainActivity;
 import toning.juriaan.vietnamsurgery.R;
+import toning.juriaan.vietnamsurgery.Utility.ExcelUtils;
 import toning.juriaan.vietnamsurgery.Utility.PhotoUtils;
 import toning.juriaan.vietnamsurgery.Utility.Utils;
 import toning.juriaan.vietnamsurgery.model.Field;
@@ -320,7 +321,7 @@ public class OverviewFormActivity extends AppCompatActivity {
             int rowNumEmptyRow = startRow;
             for (int i = startRow; i <= s.getLastRowNum(); i++) {
                 Row r = s.getRow(i);
-                if(isRowEmpty(r)) {
+                if(ExcelUtils.isRowEmpty(r)) {
                     rowNumEmptyRow = r.getRowNum();
                     break;
                 } else {
@@ -329,21 +330,6 @@ public class OverviewFormActivity extends AppCompatActivity {
             }
             return rowNumEmptyRow;
         }
-    }
-
-    /**
-     * Method to check if the row is empty
-     * @param row Row to check
-     * @return boolean
-     */
-    public static boolean isRowEmpty(Row row) {
-        for (int c = row.getFirstCellNum(); c < row.getLastCellNum(); c++) {
-            Cell cell = row.getCell(c);
-            if (cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
@@ -360,7 +346,7 @@ public class OverviewFormActivity extends AppCompatActivity {
                         tempForm.setFileName(form.getFileName());
                         tempForm.setSheetName(form.getSheetName());
                         tempForm.setFormName(form.getFileName());
-                        tempForm.setSections(createDeepCopyOfSections());
+                        tempForm.setSections(ExcelUtils.createDeepCopyOfSections(form));
 
                         Intent intent = new Intent(getApplicationContext(), FormActivity.class);
                         intent.putExtra("obj_form", tempForm);
@@ -380,33 +366,6 @@ public class OverviewFormActivity extends AppCompatActivity {
                         startActivity(intent);
                         finish();
                 }).show();
-    }
-
-    /**
-     * Method to create a deep copy of the sections
-     * @return List with sections
-     */
-    private List<Section> createDeepCopyOfSections() {
-        List<Section> l = new ArrayList<>();
-
-        for(int k = 0; k < form.getSections().size(); k++) {
-            Section s = new Section();
-            s.setSectionName(form.getSections().get(k).getSectionName());
-            s.setNumber(form.getSections().get(k).getNumber());
-            s.setColumn(form.getSections().get(k).getColumn());
-            List<Field> fields = new ArrayList<>();
-            for(int counter = 0; counter < form.getSections().get(k).getFields().size(); counter++) {
-                Field field = new Field();
-                field.setColumn(form.getSections().get(k).getFields().get(counter).getColumn());
-                field.setFieldName(form.getSections().get(k).getFields().get(counter).getFieldName());
-                field.setRow(form.getSections().get(k).getFields().get(counter).getRow());
-                fields.add(field);
-            }
-            s.setFields(fields);
-            l.add(s);
-        }
-
-        return l;
     }
 
     /**
@@ -464,7 +423,6 @@ public class OverviewFormActivity extends AppCompatActivity {
         return true;
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
@@ -476,6 +434,7 @@ public class OverviewFormActivity extends AppCompatActivity {
             }
         }
     }
+
     @Override
     public void onBackPressed() {
         if(requestCode == REQUEST_ADJUST_FORM) {

@@ -34,6 +34,7 @@ import java.util.List;
 
 import toning.juriaan.vietnamsurgery.MainActivity;
 import toning.juriaan.vietnamsurgery.R;
+import toning.juriaan.vietnamsurgery.Utility.ExcelUtils;
 import toning.juriaan.vietnamsurgery.Utility.Utils;
 import toning.juriaan.vietnamsurgery.adapter.FileNameAdapter;
 import toning.juriaan.vietnamsurgery.adapter.FormListAdapter;
@@ -318,13 +319,13 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
         for(int i = firstRowNum; i <= lastRowNum; i++)
         {
             Row row = sheet.getRow(i);
-            if(!isRowEmpty(row)) {
+            if(!ExcelUtils.isRowEmpty(row)) {
                 FormTemplate tempForm = new FormTemplate();
                 tempForm.setFileName(form.getFileName());
                 tempForm.setSheetName(form.getSheetName());
                 tempForm.setFormName(form.getFormName());
 
-                tempForm.setSections(createDeepCopyOfSections());
+                tempForm.setSections(ExcelUtils.createDeepCopyOfSections(form));
                 tempForm.setRowNumber(row.getRowNum());
                 String birthYear = "";
 
@@ -371,48 +372,6 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
         mRecyclerView.setLayoutManager(mLayoutManager);
         FormListAdapter mAdapter = new FormListAdapter(this, formList, this);
         mRecyclerView.setAdapter(mAdapter);
-    }
-
-    /**
-     * Method that creates a deep copy of the sections available in the FormTemplate
-     * @return List of Section
-     */
-    private List<Section> createDeepCopyOfSections() {
-        List<Section> l = new ArrayList<>();
-
-        for(int k = 0; k < form.getSections().size(); k++) {
-            Section s = new Section();
-            s.setSectionName(form.getSections().get(k).getSectionName());
-            s.setNumber(form.getSections().get(k).getNumber());
-            s.setColumn(form.getSections().get(k).getColumn());
-            List<Field> fields = new ArrayList<>();
-            for(int counter = 0; counter < form.getSections().get(k).getFields().size(); counter++) {
-                Field field = new Field();
-                field.setColumn(form.getSections().get(k).getFields().get(counter).getColumn());
-                field.setFieldName(form.getSections().get(k).getFields().get(counter).getFieldName());
-                field.setRow(form.getSections().get(k).getFields().get(counter).getRow());
-                fields.add(field);
-            }
-            s.setFields(fields);
-            l.add(s);
-        }
-
-        return l;
-    }
-
-    /**
-     * Checks if a row is empty
-     * @param row Row that has to be checked
-     * @return boolean
-     */
-    public static boolean isRowEmpty(Row row) {
-        for (int c = row.getFirstCellNum(); c < row.getLastCellNum(); c++) {
-            Cell cell = row.getCell(c);
-            if (cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**

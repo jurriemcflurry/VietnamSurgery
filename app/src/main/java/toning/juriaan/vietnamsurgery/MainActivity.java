@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
         }
     }
 
-
     /**
      * Method to setup the fields
      */
