@@ -386,12 +386,15 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
         File storageDirJpg = new File( root + File.separator + form.getFormName());
         File[] files = storageDirJpg.listFiles();
 
+        // Todo: Wanneer ik Jo zover krijg -> Create the name of the pictures with name, birthyear and district dynamically from Excel
         String patientName = patientForm.getSections().get(0).getFields().get(1).getAnswer();
         String birthYear = patientForm.getSections().get(0).getFields().get(2).getAnswer();
+        String district = patientForm.getSections().get(1).getFields().get(3).getAnswer();
+
+        Log.i("TESTT", patientName + "_" + birthYear + "_" + district);
 
         for( File file : files) {
-            // Todo: NAME OF PICTURES!
-            if(file.getName().contains( patientName + "_" + birthYear + "_" )) {
+            if(file.getName().contains( patientName + "_" + birthYear + "_" + district )) {
                 pictures.add(file.getAbsolutePath());
                 File pngFile = new File(root + File.separator + form.getFormName() + File.separator  + "thumbs", file.getName().replace("jpg", "png"));
                 thumbs.add(pngFile.getAbsolutePath());

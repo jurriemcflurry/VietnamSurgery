@@ -182,7 +182,7 @@ public class CameraActivity extends AppCompatActivity {
      */
     private File createImageFile() throws IOException {
         // Create an image file name - At this moment we're using the name, birthday & dateTimeformat
-        // Todo: Create a possibility to get a name out of the Excel or let the user choose.
+        // Todo: Wanneer ik Jo zover krijg -> Create a possibility to get the name dynamically out of the Excel
         String patientName = form.getSections().get(0).getFields().get(1).getAnswer();
         String birthYear = form.getSections().get(0).getFields().get(2).getAnswer();
         String district = form.getSections().get(1).getFields().get(3).getAnswer();

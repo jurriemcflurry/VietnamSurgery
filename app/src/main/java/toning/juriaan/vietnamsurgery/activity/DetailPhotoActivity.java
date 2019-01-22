@@ -109,9 +109,9 @@ public class DetailPhotoActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
+        // Todo: Wanneer ik Jo zover krijg -> Name and birthyear dynamically from Excel
         String name = form.getSections().get(0).getFields().get(1).getAnswer();
         String birthYear = form.getSections().get(0).getFields().get(2).getAnswer();
-        // Todo: Name of form
         ab.setTitle(getString(R.string.form_name, form.getFormName(), name, birthYear));
     }
 
