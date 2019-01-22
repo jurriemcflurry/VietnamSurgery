@@ -227,14 +227,17 @@ public class CameraActivity extends AppCompatActivity {
             }
         }
         // When an image has to be deleted, delete this image
-        if(requestCode == REQUEST_DELETE_IMAGE && resultCode == RESULT_OK) {
-            String photoUrl = data.getStringExtra("photoUrl");
+        if(requestCode == 100 && resultCode == RESULT_OK) {
+            form = data.getParcelableExtra("obj_form");
+            emptyGrid();
+            checkForPictures();
+            /*String photoUrl = data.getStringExtra("photoUrl");
             if(deletePhoto(photoUrl)) {
                 emptyGrid();
                 checkForPictures();
             } else {
                 Toast.makeText(this, R.string.error_delete, Toast.LENGTH_LONG).show();
-            }
+            }*/
         }
     }
 
@@ -307,7 +310,7 @@ public class CameraActivity extends AppCompatActivity {
         imageView.setLayoutParams(lp);
         imageView.setImageBitmap(picture);
         imageView.setOnClickListener((View v) ->
-            PhotoUtils.goToDetailPage(new File(path), this, form)
+            PhotoUtils.goToDetailPage(pictures.indexOf(path), this, form)
         );
         pictureGrid.addView(imageView);
     }

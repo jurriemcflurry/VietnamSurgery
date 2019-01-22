@@ -13,12 +13,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 
 import toning.juriaan.vietnamsurgery.R;
+import toning.juriaan.vietnamsurgery.Utility.PhotoUtils;
+import toning.juriaan.vietnamsurgery.Utility.Utils;
+import toning.juriaan.vietnamsurgery.listener.OnSwipeTouchListener;
 import toning.juriaan.vietnamsurgery.model.FormTemplate;
 
 public class DetailPhotoActivity extends AppCompatActivity {
@@ -30,10 +36,13 @@ public class DetailPhotoActivity extends AppCompatActivity {
     int noOfSections;
     TextView stepCounter;
     ActionBar ab;
+    int photoIndex;
+    TextView photoCounter;
     String photoUrl;
     ImageView imageView;
     TextView textView;
     FloatingActionButton fab;
+    LinearLayout layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +62,7 @@ public class DetailPhotoActivity extends AppCompatActivity {
     private void loadIntent(){
         Intent i = getIntent();
         form = i.getParcelableExtra("obj_form");
-        photoUrl = i.getStringExtra("photoUrl");
+        photoIndex = i.getIntExtra("photoIndex", 0);
     }
 
     /**
@@ -68,6 +77,8 @@ public class DetailPhotoActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.form_toolbar);
         imageView = findViewById(R.id.photo_detail_iv);
         textView = findViewById(R.id.photo_name);
+        layout = findViewById(R.id.section_view);
+        photoCounter = findViewById(R.id.photo_counter);
         fab = findViewById(R.id.delete_btn);
         fab.setOnClickListener((View v)-> {
                 new AlertDialog.Builder(DetailPhotoActivity.this)
@@ -75,11 +86,20 @@ public class DetailPhotoActivity extends AppCompatActivity {
                         .setMessage(R.string.dialog_delete_picture_text)
                         .setNegativeButton(R.string.dialog_cancel, null)
                         .setPositiveButton(R.string.dialog_ok, (DialogInterface dialog, int which) -> {
-                                getIntent().putExtra("photoUrl", photoUrl);
-                                setResult(RESULT_OK, getIntent());
-                                finish();
+                            PhotoUtils.deletePhoto(photoUrl, form, new File(Utils.getRootDir() + File.separator + form.getFormName() + File.separator  + "thumbs"), this);
+                            form.getPictures().remove(photoUrl);
+                            if(form.getPictures().size() == 0){
+                                imageView.setImageBitmap(null);
+                                photoCounter.setText("");
+                                textView.setText(R.string.picture_no_images);
+                            } else {
+                                photoIndex = 0;
+                                photoUrl = form.getPictures().get(0);
+                                setupPhoto();
+                            }
                         }).create().show();
         });
+        photoUrl = form.getPictures().get(photoIndex);
     }
 
     /**
@@ -104,6 +124,32 @@ public class DetailPhotoActivity extends AppCompatActivity {
             Bitmap bitmap = BitmapFactory.decodeFile(photoUrl);
             textView.setText(photo.getName());
             imageView.setImageBitmap(bitmap);
+            photoCounter.setText(getString(R.string.picture_counter, photoIndex + 1, form.getPictures().size()));
+            layout.setOnTouchListener(new OnSwipeTouchListener(this) {
+                public void onSwipeRight() {
+                    photoIndex--;
+                    if(photoIndex < 0) {
+                        photoIndex++;
+                        Toast.makeText(getApplicationContext(), R.string.last_picture, Toast.LENGTH_LONG).show();
+                    } else {
+                       photoUrl = form.getPictures().get(photoIndex);
+                       setupPhoto();
+                    }
+                    // Previous pic
+                }
+                public void onSwipeLeft() {
+                    photoIndex++;
+                    if(photoIndex > form.getPictures().size()) {
+                        photoIndex--;
+                        Toast.makeText(getApplicationContext(), R.string.last_picture, Toast.LENGTH_LONG).show();
+                    } else {
+                        photoUrl = form.getPictures().get(photoIndex);
+                        setupPhoto();
+                    }
+                }
+            });
+        } else {
+            textView.setText(R.string.picture_not_found);
         }
     }
 
@@ -111,5 +157,13 @@ public class DetailPhotoActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        intent.putExtra("obj_form", form);
+        setResult(RESULT_OK, intent);
+        super.onBackPressed();
     }
 }

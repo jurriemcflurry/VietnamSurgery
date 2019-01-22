@@ -32,6 +32,11 @@
     <string name="error_delete_pic">Có một lỗi xóa hình ảnh. Vui lòng thử lại.</string>
     <string name="error_not_enough_pics">Bạn phải làm ít nhất một hình ảnh.</string>
 
+    <string name="picture_not_found">Bức ảnh này không thể được tìm thấy.</string>
+    <string name="last_picture">Đây là hình ảnh cuối cùng. Bạn có thể vuốt theo cách khác.</string>
+    <string name="picture_counter">Hình %1$d của %2$d</string>
+    <string name="picture_no_images">Không có hình ảnh có sẵn.</string>
+
     <string name="dialog_warning_photosave">Đã xảy ra lỗi trong khi lưu ảnh.</string>
     <string name="dialog_warning_creatingfile">Đã xảy ra lỗi khi tạo ảnh.</string>
 

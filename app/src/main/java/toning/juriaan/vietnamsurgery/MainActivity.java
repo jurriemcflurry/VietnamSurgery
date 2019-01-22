@@ -21,20 +21,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import toning.juriaan.vietnamsurgery.Utility.Utils;
-import toning.juriaan.vietnamsurgery.activity.DirectoryChooserDialog;
+import toning.juriaan.vietnamsurgery.model.DirectoryChooserDialog;
 import toning.juriaan.vietnamsurgery.activity.FormActivity;
 import toning.juriaan.vietnamsurgery.activity.FormListActivity;
 import toning.juriaan.vietnamsurgery.adapter.FileNameAdapter;
@@ -175,11 +170,7 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
     public void chooseDir() {
         // Create DirectoryChooserDialog and register a callback
         DirectoryChooserDialog directoryChooserDialog =
-                new DirectoryChooserDialog(this,
-                        new DirectoryChooserDialog.ChosenDirectoryListener()
-                        {
-                            @Override
-                            public void onChosenDir(String chosenDir)
+                new DirectoryChooserDialog(this, (String chosenDir)->{
                             {
                                 if(Utils.editRootDirInPrefs(chosenDir)){
                                     root = new File(chosenDir);

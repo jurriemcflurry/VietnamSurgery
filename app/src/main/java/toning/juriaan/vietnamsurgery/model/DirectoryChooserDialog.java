@@ -1,4 +1,4 @@
-package toning.juriaan.vietnamsurgery.activity;
+package toning.juriaan.vietnamsurgery.model;
 
 import android.app.AlertDialog;
 import android.content.Context;

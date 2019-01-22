@@ -32,6 +32,11 @@
     <string name="error_delete_pic">There was an error deleting the picture. Please try again.</string>
     <string name="error_not_enough_pics">You have to make at least one picture.</string>
 
+    <string name="picture_not_found">This picture couldn\'t be found.</string>
+    <string name="last_picture">This is the last picture. You could swipe the other way.</string>
+    <string name="picture_counter">Picture %1$d of %2$d</string>
+    <string name="picture_no_images">No images available.</string>
+
     <string name="dialog_warning_photosave">Something went wrong while saving the photo.</string>
     <string name="dialog_warning_creatingfile">Something went wrong while creating the photo.</string>
 

@@ -172,11 +172,11 @@ public class OverviewFormActivity extends AppCompatActivity {
         LayoutInflater mInflator = getLayoutInflater();
         int index = 0;
         for( String pathToFile : form.getThumbImages()) {
+            int photoIndex = index;
             View view = mInflator.inflate(R.layout.photo_gallery_item, mGallery, false);
             ImageView imageView = view.findViewById(R.id.image_list_iv);
-            File file = new File(form.getPictures().get(index));
             imageView.setOnClickListener((View v) ->
-                    PhotoUtils.goToDetailPage(file, this, form)
+                PhotoUtils.goToDetailPage(photoIndex, this, form)
             );
 
             Bitmap pic = BitmapFactory.decodeFile(pathToFile);
@@ -429,52 +429,6 @@ public class OverviewFormActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Method to delete the picture
-     * @param photoUrl String with absolute path
-     * @return boolean
-     */
-    private boolean deletePhoto(String photoUrl) {
-        File jpgFile = new File(photoUrl);
-        if(jpgFile.exists() && jpgFile.delete()) {
-            List<String> pics = form.getPictures();
-            pics.remove(photoUrl);
-            form.setPictures(pics);
-            File pngFile = new File(storageDirPng, jpgFile.getName().replace("jpg", "png"));
-            if(pngFile.exists() && pngFile.delete()){
-                List<String> thumbs = form.getThumbImages();
-                thumbs.remove(pngFile.getAbsolutePath());
-                form.setThumbImages(thumbs);
-                return true;
-            } else {
-                Log.e(TAG, getString(R.string.error_delete_thumb));
-                new AlertDialog.Builder(this)
-                        .setTitle(R.string.dialog_warning_title)
-                        .setMessage(getString(R.string.error_delete_thumb))
-                        .setPositiveButton(getString(R.string.dialog_ok), null).show();
-                return false;
-            }
-        }
-        else {
-            Log.e(TAG, getString(R.string.error_delete_pic));
-            new AlertDialog.Builder(this)
-                    .setTitle(R.string.dialog_warning_title)
-                    .setMessage(getString(R.string.error_delete_pic))
-                    .setPositiveButton(getString(R.string.dialog_ok), null).show();
-            return false;
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == REQUEST_DELETE_IMAGE && resultCode == RESULT_OK) {
-            String photoUrl = data.getStringExtra("photoUrl");
-            if(deletePhoto(photoUrl)) {
-                putPicturesInGallery();
-            }
-        }
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -510,6 +464,18 @@ public class OverviewFormActivity extends AppCompatActivity {
         return true;
     }
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == 100) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                form = data.getParcelableExtra("obj_form");
+                putPicturesInGallery();
+            }
+        }
+    }
     @Override
     public void onBackPressed() {
         if(requestCode == REQUEST_ADJUST_FORM) {
@@ -521,5 +487,4 @@ public class OverviewFormActivity extends AppCompatActivity {
             startActivity(cameraActivity);
         }
     }
-
 }
