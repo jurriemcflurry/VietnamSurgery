@@ -8,6 +8,7 @@ public class Field implements Parcelable {
     private String answer;
     private int column;
     private int row;
+    private boolean mandatory;
 
 
     public String getFieldName() {
@@ -38,6 +39,13 @@ public class Field implements Parcelable {
         this.row = row;
     }
 
+    public boolean getMandatory() {
+        return mandatory;
+    }
+    public void setMandatory(boolean mandatory) {
+        this.mandatory = mandatory;
+    }
+
     public Field() {}
 
     @Override
@@ -51,6 +59,7 @@ public class Field implements Parcelable {
         out.writeString(answer);
         out.writeInt(column);
         out.writeInt(row);
+        out.writeByte((byte) (mandatory ? 1 : 0));
     }
 
     public static final Creator<Field> CREATOR = new Creator<Field>() {
@@ -70,6 +79,7 @@ public class Field implements Parcelable {
         answer = in.readString();
         column = in.readInt();
         row = in.readInt();
+        mandatory = in.readByte() != 0;
     }
 
 }

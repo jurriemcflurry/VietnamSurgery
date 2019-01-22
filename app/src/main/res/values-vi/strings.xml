@@ -22,6 +22,7 @@
     <string name="main_title_name">Chọn một hình thức</string>
     <string name="filled_in_forms_name">Các hình thức đã hoàn thành</string>
     <string name="form_name">%1$s - %2$s - %3$s</string>
+    <string name="form_mandatory_item">%1$s là bắt buộc. Vui lòng điền vào một câu trả lời hợp lệ.</string>
 
     <string name="contentDescription">Ảnh chi tiết</string>
 

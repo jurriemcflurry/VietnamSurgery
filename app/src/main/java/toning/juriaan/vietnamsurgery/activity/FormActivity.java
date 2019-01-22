@@ -133,16 +133,25 @@ public class FormActivity extends AppCompatActivity {
     /**
      * Method to save all the filled in fields to the form and empty the form
      * @param form FormTemplate that has to be edited
-     * @param layout LinearLayout that has to be empties
+     * @param layout LinearLayout that has to be emptied
      */
-    private void emptyForm(FormTemplate form, LinearLayout layout) {
+    private void emptyForm(FormTemplate form, LinearLayout layout, boolean backPressed) {
+        boolean error = false;
+        boolean warning = false;
         for(Field f : form.getSections().get(noOfThisSection-1).getFields()) {
             Iterator i = idsMap.entrySet().iterator();
             while(i.hasNext()) {
                 Map.Entry pair = (Map.Entry)i.next();
                 if(pair.getKey().toString().equals(f.getFieldName())) {
+                    // Todo: Wanneer ik Jo zover krijg: Ugly fix, but didn't had an other option for the radioBtns
+                    // Todo: Wanneer ik Jo zover krijg: Controle op invoer van geboortejaar etc. Nu niet mogelijk
                     try {
+                        EditText editText = findViewById((int)pair.getValue());
                         String answer = ((EditText) findViewById((int)pair.getValue())).getText().toString();
+                        if(f.getMandatory() && answer.equals("") && !backPressed) {
+                            editText.setError(getString(R.string.form_mandatory_item, f.getFieldName()));
+                            error = true;
+                        }
                         f.setAnswer(answer);
                     } catch (Exception ex) {
                         String answer = Boolean.toString(((RadioButton) findViewById((int)pair.getValue())).isChecked());
@@ -151,7 +160,13 @@ public class FormActivity extends AppCompatActivity {
                 }
             }
         }
-        layout.removeAllViews();
+        if(backPressed) {
+            layout.removeAllViews();
+            goToPreviousTab();
+        } else if(!error) {
+            layout.removeAllViews();
+            goToNextTab();
+        }
     }
 
     /**
@@ -174,8 +189,9 @@ public class FormActivity extends AppCompatActivity {
 
             for(int i = 0; i < section.getFields().size(); i++) {
                 Field f = section.getFields().get(i);
+                // Todo: Wanneer ik Jo zover krijg: Ugly fix. Didn't had an other option yet for the radioButtons.
                 if(i < section.getFields().size() - 2) {
-                    TextInputLayout editField = createTextField(f.getFieldName(), f.getColumn(), f.getAnswer());
+                    TextInputLayout editField = createTextField(f);
                     idsMap.put(f.getFieldName(), f.getColumn());
                     layout.addView(editField);
                 } else {
@@ -186,7 +202,7 @@ public class FormActivity extends AppCompatActivity {
             layout.addView(rg);
         } else {
             for(Field f : section.getFields()) {
-                TextInputLayout editField = createTextField(f.getFieldName(), f.getColumn(), f.getAnswer());
+                TextInputLayout editField = createTextField(f);
                 idsMap.put(f.getFieldName(), f.getColumn());
                 layout.addView(editField);
             }
@@ -195,12 +211,10 @@ public class FormActivity extends AppCompatActivity {
 
     /**
      * Method to create a TextField
-     * @param textFieldName String with the name of the textField
-     * @param column int of the column of this question
-     * @param answer String with an answer, could be null
+     * @param field Field that has to have a TextField
      * @return TextInputLayout textField that can be filled in
      */
-    private TextInputLayout createTextField(String textFieldName, int column, String answer) {
+    private TextInputLayout createTextField(Field field) {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
         TextInputLayout textInputLayout = new TextInputLayout(this);
@@ -209,12 +223,12 @@ public class FormActivity extends AppCompatActivity {
         EditText editText = new EditText(textInputLayout.getContext());
         editText.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
         editText.setLayoutParams(layoutParams);
-        editText.setHint(textFieldName);
+        editText.setHint(field.getFieldName());
         editText.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES );
-        if(answer != null) {
-            editText.setText(answer);
+        if(field.getAnswer() != null) {
+            editText.setText(field.getAnswer());
         }
-        editText.setId(column);
+        editText.setId(field.getColumn());
 
         textInputLayout.addView(editText);
 
@@ -258,6 +272,24 @@ public class FormActivity extends AppCompatActivity {
         getWindow().getDecorView().clearFocus();
     }
 
+    private void goToNextTab() {
+        noOfThisSection++;
+        if(noOfThisSection > noOfSections) {
+            Intent i = new Intent(getApplicationContext(), CameraActivity.class);
+            i.putExtra("obj_form", form);
+            startActivity(i);
+            finish();
+        }
+        else {
+            generateForm(form.getSections().get(noOfThisSection - 1), layout);
+        }
+    }
+
+    private void goToPreviousTab() {
+        noOfThisSection--;
+        generateForm(form.getSections().get(noOfThisSection - 1), layout);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -266,17 +298,7 @@ public class FormActivity extends AppCompatActivity {
                 return true;
             case R.id.action_next:
                 hideKeyboard(this);
-                emptyForm(form, layout);
-                noOfThisSection++;
-                if(noOfThisSection > noOfSections) {
-                    Intent i = new Intent(getApplicationContext(), CameraActivity.class);
-                    i.putExtra("obj_form", form);
-                    startActivity(i);
-                    finish();
-                }
-                else {
-                    generateForm(form.getSections().get(noOfThisSection - 1), layout);
-                }
+                emptyForm(form, layout, false);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -318,9 +340,7 @@ public class FormActivity extends AppCompatActivity {
                     })
                     .setNegativeButton(R.string.dialog_cancel, null).show();
         } else {
-            emptyForm(form, layout);
-            noOfThisSection--;
-            generateForm(form.getSections().get(noOfThisSection - 1), layout);
+            emptyForm(form, layout, true);
         }
     }
 }

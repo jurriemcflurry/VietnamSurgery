@@ -386,8 +386,6 @@ public class FormListActivity extends AppCompatActivity implements FormListListe
         String birthYear = patientForm.getSections().get(0).getFields().get(2).getAnswer();
         String district = patientForm.getSections().get(1).getFields().get(3).getAnswer();
 
-        Log.i("TESTT", patientName + "_" + birthYear + "_" + district);
-
         for( File file : files) {
             if(file.getName().contains( patientName + "_" + birthYear + "_" + district )) {
                 pictures.add(file.getAbsolutePath());

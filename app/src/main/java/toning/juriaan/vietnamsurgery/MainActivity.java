@@ -310,6 +310,12 @@ public class MainActivity extends AppCompatActivity implements FileNameListener,
                     field.setFieldName(firstFieldRow.get(column));
                     field.setColumn(column);
                     field.setRow(3);
+                    // ToDo: Wanneer ik Jo zover krijg -> Make the name, birthyear and district dynamically mandatory
+                    if((sectionCounter == 2 && column == 1) || (sectionCounter == 2 && column == 2) || (sectionCounter == 3 && column == 7)) {
+                        field.setMandatory(true);
+                    } else {
+                        field.setMandatory(false);
+                    }
                     fields.add(field);
                 }
 

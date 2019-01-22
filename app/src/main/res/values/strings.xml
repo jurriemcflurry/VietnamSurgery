@@ -22,6 +22,7 @@
     <string name="main_title_name">Pick a form</string>
     <string name="filled_in_forms_name">Filled in forms</string>
     <string name="form_name">%1$s - %2$s - %3$s</string>
+    <string name="form_mandatory_item">%1$s is mandatory. Please fill in a valid answer.</string>
 
     <string name="contentDescription">Detailed picture</string>
 
