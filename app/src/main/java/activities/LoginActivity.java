@@ -32,7 +32,6 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
     private EditText password;
     private Button loginButton;
     private UserWebInterface userWebInterface;
-    private Helper helper;
     private ProgressBar pBar;
 
     @Override
@@ -64,7 +63,7 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                helper.hideKeyboard(LoginActivity.this);
+                Helper.hideKeyboard(LoginActivity.this);
 
                 //check of er internetconnectie is
                 if(!isNetworkAvailable()){
@@ -108,9 +107,6 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
         pBar.setVisibility(View.INVISIBLE);
 
         if(response.isSuccessful() && response.body() != null){
-            //sla token op
-            //set headertexts goed
-            //terug naar home
             Snackbar.make(findViewById(R.id.login_linear_layout),getString(R.string.loggedIn), Snackbar.LENGTH_INDEFINITE)
                     .show();
             AccessToken.setAccess_token(response.body().token_type + " " + response.body().accesstoken);
@@ -141,7 +137,7 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
 
     @Override
     public void onFailure(Call<LoginResponse> call, Throwable t) {
-        helper.hideKeyboard(this);
+        Helper.hideKeyboard(this);
         pBar.setVisibility(View.INVISIBLE);
         Snackbar.make(findViewById(R.id.login_linear_layout),getString(R.string.notLoggedIn), Snackbar.LENGTH_INDEFINITE)
                 .show();

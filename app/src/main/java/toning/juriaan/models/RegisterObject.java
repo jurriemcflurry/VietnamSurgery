@@ -5,16 +5,16 @@ import com.google.gson.annotations.SerializedName;
 public class RegisterObject {
 
     @SerializedName("Password")
-    public String password;
+    private String password;
 
     @SerializedName("ConfirmPassword")
-    public String confirmPassword;
+    private String confirmPassword;
 
     @SerializedName("UserRole")
-    public String userrole;
+    private String userrole;
 
     @SerializedName("Email")
-    public String email;
+    private String email;
 
     public RegisterObject(String password, String confirmPassword, String userrole, String email){
         this.password = password;

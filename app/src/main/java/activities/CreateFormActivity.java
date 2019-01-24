@@ -492,7 +492,7 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
         new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.exitCreateForm))
                 .setMessage(getString(R.string.exitCreateFormMessage))
-                .setNegativeButton(getString(R.string.back), null)
+                .setNegativeButton(getString(R.string.cancelExitCreateForm), null)
                 .setPositiveButton(getString(R.string.exitCreateFormConfirm), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

@@ -140,8 +140,7 @@ public class MainActivity extends BaseActivity implements FormAdapter.FormListen
                     }).create().show();
         }
     }
-
-
+    
     @Override
     protected void onResume() {
         formAdapter.updateAmounts();

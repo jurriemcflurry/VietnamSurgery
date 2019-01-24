@@ -39,6 +39,7 @@
     <string name="loginCaps">LOGIN</string>
     <string name="changePasswordEmptyFields">Please make sure all the fields are filled in</string>
     <string name="noPasswordMatch">New Password does not match Confirm New Password</string>
+    <string name="passwordNotChanged">Password could not be changed now, please try again later</string>
 
     <!-- FormActivity -->
     <string name="forms">Forms</string>
@@ -158,6 +159,7 @@
     <string name="answerType">Input</string>
     <string name="exitCreateForm">Exit?</string>
     <string name="exitCreateFormMessage">Are you sure you want to exit? Unsaved changes will be lost.</string>
+    <string name="cancelExitCreateForm">Cancel</string>
     <string name="exitCreateFormConfirm">Exit</string>
     <string name="requiredOverview">(Required)&#160;</string>
 

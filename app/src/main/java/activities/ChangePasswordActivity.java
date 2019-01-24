@@ -129,6 +129,7 @@ public class ChangePasswordActivity extends BaseActivity implements Callback<Cha
 
     @Override
     public void onFailure(Call<ChangePasswordResponse> call, Throwable t) {
-        t.printStackTrace();
+        Snackbar.make(findViewById(R.id.changePassword_linear_layout), getString(R.string.passwordNotChanged), Snackbar.LENGTH_LONG)
+                .show();
     }
 }
