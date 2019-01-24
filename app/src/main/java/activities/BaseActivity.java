@@ -1,6 +1,8 @@
 package activities;
 
+import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,12 +19,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import toning.juriaan.models.AccessToken;
+import toning.juriaan.models.Helper;
 import toning.juriaan.models.R;
 
 import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.analytics.Analytics;
 import com.microsoft.appcenter.crashes.Crashes;
 import com.microsoft.appcenter.AppCenter; import com.microsoft.appcenter.analytics.Analytics; import com.microsoft.appcenter.crashes.Crashes;
+
+import java.util.List;
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -92,9 +97,16 @@ public class BaseActivity extends AppCompatActivity {
                                 startActivity(homeIntent);
                                 break;
                             case R.id.nav_2:
-                                Intent toFormContentIntent = new Intent(
-                                        getApplicationContext(), FormListActivity.class);
-                                startActivity(toFormContentIntent);
+                                if(getActiveActivity().equals("activities.FormListActivity")){
+                                    Intent toFormContentIntent = new Intent(
+                                            getApplicationContext(), FormListActivity.class);
+                                    startActivity(toFormContentIntent);
+                                    finish();
+                                }else{
+                                    Intent toFormContentIntent = new Intent(
+                                            getApplicationContext(), FormListActivity.class);
+                                    startActivity(toFormContentIntent);
+                                }
                             default: break;
                         }
 
@@ -126,8 +138,16 @@ public class BaseActivity extends AppCompatActivity {
         menu.add(getString(R.string.users)).setIcon(R.drawable.user_list_menu_icon_black).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Intent naarUsers = new Intent(getApplicationContext(), UsersActivity.class);
-                startActivity(naarUsers);
+                if(getActiveActivity().equals("activities.UsersActivity")){
+                    Intent naarUsers = new Intent(getApplicationContext(), UsersActivity.class);
+                    startActivity(naarUsers);
+                    finish();
+                }
+                else{
+                    Intent naarUsers = new Intent(getApplicationContext(), UsersActivity.class);
+                    startActivity(naarUsers);
+                }
+
                 return false;
             }
         });
@@ -174,5 +194,11 @@ public class BaseActivity extends AppCompatActivity {
         Intent refresh = new Intent(getApplicationContext(), MainActivity.class);
         refresh.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(refresh);
+    }
+
+    private String getActiveActivity(){
+        ActivityManager am = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
+        return taskInfo.get(0).topActivity.getClassName();
     }
 }
