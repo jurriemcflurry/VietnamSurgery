@@ -1,16 +1,21 @@
 package activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -96,6 +101,7 @@ public class FormOverviewActivity extends FormBaseActivity {
                     intent.putExtra(Helper.FORM, form.getFormattedFormName());
                 }
                 intent.putExtra(Helper.FORM_CONTENT_ID, formContent.getFormContentId());
+                intent.putExtra(Helper.SECTION_INDEX, sectionIndex);
 
                 setResult(Helper.EDIT_SECTION_CODE, intent);
                 finish();
@@ -106,38 +112,50 @@ public class FormOverviewActivity extends FormBaseActivity {
     private LinearLayout getPhotoGalleryView() {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(10, 10, 10, 10);
+
         LinearLayout photoGalleryView = new LinearLayout(this);
         photoGalleryView.setOrientation(LinearLayout.VERTICAL);
+        photoGalleryView.setLayoutParams(layoutParams);
+
 
         TextView photoGalleryTitleTextView = new TextView(this);
         photoGalleryTitleTextView.setText(R.string.photoGalleryTitle);
         setTitleTextView(photoGalleryTitleTextView);
-
-        ScrollView scrollView = new ScrollView(this);
         photoGalleryView.addView(photoGalleryTitleTextView);
-        photoGalleryView.addView(scrollView);
 
-        LinearLayout photoGallery = new LinearLayout(this);
-        photoGallery.setOrientation(LinearLayout.HORIZONTAL);
+//        ScrollView.LayoutParams scrollLayoutParams = new ScrollView.LayoutParams(
+//                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//        ScrollView scrollView = new ScrollView(this);
+//        photoGalleryView.addView(scrollView);
+//        scrollView.setLayoutParams(scrollLayoutParams);
+//
+        GridLayout photoGallery = new GridLayout(this);
+        photoGallery.setColumnCount(2);
         photoGallery.setLayoutParams(layoutParams);
+
+        RelativeLayout.LayoutParams layoutParams1 = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams1.setMargins(10, 10, 10, 10);
 
         for (String imageName : formContent.getImageNames()) {
             Image image = Storage.getImageByName(imageName, this);
             if (image == null) continue;
             ImageView imageView = new ImageView(this);
+            imageView.setLayoutParams(layoutParams1);
             Bitmap bitmap = image.getThumbnailBitmap(this);
 
             imageView.setImageBitmap(bitmap);
             photoGallery.addView(imageView);
         }
 
-        scrollView.addView(photoGallery);
+        photoGalleryView.addView(photoGallery);
         return photoGalleryView;
     }
 
     private LinearLayout getSectionView(Section section) {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         LinearLayout sectionView = new LinearLayout(this);
         sectionView.setLayoutParams(layoutParams);
         sectionView.setOrientation(LinearLayout.VERTICAL);
@@ -148,17 +166,48 @@ public class FormOverviewActivity extends FormBaseActivity {
         sectionView.addView(sectionNameTextView);
 
         for (Field field : section.getFields()) {
+            LinearLayout.LayoutParams linearLayoutParams = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+            LinearLayout fieldView = new LinearLayout(this);
+            fieldView.setLayoutParams(linearLayoutParams);
+            fieldView.setOrientation(LinearLayout.HORIZONTAL);
+
+            LinearLayout.LayoutParams textViewLayout = new LinearLayout.LayoutParams(
+                    0, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
+
             TextView fieldNameText = new TextView(this);
+            fieldNameText.setLayoutParams(textViewLayout);
             String fieldName = field.getFieldName() + ":";
             fieldNameText.setText(fieldName);
+            fieldNameText.setTextSize(17);
             fieldNameText.setTextColor(Color.BLACK);
-            sectionView.addView(fieldNameText);
 
             TextView fieldValueText = new TextView(this);
+            fieldValueText.setLayoutParams(textViewLayout);
             fieldValueText.setText(formContent.getAnswer(field.getFieldName()));
+            fieldValueText.setWidth(0);
             fieldValueText.setTextColor(Color.BLACK);
             fieldValueText.setTextSize(17);
-            sectionView.addView(fieldValueText);
+
+            fieldView.addView(fieldNameText);
+            fieldView.addView(fieldValueText);
+
+            LinearLayout fieldsAndDivider = new LinearLayout(this);
+            fieldsAndDivider.setLayoutParams(linearLayoutParams);
+            fieldsAndDivider.setOrientation(LinearLayout.VERTICAL);
+
+            ViewGroup.LayoutParams dividerLayout = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, 1);
+
+            View divider = new View(this);
+            divider.setLayoutParams(dividerLayout);
+            divider.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+
+            fieldsAndDivider.addView(fieldView);
+            fieldsAndDivider.addView(divider);
+
+            sectionView.addView(fieldsAndDivider);
         }
         return sectionView;
     }
@@ -183,18 +232,47 @@ public class FormOverviewActivity extends FormBaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.next_menu_item:
-                setResult(Helper.CONTENT_SAVED_CODE);
-                formContent.updateDate();
-                Storage.cleanImgDir(this);
-                finish();
+                getSaveDialog().show();
                 return true;
             case R.id.delete_menu_item:
-                Storage.deleteFormContent(formContent, this);
-                setResult(Helper.CONTENT_SAVED_CODE);
-                finish();
+                getDeleteDialog().show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private AlertDialog getSaveDialog() {
+        return new AlertDialog.Builder(this)
+                .setTitle(R.string.saveDialogTitle)
+                .setMessage(R.string.saveDialogMessage)
+                .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        setResult(Helper.CONTENT_SAVED_CODE);
+                        formContent.updateDate();
+                        Storage.saveFormContent(formContent, getApplicationContext());
+                        Storage.cleanImgDir(getApplicationContext());
+                        finish();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .create();
+    }
+
+    private AlertDialog getDeleteDialog() {
+        return new AlertDialog.Builder(this)
+                .setTitle(R.string.deleteDialogTitle)
+                .setMessage(R.string.deleteDialogMessage)
+                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Storage.deleteFormContent(formContent, getApplicationContext());
+                        setResult(Helper.CONTENT_SAVED_CODE);
+                        finish();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .create();
     }
 }

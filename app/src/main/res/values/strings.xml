@@ -28,6 +28,7 @@
     <string name="imageLoss">Going back without saving erases the pictures</string>
     <string name="exitPhotos">Exit Photos</string>
     <string name="cancel">Cancel</string>
+    <string name="tapInstruction">Image loading. \nTap to refresh</string>
 
     <!-- ChangePasswordActivity -->
     <string name="oldPassword">Old Password</string>
@@ -60,6 +61,10 @@
 
     <!-- FormOverviewActivity -->
     <string name="photoGalleryTitle">Photos</string>
+    <string name="deleteDialogTitle">Delete this content?</string>
+    <string name="deleteDialogMessage">Are you sure you want to permanently delete this content?</string>
+    <string name="saveDialogTitle">Save this content?</string>
+    <string name="saveDialogMessage">Are you sure you want to save this content?</string>
 
     <!-- LoginActivity -->
     <string name="loginTitle">Login</string>
@@ -173,5 +178,6 @@
     <string name="refresh">Refresh</string>
     <string name="save">Save</string>
     <string name="upload">Upload</string>
+    <string name="unavailable">Unavailable</string>
     <string name="test">Test</string>
 </resources>

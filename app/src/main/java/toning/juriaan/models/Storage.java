@@ -329,9 +329,9 @@ public class Storage {
             File imageDir = getImagesDir(context);
             File[] imageFiles = imageDir.listFiles();
 
-            for (File image : imageFiles) {
-                if (image.getName().toLowerCase().contains(formContent.getFormContentId().toLowerCase())) {
-                    images.add(getImage(image, context));
+            for (File imageFile : imageFiles) {
+                if (imageFile.getName().toLowerCase().contains(formContent.getFormContentId().toLowerCase())) {
+                    images.add(getImage(imageFile));
                 }
             }
             return images;
@@ -347,7 +347,7 @@ public class Storage {
 
             for (File imageFile : imageFiles) {
                 if (imageFile.getName().toLowerCase().contains(imageName.toLowerCase())) {
-                    return getImage(imageFile, context);
+                    return getImage(imageFile);
                 }
             }
         } catch (Exception e) {
@@ -356,7 +356,7 @@ public class Storage {
         return null;
     }
 
-    private static Image getImage(File imageFile, Context context) {
+    private static Image getImage(File imageFile) {
         try {
             String imageName = imageFile.getName().split(".png")[0];
             String imagePath = imageFile.getAbsolutePath();
@@ -482,6 +482,7 @@ public class Storage {
     public static int getNextImageNumber(FormContent formContent, Context context) {
         cleanStorage(context);
         ArrayList<Image> images = getImagesForFormContent(formContent, context);
+        Helper.log("images " + images.size());
         int highestNumber = 0;
         for (Image image : images) {
             String[] splitImageName = image.getImageName().split("_");

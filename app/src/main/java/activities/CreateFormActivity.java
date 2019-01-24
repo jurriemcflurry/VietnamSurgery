@@ -11,6 +11,7 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.util.Pair;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -430,7 +431,7 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.next_menu_item:
+            case R.id.save_menu_item:
                 String formName = formNameEditText.getText().toString();
                 postForm(formName, formTemplate);
                 return true;
@@ -499,5 +500,11 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
                     }
                 })
                 .create().show();
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.form_save_activity_menu, menu);
+        return super.onPrepareOptionsMenu(menu);
     }
 }
