@@ -1,6 +1,8 @@
 package activities;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -30,7 +32,7 @@ import toning.juriaan.models.Helper;
 import toning.juriaan.models.R;
 import toning.juriaan.models.RegisterObject;
 
-public class RegisterActivity extends BaseActivity implements AdapterView.OnItemSelectedListener, Callback<RegisterResponse> {
+public class RegisterActivity extends FormBaseActivity implements AdapterView.OnItemSelectedListener, Callback<RegisterResponse> {
 
     private UserWebInterface userWebInterface;
     private EditText password;
@@ -46,7 +48,7 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
+        FrameLayout contentFrameLayout = findViewById(R.id.formbase_framelayout);
         getLayoutInflater().inflate(R.layout.activity_register, contentFrameLayout);
         getSupportActionBar().setTitle(getString(R.string.addUserTitle));
 
@@ -212,5 +214,27 @@ public class RegisterActivity extends BaseActivity implements AdapterView.OnItem
         pBar.setVisibility(View.INVISIBLE);
         Snackbar.make(findViewById(R.id.register_linear_layout), getString(R.string.userNotAdded),Snackbar.LENGTH_LONG)
                 .show();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.exitRegisterTitle))
+                .setMessage(getString(R.string.exitRegisterMessage))
+                .setNegativeButton(getString(R.string.cancelExit), null)
+                .setPositiveButton(getString(R.string.exitRegister), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Helper.hideKeyboard(RegisterActivity.this);
+                        RegisterActivity.this.finish();
+                    }
+                })
+                .create().show();
     }
 }

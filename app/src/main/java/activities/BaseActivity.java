@@ -56,8 +56,8 @@ public class BaseActivity extends AppCompatActivity {
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
-        if(AccessToken.userName != null){
-            loggedInUser.setText(AccessToken.userName);
+        if(AccessToken.getUserName() != null){
+            loggedInUser.setText(AccessToken.getUserName());
             editProfile.setVisibility(View.VISIBLE);
             editProfile.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -72,11 +72,11 @@ public class BaseActivity extends AppCompatActivity {
             editProfile.setVisibility(View.GONE);
         }
 
-        if(AccessToken.access_token == null){
+        if(AccessToken.getAccess_token() == null){
             addLoginButton(menu);
         }
         else{
-            if(AccessToken.userrole.equals(getString(R.string.BaseAdminCheck))){
+            if(AccessToken.getUserrole().equals(getString(R.string.BaseAdminCheck))){
                 addMenuItemsAdmin(menu);
             }
 
@@ -186,9 +186,9 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     private void logout(){
-        AccessToken.access_token = null;
-        AccessToken.userName = null;
-        AccessToken.userrole = null;
+        AccessToken.setAccess_token(null);
+        AccessToken.setUserName(null);
+        AccessToken.setUserrole(null);
 
         drawerLayout.closeDrawers();
         Intent refresh = new Intent(getApplicationContext(), MainActivity.class);

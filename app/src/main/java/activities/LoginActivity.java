@@ -113,9 +113,9 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
             //terug naar home
             Snackbar.make(findViewById(R.id.login_linear_layout),getString(R.string.loggedIn), Snackbar.LENGTH_INDEFINITE)
                     .show();
-            AccessToken.access_token = response.body().token_type + " " + response.body().accesstoken;
-            AccessToken.userName = response.body().userName;
-            AccessToken.userrole = response.body().role;
+            AccessToken.setAccess_token(response.body().token_type + " " + response.body().accesstoken);
+            AccessToken.setUserName(response.body().userName);
+            AccessToken.setUserrole(response.body().role);
 
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {

@@ -156,7 +156,7 @@ public class FormListActivity extends BaseActivity implements FormListAdapter.Fo
     }
 
     private void tryPostFormContentList() {
-        if (AccessToken.access_token != null) {
+        if (AccessToken.getAccess_token() != null) {
             getUploadDialog().show();
         } else {
             getLoginDialog().show();

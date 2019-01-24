@@ -110,6 +110,10 @@
     <string name="passwordRegisterHint">Password</string>
     <string name="confirmpassword">Confirm password</string>
     <string name="addUserButton">Add User</string>
+    <string name="exitRegisterTitle">Exit?</string>
+    <string name="exitRegisterMessage">Are you sure you want to exit? Unsaved changes will be lost</string>
+    <string name="cancelExit">Cancel</string>
+    <string name="exitRegister">Exit</string>
 
     <!-- Users Listitem -->
     <string name="listitemUsername">Username</string>
