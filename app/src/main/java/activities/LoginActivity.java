@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputEditText;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,8 +29,8 @@ import toning.juriaan.models.R;
 
 public class LoginActivity extends BaseActivity implements Callback<LoginResponse> {
 
-    private EditText email;
-    private EditText password;
+    private TextInputEditText email;
+    private TextInputEditText password;
     private Button loginButton;
     private UserWebInterface userWebInterface;
     private ProgressBar pBar;
