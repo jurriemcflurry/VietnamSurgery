@@ -45,7 +45,6 @@ public class FormContent {
         formContentAnswers = new HashMap<>();
         imageNames = new ArrayList<>();
         formContentId = UUID.randomUUID().toString();
-        Helper.log(formContentId.toString());
         updateDate();
     }
 
@@ -95,9 +94,7 @@ public class FormContent {
         String district = getAnswer(context.getString(R.string.district));
         String birthYear = getAnswer(context.getString(R.string.birthYear));
 
-        boolean isValid = (!name.isEmpty() && !district.isEmpty() && !birthYear.isEmpty());
-        Helper.log("isValidInfo " + isValid);
-        return isValid;
+        return (!name.isEmpty() && !district.isEmpty() && !birthYear.isEmpty());
     }
 
     public boolean isValid(Context context) {
@@ -122,7 +119,8 @@ public class FormContent {
 
     public void addAnswer(String fieldName, String value) {
         boolean add = true;
-        value = value.trim();
+        if (value != null)
+            value = value.trim();
 
         for (Map.Entry<String, String> entry : formContentAnswers.entrySet()) {
             if (entry.getKey().equals(fieldName)) {
@@ -183,6 +181,8 @@ public class FormContent {
     }
 
     public static FormContent createTemp(FormContent formContent) {
+        if (formContent.getFormContentId().contains(Helper.TEMP)) return formContent;
+
         FormContent tempFormContent = new FormContent(formContent.getFormId());
 
         tempFormContent.setFormContentId(formContent.getFormContentId() + Helper.TEMP);

@@ -55,10 +55,18 @@
     <!-- FormListActivity -->
     <string name="formContentFormList">Filled in forms</string>
     <string name="uploadProgressInfo">Upload progress: %s of %s.</string>
+    <string name="uploadDone">Uploading done!</string>
+    <string name="uploadErrorDialogTitle">Upload errors.</string>
     <string name="uploadDialogTitle">Do you want to upload local content?</string>
     <string name="uploadDialogMessage">The local content that is uploaded will be deleted!</string>
     <string name="uploadLoginDialogTitle">You are not logged in.</string>
     <string name="uploadLoginDialogMessage">To upload local content you must log in first.</string>
+    <string name="retry">Retry</string>
+    <string name="uploadInfoFailed">Uploading failed. Tap here for more info.</string>
+    <string name="uploadNoInternetDialogTitle">No network available.</string>
+    <string name="uploadNoInternetDialogMessage">No internet connection available. Please try again later</string>
+    <string name="backDialogTitle">Go back?</string>
+    <string name="backDialogMessage">Editing can be done by tapping the section you want to edit. Data will be lost if you go back.</string>
 
     <!-- FormOverviewActivity -->
     <string name="photoGalleryTitle">Photos</string>

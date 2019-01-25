@@ -45,6 +45,7 @@ public class CameraActivity extends FormBaseActivity {
     private String formName;
     private File nextImageFile;
     private Uri nextImageUri;
+    private boolean isEditing;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -97,7 +98,6 @@ public class CameraActivity extends FormBaseActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        Helper.log("permissionResult()");
     }
 
     private void updateView() {
@@ -165,6 +165,7 @@ public class CameraActivity extends FormBaseActivity {
         Intent intent = getIntent();
         formName = intent.getStringExtra(Helper.FORM);
         formContent = Storage.getFormContentById(intent.getStringExtra(Helper.FORM_CONTENT_ID), this);
+        isEditing = intent.getBooleanExtra(Helper.IS_EDITING, false);
     }
 
     //het resultaat van de camera (een foto) wordt hier in een nieuwe ImageView gestopt
@@ -189,10 +190,13 @@ public class CameraActivity extends FormBaseActivity {
                 int sectionIndex = data.getIntExtra(Helper.SECTION_INDEX, 0);
                 getIntent().putExtra(Helper.SECTION_INDEX, sectionIndex);
                 setResult(Helper.EDIT_SECTION_CODE, getIntent());
-                Helper.log("Camera put " + sectionIndex);
+                finish();
+            } else if (resultCode == Helper.GO_BACK) {
+                setResult(Helper.GO_BACK);
                 finish();
             }
         }
+
     }
 
     private void handleSaveImage() {
@@ -222,7 +226,6 @@ public class CameraActivity extends FormBaseActivity {
 
     private void handleDeleteImage(Intent data) {
         String imageNameToRemove = data.getStringExtra(Helper.IMAGE_NAME);
-        Helper.log("CameraActivity.handleDeleteImage() " + imageNameToRemove);
         if (!formContent.getImageNames().contains(imageNameToRemove)) return;
 
         formContent.getImageNames().remove(imageNameToRemove);
@@ -254,6 +257,18 @@ public class CameraActivity extends FormBaseActivity {
                     startActivityForResult(formOverviewIntent, Helper.CAMERA_ACTIVITY_CODE);
                 }
                 return true;
+            case R.id.save_menu_item:
+                if (formContent.getImageNames().isEmpty()) {
+                    new AlertDialog.Builder(this)
+                            .setTitle("No images found")
+                            .setMessage("You need to take at least one picture")
+                            .setNegativeButton("Back", null)
+                            .create().show();
+                } else {
+                    setResult(Helper.EDIT_PHOTOS_CODE);
+                    finish();
+                }
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -267,7 +282,11 @@ public class CameraActivity extends FormBaseActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.form_activity_menu, menu);
+        if (isEditing) {
+            getMenuInflater().inflate(R.menu.form_save_activity_menu, menu);
+        } else {
+            getMenuInflater().inflate(R.menu.form_activity_menu, menu);
+        }
         return super.onPrepareOptionsMenu(menu);
     }
 }

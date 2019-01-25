@@ -54,8 +54,6 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
         getLayoutInflater().inflate(R.layout.activity_form, contentFrameLayout);
         getSupportActionBar().setTitle(getString(R.string.forms));
 
-        Storage.cleanStorage(this);
-
         dropDownValues = new ArrayList<>();
         try {
             loadIntent();
@@ -78,22 +76,7 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
         sectionIndex = intent.getIntExtra(Helper.SECTION_INDEX, 0);
         isEditing = intent.getBooleanExtra(Helper.IS_EDITING, false);
 
-        form = Storage.getForm(formName, this);
-        if (form == null) {
-            finish();
-        }
-
-        FormContent formContent = null;
-        if (formContentId != null && !formContentId.isEmpty()) {
-            formContent = Storage.getFormContentById(formContentId, this);
-        }
-
-        if (formContent == null) {
-            formContent = new FormContent(form.getId());
-        }
-
-        tempFormContent = FormContent.createTemp(formContent);
-        Storage.saveFormContent(tempFormContent, this);
+        loadFormData(formName, formContentId);
 
         if (sectionIndex >= form.getFormTemplate().getSections().size()) {
             sectionIndex = 0;
@@ -104,7 +87,30 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
         }
     }
 
+    private void loadFormData(String formName, String formContentId) {
+        form = Storage.getForm(formName, this);
+        if (form == null) {
+            finish();
+        }
+        Helper.log("1");
+        FormContent formContent = null;
+        if (formContentId != null && !formContentId.isEmpty()) {
+            Helper.log("2 " + formContentId);
+            formContent = Storage.getFormContentById(formContentId, this);
+        }
+
+        if (formContent == null) {
+            Helper.log("3");
+            formContent = new FormContent(form.getId());
+        }
+
+        tempFormContent = FormContent.createTemp(formContent);
+        Storage.saveFormContent(tempFormContent, this);
+        Helper.log("5");
+    }
+
     private void updateView() {
+        tempFormContent = Storage.getTempFormContent(this);
         Section section = form.getFormTemplate().getSections().get(sectionIndex);
         ArrayList<Field> fields = section.getFields();
         getSupportActionBar().setTitle(tempFormContent.getFormContentName());
@@ -155,7 +161,6 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
         }
 
         String value = tempFormContent.getAnswer(field.getFieldName());
-        Helper.log("value: " + value);
         if (!value.isEmpty()) {
             editText.setText(value);
         }
@@ -218,6 +223,11 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
             case R.id.next_menu_item:
                 nextSection();
                 return true;
+            case R.id.save_menu_item:
+                nextSection();
+                Storage.confirmFormContent(this);
+                finish();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -234,6 +244,7 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
         ArrayList<String> errors = validateSection();
         if (errors.size() == 0) {
             clearFields();
+            storeFormContent();
             if (!isEditing) {
                 if (sectionIndex < form.getFormTemplate().getSections().size() - 1) {
                     sectionIndex++;
@@ -242,8 +253,6 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
                 } else if (sectionIndex >= form.getFormTemplate().getSections().size() - 1) {
                     goToCameraActivity();
                 }
-            } else {
-                finish();
             }
         } else {
             String errorMessage = "";
@@ -261,11 +270,10 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
     private void goToCameraActivity() {
         tempFormContent.updateFormContentName(this);
 
-        storeFormContent();
-
         Intent cameraIntent = new Intent(getApplicationContext(), CameraActivity.class);
         cameraIntent.putExtra(Helper.FORM, form.getFormattedFormName());
         cameraIntent.putExtra(Helper.FORM_CONTENT_ID, tempFormContent.getFormContentId());
+        cameraIntent.putExtra(Helper.IS_EDITING, isEditing);
         startActivityForResult(cameraIntent, Helper.FORM_ACTIVITY_CODE);
     }
 
@@ -388,8 +396,10 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
                 updateView();
             } else if (resultCode == Helper.EDIT_SECTION_CODE && data != null) {
                 sectionIndex = data.getIntExtra(Helper.SECTION_INDEX, 0);
-                Helper.log("Form " + sectionIndex);
                 updateView();
+            } else if (resultCode == Helper.GO_BACK) {
+                setResult(Helper.GO_BACK);
+                finish();
             }
         }
     }
@@ -412,7 +422,11 @@ public class FormActivity extends FormBaseActivity implements AdapterView.OnItem
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.form_activity_menu, menu);
+        if (isEditing) {
+            getMenuInflater().inflate(R.menu.form_save_activity_menu, menu);
+        } else {
+            getMenuInflater().inflate(R.menu.form_activity_menu, menu);
+        }
         return super.onPrepareOptionsMenu(menu);
     }
 

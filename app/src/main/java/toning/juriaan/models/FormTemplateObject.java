@@ -20,6 +20,5 @@ public class FormTemplateObject {
         this.name = name;
         this.region = "test region";
         this.formTemplateString = formTemplate.toJson();//.replace("\"", "\\\"");
-        Helper.log(this.formTemplateString);
     }
 }

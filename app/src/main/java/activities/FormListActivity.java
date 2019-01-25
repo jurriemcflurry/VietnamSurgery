@@ -1,15 +1,16 @@
 package activities;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.util.LogPrinter;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +21,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import toning.juriaan.models.AccessToken;
-import toning.juriaan.models.FormContentUploadCallHandler;
 import toning.juriaan.models.FormContentUploadHandler;
 import toning.juriaan.models.FormContentUploadProgress;
 import toning.juriaan.models.ProgressListener;
@@ -55,20 +55,20 @@ public class FormListActivity extends BaseActivity implements FormListAdapter.Fo
         getLayoutInflater().inflate(R.layout.activity_form_list, contentFrameLayout);
         getSupportActionBar().setTitle(getString(R.string.formContentFormList));
 
-        loadProgressView();
-        updateProgressView();
-
         ArrayList<String> formContentNames = Storage.getFormContentNames(this);
         formListAdapter = new FormListAdapter(formContentNames, this);
         formListRecycler = findViewById(R.id.form_list_recycler);
         formListRecycler.setAdapter(formListAdapter);
         formListRecycler.setLayoutManager(new LinearLayoutManager(this));
+
+        loadProgressView();
+        updateProgressView();
     }
 
     private void loadProgressView() {
         uploadProgressBar = findViewById(R.id.upload_progress_bar);
         uploadProgressBar.setVisibility(View.INVISIBLE);
-        uploadProgress = new FormContentUploadProgress(0, this);
+        uploadProgress = new FormContentUploadProgress(this);
 
         uploadProgressInfo = findViewById(R.id.upload_progress_info);
         uploadProgressInfo.setVisibility(View.INVISIBLE);
@@ -84,14 +84,13 @@ public class FormListActivity extends BaseActivity implements FormListAdapter.Fo
         final FormWebInterface client = retrofit.create(FormWebInterface.class);
 
         final ArrayList<FormContent> formContents = Storage.getFormContents(this);
-        uploadProgressBar.setMax(formContents.size());
-        uploadProgressBar.setProgress(0);
-        uploadProgress.setTotalFormContents(formContents.size());
+        uploadProgress.clearErrors();
+        uploadProgress.clearResponses();
+        uploadProgress.setUploadTotal(formContents.size());
 
         uploadHandler = new FormContentUploadHandler(formContents, this, client, this);
 
         handler.post(uploadHandler);
-        dump();
         updateProgressView();
     }
 
@@ -99,12 +98,6 @@ public class FormListActivity extends BaseActivity implements FormListAdapter.Fo
     public boolean onPrepareOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.form_list_menu, menu);
         return super.onPrepareOptionsMenu(menu);
-    }
-
-    private void deleteAllFormContents() {
-        if (Storage.deleteAllFormContent(this)) {
-            updateView();
-        }
     }
 
     @Override
@@ -119,30 +112,11 @@ public class FormListActivity extends BaseActivity implements FormListAdapter.Fo
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == Helper.FORM_OVERVIEW_CODE) {
-            if (resultCode == Helper.CONTENT_SAVED_CODE) {
-                updateView();
-            } else if ((resultCode == Helper.EDIT_SECTION_CODE && data != null) || resultCode == Helper.EDIT_PHOTOS_CODE) {
-                Intent formIntent = new Intent(getApplicationContext(), FormActivity.class);
-                int sectionIndex = data.getIntExtra(Helper.SECTION_INDEX, 0);
-                formIntent.putExtra(Helper.SECTION_INDEX, sectionIndex);
-                formIntent.putExtra(Helper.FORM, data.getStringExtra(Helper.FORM));
-                formIntent.putExtra(Helper.FORM_CONTENT_ID, data.getStringExtra(Helper.FORM_CONTENT_ID));
-                if (resultCode == Helper.EDIT_PHOTOS_CODE) {
-                    formIntent.putExtra(Helper.GO_TO_CAMERA, true);
-                    startActivityForResult(formIntent, Helper.EDIT_PHOTOS_CODE);
-                } else {
-                    startActivityForResult(formIntent, Helper.EDIT_SECTION_CODE);
-                }
-
-            }
-        } else if (requestCode == Helper.EDIT_SECTION_CODE) {
-            if (resultCode == Helper.CONTENT_SAVED_CODE) {
-                updateView();
-            }
+            updateRecyclerView();
         }
     }
 
-    private void updateView() {
+    private void updateRecyclerView() {
         formListAdapter.setFormContentNames(Storage.getFormContentNames(this));
     }
 
@@ -158,12 +132,31 @@ public class FormListActivity extends BaseActivity implements FormListAdapter.Fo
     }
 
     private void tryPostFormContentList() {
-        if (AccessToken.getAccess_token() != null) {
-            getUploadDialog().show();
+        if (isNetworkAvailable()) {
+            if (AccessToken.getAccess_token() != null) {
+                getUploadDialog().show();
+            } else {
+                getLoginDialog().show();
+            }
         } else {
-            getLoginDialog().show();
+            getNoInternetDialog().show();
         }
 
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    private AlertDialog getNoInternetDialog() {
+        return new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.uploadNoInternetDialogTitle))
+                .setMessage(getString(R.string.uploadNoInternetDialogMessage))
+                .setPositiveButton(getString(R.string.ok), null)
+                .create();
     }
 
     private AlertDialog getLoginDialog() {
@@ -195,16 +188,54 @@ public class FormListActivity extends BaseActivity implements FormListAdapter.Fo
                 .create();
     }
 
+    private AlertDialog getUploadErrorDialog() {
+        return new AlertDialog.Builder(this)
+                .setTitle(R.string.deleteDialogTitle)
+                .setMessage(uploadProgress.getErrorMessage())
+                .setPositiveButton(getString(R.string.ok), null)
+                .setNegativeButton(getString(R.string.retry), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        postFormContentList();
+                    }
+                }).create();
+    }
+
     @Override
     public void updateProgressView() {
-        if (uploadHandler == null) return;
-        uploadProgressInfo.setVisibility(View.VISIBLE);
-        uploadProgressBar.setVisibility(View.VISIBLE);
-        uploadProgressBar.setProgress(uploadProgress.getUploadedFormContents());
-        uploadProgressInfo.setText(String.format(
-                getString(R.string.uploadProgressInfo),
-                "" + uploadProgress.getUploadedFormContents(),
-                "" + uploadProgress.getTotalFormContents()));
+        if (uploadProgress == null || uploadProgress.getUploadTotal() < 1) return;
+
+        uploadProgressInfo.setOnClickListener(null);
+
+        if (!uploadProgress.isDone()) {
+            uploadProgressInfo.setVisibility(View.VISIBLE);
+            uploadProgressBar.setVisibility(View.VISIBLE);
+
+            uploadProgressBar.setProgress(uploadProgress.getResponses());
+            uploadProgressBar.setMax(uploadProgress.getUploadTotal());
+
+            uploadProgressInfo.setText(String.format(
+                    getString(R.string.uploadProgressInfo),
+                    "" + uploadProgress.getResponses(),
+                    "" + uploadProgress.getUploadTotal()));
+        } else {
+            uploadProgressBar.setVisibility(View.INVISIBLE);
+            Storage.cleanStorage(this);
+
+            if (uploadProgress.getErrors().size() == 0) {
+                Intent backToHome = new Intent(getApplicationContext(), MainActivity.class);
+                backToHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(backToHome);
+            } else {
+                uploadProgressInfo.setText(getString(R.string.uploadInfoFailed));
+                uploadProgressInfo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        getUploadErrorDialog().show();
+                    }
+                });
+            }
+        }
     }
 
     @Override
@@ -215,9 +246,5 @@ public class FormListActivity extends BaseActivity implements FormListAdapter.Fo
     @Override
     public FormContentUploadProgress getProgress() {
         return uploadProgress;
-    }
-
-    private void dump() {
-        handler.dump(new LogPrinter(Log.DEBUG, "Handler"), "FormList");
     }
 }

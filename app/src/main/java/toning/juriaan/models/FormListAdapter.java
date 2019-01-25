@@ -32,6 +32,10 @@ public class FormListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         notifyDataSetChanged();
     }
 
+    public void updateFormContentsList() {
+        this.setFormContentNames(Storage.getFormContentNames(context));
+    }
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -43,6 +47,8 @@ public class FormListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         final FormContent formContent = Storage.getFormContentById(formContentNames.get(i), context);
+        if (formContent == null) return;
+
         FormListViewHolder vh = (FormListViewHolder) viewHolder;
 
         String name = context.getString(R.string.name) + ": " +

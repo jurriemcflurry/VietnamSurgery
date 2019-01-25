@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.view.Menu;
@@ -52,16 +53,31 @@ public class FormOverviewActivity extends FormBaseActivity {
 
     private void loadIntent() {
         Intent intent = getIntent();
-        String formContentName = intent.getStringExtra(Helper.FORM_CONTENT_ID);
         String formName = intent.getStringExtra(Helper.FORM);
+        String formContentId = intent.getStringExtra(Helper.FORM_CONTENT_ID);
         isEditing = intent.getBooleanExtra(Helper.IS_EDITING, false);
 
+        loadFormData(formName, formContentId);
+    }
+
+    private void loadFormData(String formName, String formContentId) {
+        Helper.log("formName " + formName);
+        Helper.log("formContentId " + formContentId);
         form = Storage.getForm(formName, this);
-        formContent = Storage.getFormContentById(formContentName, this);
+        formContent = Storage.getFormContentById(formContentId, this);
+        if (formContent == null && formContentId.contains(Helper.TEMP)) {
+            formContentId = formContentId.replaceAll(Helper.TEMP, "");
+            formContent = Storage.getFormContentById(formContentId, this);
+        }
+
+        if (formContent == null) {
+            finish();
+        }
     }
 
     private void updateView() {
         sectionsView.removeAllViews();
+        loadFormData(form.getFormattedFormName(), formContent.getFormContentId());
         for (int i = 0; i < form.getFormTemplate().getSections().size(); i++) {
             Section section = form.getFormTemplate().getSections().get(i);
             LinearLayout sectionView = getSectionView(section);
@@ -86,8 +102,7 @@ public class FormOverviewActivity extends FormBaseActivity {
                 formActivityIntent.putExtra(Helper.IS_EDITING, true);
                 formActivityIntent.putExtra(Helper.GO_TO_CAMERA, true);
 
-                setResult(Helper.EDIT_PHOTOS_CODE, formActivityIntent);
-                finish();
+                startActivityForResult(formActivityIntent, Helper.EDIT_PHOTOS_CODE);
             }
         };
     }
@@ -226,7 +241,6 @@ public class FormOverviewActivity extends FormBaseActivity {
         return super.onPrepareOptionsMenu(menu);
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -241,6 +255,15 @@ public class FormOverviewActivity extends FormBaseActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if (isEditing) {
+            getBackDialog().show();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     private AlertDialog getSaveDialog() {
         return new AlertDialog.Builder(this)
                 .setTitle(R.string.saveDialogTitle)
@@ -251,8 +274,7 @@ public class FormOverviewActivity extends FormBaseActivity {
                         setResult(Helper.CONTENT_SAVED_CODE);
                         formContent.updateDate();
                         Context context = getApplicationContext();
-                        Storage.confirmFormContent(formContent, context);
-                        Storage.cleanStorage(context);
+                        Storage.confirmFormContent(context);
                         finish();
                     }
                 })
@@ -274,5 +296,30 @@ public class FormOverviewActivity extends FormBaseActivity {
                 })
                 .setNegativeButton(R.string.cancel, null)
                 .create();
+    }
+
+    private AlertDialog getBackDialog() {
+        return new AlertDialog.Builder(this)
+                .setTitle(R.string.backDialogTitle)
+                .setMessage(R.string.backDialogMessage)
+                .setPositiveButton(R.string.back, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Storage.cleanStorage(getApplicationContext());
+                        Storage.deleteFormContent(formContent, getApplicationContext());
+                        setResult(Helper.GO_BACK);
+                        finish();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .create();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == Helper.EDIT_PHOTOS_CODE || requestCode == Helper.EDIT_SECTION_CODE) {
+            updateView();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

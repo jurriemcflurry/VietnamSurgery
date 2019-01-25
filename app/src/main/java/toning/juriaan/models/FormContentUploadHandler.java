@@ -4,6 +4,7 @@ import android.content.Context;
 
 import java.util.ArrayList;
 
+import retrofit2.Call;
 import webinterfaces.FormWebInterface;
 
 public class FormContentUploadHandler implements Runnable {
@@ -33,23 +34,17 @@ public class FormContentUploadHandler implements Runnable {
     public void run() {
         try {
             isRunning = true;
-            Helper.log("isRunning " + isRunning);
             int i = 0;
             while (i < formContents.size()) {
                 ArrayList<Thread> threads = new ArrayList<>();
                 int j = i;
                 while (j < i + 5 && j < formContents.size()) {
                     FormContent formContent = formContents.get(j);
-                    FormContentUploadCallHandler handler = new FormContentUploadCallHandler(
-                            formContent,
-                            context,
-                            client,
-                            progressListener.getProgress());
+                    FormContentUploadModel uploadModel = new FormContentUploadModel(formContent, context);
+                    Call<Void> call = client.postFormContent(uploadModel);
 
-                    Thread thread = new Thread(handler);
-                    threads.add(thread);
-                    thread.start();
-                    Helper.log("Call handler started. " + formContent.getFormContentId());
+                    call.enqueue(new FormContentCallback(formContent, progressListener.getProgress(), context));
+
                     j++;
                 }
 

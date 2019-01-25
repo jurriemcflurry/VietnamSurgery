@@ -3,33 +3,32 @@ package toning.juriaan.models;
 import java.util.ArrayList;
 
 public class FormContentUploadProgress {
-    private int uploadedFormContents;
-    private int totalFormContents;
+    private int responses;
+    private int uploadTotal;
     private ArrayList<String> errors;
     private ProgressListener progressListener;
 
-    public FormContentUploadProgress(int totalFormContents, ProgressListener progressListener) {
-        this.uploadedFormContents = 0;
-        this.totalFormContents = totalFormContents;
+    public FormContentUploadProgress(ProgressListener progressListener) {
+        this.responses = 0;
+        this.uploadTotal = 0;
         this.errors = new ArrayList<>();
         this.progressListener = progressListener;
-        progressListener.setMax(totalFormContents);
     }
 
-    public int getUploadedFormContents() {
-        return uploadedFormContents;
+    public int getResponses() {
+        return responses;
     }
 
-    public void setUploadedFormContents(int uploadedFormContents) {
-        this.uploadedFormContents = uploadedFormContents;
+    public void setResponses(int responses) {
+        this.responses = responses;
     }
 
-    public int getTotalFormContents() {
-        return totalFormContents;
+    public int getUploadTotal() {
+        return uploadTotal;
     }
 
-    public void setTotalFormContents(int totalFormContents) {
-        this.totalFormContents = totalFormContents;
+    public void setUploadTotal(int uploadTotal) {
+        this.uploadTotal = uploadTotal;
     }
 
     public ArrayList<String> getErrors() {
@@ -42,17 +41,40 @@ public class FormContentUploadProgress {
 
     public void addResponse() {
         synchronized (this) {
-            uploadedFormContents++;
+            responses++;
             progressListener.updateProgressView();
         }
 
+    }
+
+    public void clearResponses() {
+        responses = 0;
     }
 
     public void addError(String error) {
         synchronized (this) {
             errors.add(error);
             progressListener.updateProgressView();
-            Helper.log("addError() " + error);
         }
+    }
+
+    public void clearErrors() {
+        errors.clear();
+    }
+
+    public boolean isDone() {
+        synchronized (this) {
+            return responses >= uploadTotal;
+        }
+    }
+
+    public String getErrorMessage() {
+        StringBuilder stringBuilder = new StringBuilder("errors:\n");
+        for (String error : errors) {
+            String entry = error + "\n";
+            stringBuilder.append(entry);
+        }
+
+        return stringBuilder.toString();
     }
 }

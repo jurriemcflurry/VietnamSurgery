@@ -83,7 +83,6 @@ public class MainActivity extends BaseActivity implements FormAdapter.FormListen
 
             @Override
             public void onFailure(Call<FormulierenResponse[]> call, Throwable t) {
-                Helper.log("onFailure() " + t.getMessage());
                 t.printStackTrace();
             }
         });
@@ -98,7 +97,6 @@ public class MainActivity extends BaseActivity implements FormAdapter.FormListen
     public void onItemClick(Form form) {
         Intent toFormActivityIntent = new Intent(MainActivity.this, FormActivity.class);
         toFormActivityIntent.putExtra(Helper.FORM, form.getFormattedFormName());
-        Helper.log("main start with " + true);
         startActivity(toFormActivityIntent);
     }
 
@@ -132,7 +130,6 @@ public class MainActivity extends BaseActivity implements FormAdapter.FormListen
 
                                 @Override
                                 public void onFailure(Call<Void> call, Throwable t) {
-                                    Helper.log("on Failure");
                                 }
                             });
                         }

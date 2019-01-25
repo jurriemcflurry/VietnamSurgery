@@ -14,7 +14,6 @@ public class Helper {
     public final static String FORM_CONTENT_ID = "FormContentId";
     public final static String SECTION_INDEX = "SectionIndex";
     public final static String IMAGE_NAME = "ImageName";
-    public final static String IMAGE_EXTENSION = ".png";
     public final static String IS_EDITING = "IsNew";
     public final static String GO_TO_CAMERA = "GoToCamera";
 
@@ -25,6 +24,7 @@ public class Helper {
     public final static int EDIT_SECTION_CODE = 301;
     public final static int EDIT_PHOTOS_CODE = 302;
     public final static int CONTENT_SAVED_CODE = 303;
+    public final static int GO_BACK = 304;
     public final static int DELETE_IMAGE = 400;
     public final static int NO_IMAGE_DELETED = 401;
     public final static int FORM_LIST_CODE = 500;
@@ -42,6 +42,7 @@ public class Helper {
     public final static String QUESTION_SECTION = "Section";
 
     public final static String FILE_EXTENSION = ".json";
+    public final static String IMAGE_EXTENSION = ".png";
     public final static String TEMP = "_temp";
 
     public final static int THUMBNAIL_SIZE = 400;

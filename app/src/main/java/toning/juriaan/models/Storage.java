@@ -88,7 +88,6 @@ public class Storage {
             while ((line = reader.readLine()) != null) {
                 stringBuilder.append(line);
             }
-            reader.close();
             return stringBuilder.toString();
         } catch (Exception e) {
             e.printStackTrace();
@@ -133,28 +132,42 @@ public class Storage {
     }
 
     public static FormContent getTempFormContent(Context context) {
+        return FormContent.fromJson(readFile(getTempFormContentFile(context)));
+    }
+
+    private static File getTempFormContentFile(Context context) {
         try {
             File[] files = getFormContentDir(context).listFiles();
-
             for (File file : files) {
                 if (file.getName().contains(Helper.TEMP)) {
-                    return FormContent.fromJson(readFile(file));
+                    return file;
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
-    public static boolean confirmFormContent(FormContent formContent, Context context) {
+    public static FormContent getWorkingFormContent(Context context) {
+        String formContentName = getTempFormContentFile(context).getName().replaceAll(Helper.TEMP, "");
+        try {
+            return FormContent.fromJson(readFile(getFormContentFile(formContentName, context)));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static boolean confirmFormContent(Context context) {
         boolean success = false;
 
         try {
+            FormContent formContent = getTempFormContent(context);
             formContent.confirm();
             saveFormContent(formContent, context);
             confirmImages(context);
+            cleanStorage(context);
             success = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -170,10 +183,6 @@ public class Storage {
             File[] thumbnailFiles = getThumbnailDir(context).listFiles();
 
             File[] files = new File[imageFiles.length + thumbnailFiles.length];
-
-            Helper.log("files size " + files.length);
-            Helper.log("imageFiles size " + imageFiles.length);
-            Helper.log("thumbnailFiles size " + thumbnailFiles.length);
 
             System.arraycopy(imageFiles, 0, files, 0, imageFiles.length);
             System.arraycopy(thumbnailFiles, 0, files, imageFiles.length, thumbnailFiles.length);
@@ -340,7 +349,7 @@ public class Storage {
         try {
             File[] files = getFormContentDir(context).listFiles();
             for (File file : files) {
-                if (file.length() == 0 || file.getName().contains("_temp")) {
+                if (file.length() == 0 || file.getName().contains("_temp") || !file.getName().contains(Helper.FILE_EXTENSION)) {
                     file.delete();
                 }
             }
@@ -353,7 +362,7 @@ public class Storage {
         try {
             File[] files = getFormTemplateDir(context).listFiles();
             for (File file : files) {
-                if (file.length() == 0) {
+                if (file.length() == 0 || !file.getName().contains(Helper.FILE_EXTENSION)) {
                     file.delete();
                 }
             }
@@ -367,9 +376,9 @@ public class Storage {
             File[] files = getImagesDir(context).listFiles();
             for (File file : files) {
                 if (file.length() == 0 ||
-                    file.getName().contains(Helper.TEMP) ||
-                    imageIsOrphan(file.getName(), context))
-                {
+                        file.getName().contains(Helper.TEMP) ||
+                        !file.getName().contains(Helper.IMAGE_EXTENSION) ||
+                        imageIsOrphan(file.getName(), context)) {
                     file.delete();
                 }
             }
@@ -383,7 +392,10 @@ public class Storage {
         try {
             File[] files = getThumbnailDir(context).listFiles();
             for (File file : files) {
-                if (file.length() == 0 || file.getName().contains(Helper.TEMP) || imageIsOrphan(file.getName(), context)) {
+                if (file.length() == 0 ||
+                        file.getName().contains(Helper.TEMP) ||
+                        !file.getName().contains(Helper.IMAGE_EXTENSION) ||
+                        imageIsOrphan(file.getName(), context)) {
                     file.delete();
                 }
             }
@@ -516,8 +528,6 @@ public class Storage {
             for (File file : files) {
                 if (file.length() > 0 && file.getName().contains(Helper.FILE_EXTENSION)) {
                     names.add(file.getName().replaceAll(Helper.FILE_EXTENSION, ""));
-                } else {
-                    file.delete();
                 }
             }
         } catch (Exception e) {
@@ -579,7 +589,7 @@ public class Storage {
         if (!file.exists()) {
             try {
                 if (!file.createNewFile()) {
-                    Helper.log("Making file failed");
+                    throw new Exception("Making file failed");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -627,7 +637,7 @@ public class Storage {
         if (!file.exists()) {
             try {
                 if (!file.mkdirs()) {
-                    Helper.log("Making dir failed");
+                    throw new Exception("Making dir failed");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
