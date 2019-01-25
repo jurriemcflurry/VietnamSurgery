@@ -267,10 +267,11 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
         fieldType.setTextSize(20);
 
         linearLayout.addView(fieldType);
-        linearLayout.setOnClickListener(new View.OnClickListener() {
+        linearLayout.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View v) {
+            public boolean onLongClick(View v) {
                 deleteField(field);
+                return true;
             }
         });
         relativeLayout.addView(fieldName);

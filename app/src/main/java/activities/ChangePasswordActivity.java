@@ -31,7 +31,6 @@ public class ChangePasswordActivity extends BaseActivity implements Callback<Cha
     private Button changePassword;
     private ProgressBar changePasswordSpinner;
     private UserWebInterface userWebInterface;
-    private Helper helper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -106,7 +105,7 @@ public class ChangePasswordActivity extends BaseActivity implements Callback<Cha
 
     @Override
     public void onResponse(Call<ChangePasswordResponse> call, Response<ChangePasswordResponse> response) {
-        helper.hideKeyboard(this);
+        Helper.hideKeyboard(this);
         hideSpinner();
 
         if(response.isSuccessful() && response.body() == null){

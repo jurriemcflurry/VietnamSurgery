@@ -21,6 +21,9 @@
     <string name="logoutMessage">Are you sure you want to log out?</string>
     <string name="cancelLogout">Cancel</string>
     <string name="confirmLogout">Log out</string>
+    <string name="activityForm">activities.FormListActivity</string>
+    <string name="activityUsers">activities.UsersActivity</string>
+    <string name="activityLogin">activities.LoginActivity</string>
 
     <!-- CameraActivity -->
     <string name="imagesSaved">Images successfully saved!</string>
