@@ -90,7 +90,6 @@ public class UsersActivity extends BaseActivity implements Callback<List<User>> 
                                     startActivity(toLogin);
                                 }
                             }).show();
-                    return;
                 }
             }
         });

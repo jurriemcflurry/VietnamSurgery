@@ -29,7 +29,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView title;
         public TextView role;
-        public ImageView delete;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -48,7 +47,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
     public void onBindViewHolder(@NonNull final MyViewHolder vh, int i) {
         User node = getItem(i);
         vh.title.setText(node.username);
-        vh.role.setText("(" + node.roles.get(0).getRole() + ")");
+        vh.role.setText(node.roles.get(0).getRole());
 
         vh.title.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
