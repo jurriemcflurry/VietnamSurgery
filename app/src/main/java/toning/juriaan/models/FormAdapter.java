@@ -50,7 +50,7 @@ public class FormAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         final Form form = forms.get(i);
-        FormViewHolder vh = (FormViewHolder) viewHolder;
+        FormViewHolder formViewHolder = (FormViewHolder) viewHolder;
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,8 +66,8 @@ public class FormAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
         });
 
-        vh.formName.setText(form.getFormName());
-        vh.contentAmount.setText(getContentAmount(form.getId()).toString());
+        formViewHolder.formName.setText(form.getFormName());
+        formViewHolder.contentAmount.setText(getContentAmount(form.getId()).toString());
     }
 
     private Integer getContentAmount(Integer id) {

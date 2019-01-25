@@ -45,7 +45,6 @@ public class CameraActivity extends FormBaseActivity {
     private String formName;
     private File nextImageFile;
     private Uri nextImageUri;
-    private boolean isNew;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -166,8 +165,6 @@ public class CameraActivity extends FormBaseActivity {
         Intent intent = getIntent();
         formName = intent.getStringExtra(Helper.FORM);
         formContent = Storage.getFormContentById(intent.getStringExtra(Helper.FORM_CONTENT_ID), this);
-        isNew = intent.getBooleanExtra(Helper.IS_EDITING, false);
-        Helper.log("Camera load with " + isNew);
     }
 
     //het resultaat van de camera (een foto) wordt hier in een nieuwe ImageView gestopt
@@ -253,8 +250,7 @@ public class CameraActivity extends FormBaseActivity {
                     Intent formOverviewIntent = new Intent(getApplicationContext(), FormOverviewActivity.class);
                     formOverviewIntent.putExtra(Helper.FORM, formName);
                     formOverviewIntent.putExtra(Helper.FORM_CONTENT_ID, formContent.getFormContentId());
-                    formOverviewIntent.putExtra(Helper.IS_EDITING, isNew);
-                    Helper.log("Camera start with " + isNew);
+                    formOverviewIntent.putExtra(Helper.IS_EDITING, true);
                     startActivityForResult(formOverviewIntent, Helper.CAMERA_ACTIVITY_CODE);
                 }
                 return true;

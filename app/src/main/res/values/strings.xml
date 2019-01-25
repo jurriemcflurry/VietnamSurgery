@@ -5,7 +5,7 @@
 
     <!-- Menu items -->
     <string name="home">Home</string>
-    <string name="formContent">Filled in forms</string>
+    <string name="formContentAnswers">Filled in forms</string>
     <string name="not_logged_in">Not logged in</string>
     <string name="users">Users</string>
     <string name="login">Login</string>
@@ -53,7 +53,7 @@
 
     <!-- FormListActivity -->
     <string name="formContentFormList">Filled in forms</string>
-    <string name="uploadCountText">Upload progress: %s of %s.</string>
+    <string name="uploadProgressInfo">Upload progress: %s of %s.</string>
     <string name="uploadDialogTitle">Do you want to upload local content?</string>
     <string name="uploadDialogMessage">The local content that is uploaded will be deleted!</string>
     <string name="uploadLoginDialogTitle">You are not logged in.</string>

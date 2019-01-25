@@ -115,7 +115,7 @@ public class Storage {
     }
 
     public static boolean saveFormContent(FormContent formContent, Context context) {
-        Boolean success = false;
+        boolean success = false;
 
         try {
             File file = getFormContentFile(formContent.getFormContentId(), context);
@@ -132,6 +132,66 @@ public class Storage {
         return success;
     }
 
+    public static FormContent getTempFormContent(Context context) {
+        try {
+            File[] files = getFormContentDir(context).listFiles();
+
+            for (File file : files) {
+                if (file.getName().contains(Helper.TEMP)) {
+                    return FormContent.fromJson(readFile(file));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static boolean confirmFormContent(FormContent formContent, Context context) {
+        boolean success = false;
+
+        try {
+            formContent.confirm();
+            saveFormContent(formContent, context);
+            confirmImages(context);
+            success = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return success;
+    }
+
+    private static boolean confirmImages(Context context) {
+        boolean success = true;
+        try {
+            File[] imageFiles = getImagesDir(context).listFiles();
+            File[] thumbnailFiles = getThumbnailDir(context).listFiles();
+
+            File[] files = new File[imageFiles.length + thumbnailFiles.length];
+
+            Helper.log("files size " + files.length);
+            Helper.log("imageFiles size " + imageFiles.length);
+            Helper.log("thumbnailFiles size " + thumbnailFiles.length);
+
+            System.arraycopy(imageFiles, 0, files, 0, imageFiles.length);
+            System.arraycopy(thumbnailFiles, 0, files, imageFiles.length, thumbnailFiles.length);
+
+
+            for (File file : files) {
+                if (file.getName().contains(Helper.TEMP)) {
+                    if (!file.renameTo(new File(file.getAbsolutePath().replaceAll(Helper.TEMP, "")))) {
+                        success = false;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return success;
+    }
+
     public static boolean saveImage(Image image, Context context) {
         Boolean success = false;
 
@@ -139,24 +199,11 @@ public class Storage {
             saveThumbnail(image, context);
             Bitmap fullImageBitMap = image.getImageBitmap(context);
 
-            int newWidth = fullImageBitMap.getWidth();
-            int newHeight = fullImageBitMap.getHeight();
-            if (fullImageBitMap.getWidth() > fullImageBitMap.getHeight()) {
-                if (fullImageBitMap.getWidth() > 1000) {
-                    newWidth = 1000;
-                    newHeight = (1000 * fullImageBitMap.getHeight()) / fullImageBitMap.getWidth();
-                }
-            } else {
-                if (fullImageBitMap.getHeight() > 1000) {
-                    newWidth = (1000 * fullImageBitMap.getWidth()) / fullImageBitMap.getHeight();
-                    newHeight = 1000;
-                }
-            }
+            int[] newDimensions = calcResizedDimensions(new int[]{fullImageBitMap.getWidth(), fullImageBitMap.getHeight()});
+            if (newDimensions == null) return false;
 
             Bitmap resizedImageBitmap = ThumbnailUtils.extractThumbnail(
-                    fullImageBitMap, newWidth, newHeight);
-            Helper.log("new size " + newWidth + " " + newHeight);
-            Helper.log("resized " + resizedImageBitmap.getWidth() + " " + resizedImageBitmap.getHeight());
+                    fullImageBitMap, newDimensions[0], newDimensions[1]);
             image.setImageBitmap(resizedImageBitmap);
 
 
@@ -164,14 +211,33 @@ public class Storage {
                     getImageFile(image.getImageName(), context));
             Bitmap resetImage = image.getImageBitmap(context);
 
-            Helper.log("reset " + resetImage.getWidth() + " " + resetImage.getHeight());
-
             resetImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.close();
+            success = true;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return success;
+    }
+
+    private static int[] calcResizedDimensions(int[] dimensions) {
+        if (dimensions.length != 2) return null;
+
+        int newWidth = dimensions[0];
+        int newHeight = dimensions[1];
+        if (dimensions[0] > dimensions[1]) {
+            if (dimensions[0] > 1000) {
+                newWidth = 1000;
+                newHeight = (1000 * dimensions[1]) / dimensions[0];
+            }
+        } else {
+            if (dimensions[1] > 1000) {
+                newWidth = (1000 * dimensions[0]) / dimensions[1];
+                newHeight = 1000;
+            }
+        }
+
+        return new int[]{newWidth, newHeight};
     }
 
     public static boolean saveThumbnail(Image image, Context context) {
@@ -204,13 +270,13 @@ public class Storage {
         return null;
     }
 
-    public static void deleteAllForms(Context context){
-        try{
+    public static void deleteAllForms(Context context) {
+        try {
             File[] formFiles = getFormTemplateDir(context).listFiles();
-            for(File file : formFiles){
+            for (File file : formFiles) {
                 file.delete();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -274,7 +340,7 @@ public class Storage {
         try {
             File[] files = getFormContentDir(context).listFiles();
             for (File file : files) {
-                if (file.length() == 0) {
+                if (file.length() == 0 || file.getName().contains("_temp")) {
                     file.delete();
                 }
             }
@@ -300,7 +366,10 @@ public class Storage {
         try {
             File[] files = getImagesDir(context).listFiles();
             for (File file : files) {
-                if (file.length() == 0) {
+                if (file.length() == 0 ||
+                    file.getName().contains(Helper.TEMP) ||
+                    imageIsOrphan(file.getName(), context))
+                {
                     file.delete();
                 }
             }
@@ -314,13 +383,28 @@ public class Storage {
         try {
             File[] files = getThumbnailDir(context).listFiles();
             for (File file : files) {
-                if (file.length() == 0) {
+                if (file.length() == 0 || file.getName().contains(Helper.TEMP) || imageIsOrphan(file.getName(), context)) {
                     file.delete();
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static boolean imageIsOrphan(String imageName, Context context) {
+        try {
+            File[] formContentFiles = getFormContentDir(context).listFiles();
+
+            for (File formContentFile : formContentFiles) {
+                if (formContentFile.getName().contains(imageName.split("_")[0])) {
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 
     public static ArrayList<Image> getImagesForFormContent(FormContent formContent, Context context) {
@@ -430,8 +514,8 @@ public class Storage {
         try {
             File[] files = getFormContentDir(context).listFiles();
             for (File file : files) {
-                if (file.length() > 0 && file.getName().contains(".json")) {
-                    names.add(file.getName().split(".json")[0]);
+                if (file.length() > 0 && file.getName().contains(Helper.FILE_EXTENSION)) {
+                    names.add(file.getName().replaceAll(Helper.FILE_EXTENSION, ""));
                 } else {
                     file.delete();
                 }
@@ -440,58 +524,6 @@ public class Storage {
             e.printStackTrace();
         }
         return names;
-    }
-
-    public static int getNextFormContentNumber(String formContentName, Context context) {
-        try {
-            cleanStorage(context);
-            File[] files = getFormContentDir(context).listFiles();
-            int highestNumber = 0;
-            for (File file : files) {
-                if (file.length() <= 0) continue;
-                String name = file.getName();
-                name = name.split(".json")[0];
-                String[] splitName = name.split("_");
-                String[] splitFormContentName = formContentName.split("_");
-                boolean same = true;
-                for (int i = 0; i < splitFormContentName.length; i++) {
-                    if (!splitName[i].equals(splitFormContentName[i])) {
-                        same = false;
-                        break;
-                    }
-                }
-                if (same) {
-                    try {
-                        int fileNumber = Integer.parseInt(splitName[splitName.length - 1]);
-                        if (fileNumber >= highestNumber) {
-                            highestNumber = fileNumber + 1;
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            return highestNumber;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return -1;
-        }
-    }
-
-    public static int getNextImageNumber(FormContent formContent, Context context) {
-        cleanStorage(context);
-        ArrayList<Image> images = getImagesForFormContent(formContent, context);
-        Helper.log("images " + images.size());
-        int highestNumber = 0;
-        for (Image image : images) {
-            String[] splitImageName = image.getImageName().split("_");
-            int imageNumber = Integer.parseInt(splitImageName[splitImageName.length - 1]);
-            if (imageNumber >= highestNumber) {
-                highestNumber = imageNumber + 1;
-            }
-        }
-        return highestNumber;
     }
 
     public static void makeLogEntry(String entry, Context context) {

@@ -98,7 +98,6 @@ public class MainActivity extends BaseActivity implements FormAdapter.FormListen
     public void onItemClick(Form form) {
         Intent toFormActivityIntent = new Intent(MainActivity.this, FormActivity.class);
         toFormActivityIntent.putExtra(Helper.FORM, form.getFormattedFormName());
-        toFormActivityIntent.putExtra(Helper.IS_EDITING, true);
         Helper.log("main start with " + true);
         startActivity(toFormActivityIntent);
     }
@@ -144,6 +143,7 @@ public class MainActivity extends BaseActivity implements FormAdapter.FormListen
 
     @Override
     protected void onResume() {
+        Storage.cleanStorage(this);
         formAdapter.updateAmounts();
         super.onResume();
     }

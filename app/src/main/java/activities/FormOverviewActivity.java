@@ -1,5 +1,6 @@
 package activities;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -16,7 +17,6 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import toning.juriaan.models.Field;
@@ -77,15 +77,16 @@ public class FormOverviewActivity extends FormBaseActivity {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = getIntent();
+                Intent formActivityIntent = new Intent(getApplicationContext(), FormActivity.class);
                 Form form = Storage.getFormById(formContent.getFormId(), getApplicationContext());
                 if (form != null) {
-                    intent.putExtra(Helper.SECTION_INDEX, form.getFormTemplate().getSections().size() - 1);
-                    intent.putExtra(Helper.FORM, form.getFormattedFormName());
+                    formActivityIntent.putExtra(Helper.FORM, form.getFormattedFormName());
                 }
-                intent.putExtra(Helper.FORM_CONTENT_ID, formContent.getFormContentId());
+                formActivityIntent.putExtra(Helper.FORM_CONTENT_ID, formContent.getFormContentId());
+                formActivityIntent.putExtra(Helper.IS_EDITING, true);
+                formActivityIntent.putExtra(Helper.GO_TO_CAMERA, true);
 
-                setResult(Helper.EDIT_PHOTOS_CODE, intent);
+                setResult(Helper.EDIT_PHOTOS_CODE, formActivityIntent);
                 finish();
             }
         };
@@ -95,16 +96,15 @@ public class FormOverviewActivity extends FormBaseActivity {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = getIntent();
-                Form form = Storage.getFormById(formContent.getFormId(), getApplicationContext());
+                Intent formActivityIntent = new Intent(getApplicationContext(), FormActivity.class);
+                formActivityIntent.putExtra(Helper.IS_EDITING, true);
                 if (form != null) {
-                    intent.putExtra(Helper.FORM, form.getFormattedFormName());
+                    formActivityIntent.putExtra(Helper.FORM, form.getFormattedFormName());
                 }
-                intent.putExtra(Helper.FORM_CONTENT_ID, formContent.getFormContentId());
-                intent.putExtra(Helper.SECTION_INDEX, sectionIndex);
+                formActivityIntent.putExtra(Helper.FORM_CONTENT_ID, formContent.getFormContentId());
+                formActivityIntent.putExtra(Helper.SECTION_INDEX, sectionIndex);
 
-                setResult(Helper.EDIT_SECTION_CODE, intent);
-                finish();
+                startActivityForResult(formActivityIntent, Helper.EDIT_SECTION_CODE);
             }
         };
     }
@@ -124,12 +124,6 @@ public class FormOverviewActivity extends FormBaseActivity {
         setTitleTextView(photoGalleryTitleTextView);
         photoGalleryView.addView(photoGalleryTitleTextView);
 
-//        ScrollView.LayoutParams scrollLayoutParams = new ScrollView.LayoutParams(
-//                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//        ScrollView scrollView = new ScrollView(this);
-//        photoGalleryView.addView(scrollView);
-//        scrollView.setLayoutParams(scrollLayoutParams);
-//
         GridLayout photoGallery = new GridLayout(this);
         photoGallery.setColumnCount(2);
         photoGallery.setLayoutParams(layoutParams);
@@ -166,50 +160,55 @@ public class FormOverviewActivity extends FormBaseActivity {
         sectionView.addView(sectionNameTextView);
 
         for (Field field : section.getFields()) {
-            LinearLayout.LayoutParams linearLayoutParams = new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-            LinearLayout fieldView = new LinearLayout(this);
-            fieldView.setLayoutParams(linearLayoutParams);
-            fieldView.setOrientation(LinearLayout.HORIZONTAL);
-
-            LinearLayout.LayoutParams textViewLayout = new LinearLayout.LayoutParams(
-                    0, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
-
-            TextView fieldNameText = new TextView(this);
-            fieldNameText.setLayoutParams(textViewLayout);
-            String fieldName = field.getFieldName() + ":";
-            fieldNameText.setText(fieldName);
-            fieldNameText.setTextSize(17);
-            fieldNameText.setTextColor(Color.BLACK);
-
-            TextView fieldValueText = new TextView(this);
-            fieldValueText.setLayoutParams(textViewLayout);
-            fieldValueText.setText(formContent.getAnswer(field.getFieldName()));
-            fieldValueText.setWidth(0);
-            fieldValueText.setTextColor(Color.BLACK);
-            fieldValueText.setTextSize(17);
-
-            fieldView.addView(fieldNameText);
-            fieldView.addView(fieldValueText);
-
-            LinearLayout fieldsAndDivider = new LinearLayout(this);
-            fieldsAndDivider.setLayoutParams(linearLayoutParams);
-            fieldsAndDivider.setOrientation(LinearLayout.VERTICAL);
-
-            ViewGroup.LayoutParams dividerLayout = new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, 1);
-
-            View divider = new View(this);
-            divider.setLayoutParams(dividerLayout);
-            divider.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
-
-            fieldsAndDivider.addView(fieldView);
-            fieldsAndDivider.addView(divider);
-
+            LinearLayout fieldsAndDivider = getFieldView(field);
             sectionView.addView(fieldsAndDivider);
         }
         return sectionView;
+    }
+
+    private LinearLayout getFieldView(Field field) {
+        LinearLayout.LayoutParams linearLayoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        LinearLayout fieldView = new LinearLayout(this);
+        fieldView.setLayoutParams(linearLayoutParams);
+        fieldView.setOrientation(LinearLayout.HORIZONTAL);
+
+        LinearLayout.LayoutParams textViewLayout = new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
+
+        TextView fieldNameText = new TextView(this);
+        fieldNameText.setLayoutParams(textViewLayout);
+        String fieldName = field.getFieldName() + ":";
+        fieldNameText.setText(fieldName);
+        fieldNameText.setTextSize(17);
+        fieldNameText.setTextColor(Color.BLACK);
+
+        TextView fieldValueText = new TextView(this);
+        fieldValueText.setLayoutParams(textViewLayout);
+        fieldValueText.setText(formContent.getAnswer(field.getFieldName()));
+        fieldValueText.setWidth(0);
+        fieldValueText.setTextColor(Color.BLACK);
+        fieldValueText.setTextSize(17);
+
+        fieldView.addView(fieldNameText);
+        fieldView.addView(fieldValueText);
+
+        LinearLayout fieldsAndDivider = new LinearLayout(this);
+        fieldsAndDivider.setLayoutParams(linearLayoutParams);
+        fieldsAndDivider.setOrientation(LinearLayout.VERTICAL);
+
+        ViewGroup.LayoutParams dividerLayout = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, 1);
+
+        View divider = new View(this);
+        divider.setLayoutParams(dividerLayout);
+        divider.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+
+        fieldsAndDivider.addView(fieldView);
+        fieldsAndDivider.addView(divider);
+
+        return fieldsAndDivider;
     }
 
     private void setTitleTextView(TextView textView) {
@@ -220,9 +219,9 @@ public class FormOverviewActivity extends FormBaseActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (isEditing) {
-            getMenuInflater().inflate(R.menu.form_activity_menu, menu);
+            getMenuInflater().inflate(R.menu.form_overview_activity_save_menu, menu);
         } else {
-            getMenuInflater().inflate(R.menu.form_overview_activity_menu, menu);
+            getMenuInflater().inflate(R.menu.form_overview_activity_delete_menu, menu);
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -231,7 +230,7 @@ public class FormOverviewActivity extends FormBaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.next_menu_item:
+            case R.id.save_menu_item:
                 getSaveDialog().show();
                 return true;
             case R.id.delete_menu_item:
@@ -251,8 +250,9 @@ public class FormOverviewActivity extends FormBaseActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         setResult(Helper.CONTENT_SAVED_CODE);
                         formContent.updateDate();
-                        Storage.saveFormContent(formContent, getApplicationContext());
-                        Storage.cleanImgDir(getApplicationContext());
+                        Context context = getApplicationContext();
+                        Storage.confirmFormContent(formContent, context);
+                        Storage.cleanStorage(context);
                         finish();
                     }
                 })
