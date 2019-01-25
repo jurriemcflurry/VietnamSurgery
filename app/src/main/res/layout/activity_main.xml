@@ -15,7 +15,6 @@ android:fitsSystemWindows="true">
 
             <TextView
                 android:text="@string/chooseForm"
-                android:textColor="@color/black"
                 android:textSize="25sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

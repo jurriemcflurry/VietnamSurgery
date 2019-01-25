@@ -132,6 +132,8 @@
     <string name="deleteUserMessage">Are you sure you want to delete user&#160;</string>
     <string name="cancelDelete">Cancel</string>
     <string name="confirmDelete">Delete</string>
+    <string name="usernameTitle">Username:</string>
+    <string name="roleTitle">Role:</string>
 
     <!-- CreateFormActivity -->
     <string name="createFormTitle">Create New Form</string>

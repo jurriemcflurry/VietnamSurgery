@@ -35,7 +35,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
             super(itemView);
             title = itemView.findViewById(R.id.listitem_title);
             role = itemView.findViewById(R.id.listitem_role);
-            delete = itemView.findViewById(R.id.deleteUser);
         }
     }
 
@@ -51,10 +50,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
         vh.title.setText(node.username);
         vh.role.setText("(" + node.roles.get(0).getRole() + ")");
 
-        vh.delete.setOnClickListener(new View.OnClickListener() {
+        vh.title.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View v) {
+            public boolean onLongClick(View v) {
                 detailClickListener.onItemClick(vh.getAdapterPosition());
+                return false;
             }
         });
     }
