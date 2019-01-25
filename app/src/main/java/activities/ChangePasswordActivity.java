@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
-import responsemodels.ChangePasswordResponse;
 import webinterfaces.UserWebInterface;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -22,7 +21,7 @@ import toning.juriaan.models.ChangePasswordObject;
 import toning.juriaan.models.Helper;
 import toning.juriaan.models.R;
 
-public class ChangePasswordActivity extends BaseActivity implements Callback<ChangePasswordResponse> {
+public class ChangePasswordActivity extends BaseActivity implements Callback<Void> {
 
     private FrameLayout changePasswordFrameLayout;
     private TextInputEditText oldPassword;
@@ -104,7 +103,7 @@ public class ChangePasswordActivity extends BaseActivity implements Callback<Cha
     }
 
     @Override
-    public void onResponse(Call<ChangePasswordResponse> call, Response<ChangePasswordResponse> response) {
+    public void onResponse(Call<Void> call, Response<Void> response) {
         Helper.hideKeyboard(this);
         hideSpinner();
 
@@ -127,7 +126,7 @@ public class ChangePasswordActivity extends BaseActivity implements Callback<Cha
     }
 
     @Override
-    public void onFailure(Call<ChangePasswordResponse> call, Throwable t) {
+    public void onFailure(Call<Void> call, Throwable t) {
         Snackbar.make(findViewById(R.id.changePassword_linear_layout), getString(R.string.passwordNotChanged), Snackbar.LENGTH_LONG)
                 .show();
     }

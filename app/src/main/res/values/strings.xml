@@ -96,6 +96,10 @@
 
     <!-- PhotoDetailActivity -->
     <string name="camera_title">Photos</string>
+    <string name="deleteTitle">Delete picture?</string>
+    <string name="deleteMessage">Are you sure you want to delete this picture?</string>
+    <string name="cancelPhotoDelete">No</string>
+    <string name="confirmPhotoDelete">Yes</string>
 
     <!-- RegisterActivity -->
     <string name="addUserTitle">Add User</string>

@@ -39,10 +39,10 @@ public class PhotoDetailActivity extends FormBaseActivity {
             @Override
             public void onClick(View v) {
                 new AlertDialog.Builder(PhotoDetailActivity.this)
-                        .setTitle("Delete picture?")
-                        .setMessage("Are you sure you want to delete this picture?")
-                        .setNegativeButton("No", null)
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        .setTitle(getString(R.string.deleteTitle))
+                        .setMessage(getString(R.string.deleteMessage))
+                        .setNegativeButton(getString(R.string.cancelPhotoDelete), null)
+                        .setPositiveButton(getString(R.string.confirmPhotoDelete), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 getIntent().putExtra(Helper.IMAGE_NAME, imageName);

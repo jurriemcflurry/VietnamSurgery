@@ -21,7 +21,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import responsemodels.DeleteResponse;
 import webinterfaces.DetailClickListener;
 import webinterfaces.UserWebInterface;
 import retrofit2.Call;
@@ -141,9 +140,9 @@ public class UsersActivity extends BaseActivity implements Callback<List<User>> 
     }
 
     private void deleteUserCall(String userId){
-        userWebInterface.deleteUser(userId).enqueue(new Callback<DeleteResponse>() {
+        userWebInterface.deleteUser(userId).enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<DeleteResponse> call, Response<DeleteResponse> response) {
+            public void onResponse(Call<Void> call, Response<Void> response) {
                 pBar.setVisibility(View.INVISIBLE);
                 Snackbar.make(findViewById(R.id.users_frame_layout), getString(R.string.userDeleted), Snackbar.LENGTH_LONG)
                         .show();
@@ -153,7 +152,7 @@ public class UsersActivity extends BaseActivity implements Callback<List<User>> 
             }
 
             @Override
-            public void onFailure(Call<DeleteResponse> call, Throwable t) {
+            public void onFailure(Call<Void> call, Throwable t) {
                 t.printStackTrace();
                 pBar.setVisibility(View.INVISIBLE);
                 Snackbar.make(findViewById(R.id.users_frame_layout), getString(R.string.userDeleted), Snackbar.LENGTH_LONG)
