@@ -30,6 +30,11 @@ public class AddSectionActivity extends FormBaseActivity {
 
         Intent fromCreateForm = getIntent();
 
+        setupLayout();
+
+    }
+
+    private void setupLayout(){
         addSectionFrameLayout = findViewById(R.id.addSectionFrameLayout);
         sectionNameEditText = findViewById(R.id.sectionNameEditText);
         addSectionButton = findViewById(R.id.addSectionButton);

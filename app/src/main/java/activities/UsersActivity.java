@@ -68,7 +68,7 @@ public class UsersActivity extends BaseActivity implements Callback<List<User>> 
             @Override
             public void onItemClick(int position) {
                 final User user = mListAdapter.getItem(position);
-                if(AccessToken.userrole.equals(getString(R.string.adminCheck))){
+                if(AccessToken.getUserrole().equals(getString(R.string.adminCheck))){
                     new AlertDialog.Builder(UsersActivity.this)
                             .setTitle(getString(R.string.deleteUserTitle))
                             .setMessage(getString(R.string.deleteUserMessage) + user.username + "?")
@@ -125,7 +125,7 @@ public class UsersActivity extends BaseActivity implements Callback<List<User>> 
     }
 
     private void getUsers(){
-        if(AccessToken.access_token == null){
+        if(AccessToken.getAccess_token() == null){
             pBar.setVisibility(View.INVISIBLE);
             Snackbar.make(findViewById(R.id.users_linearlayout), getString(R.string.noAccess),Snackbar.LENGTH_LONG)
                     .setAction(getString(R.string.loginSnackbar), new View.OnClickListener() {
@@ -138,7 +138,7 @@ public class UsersActivity extends BaseActivity implements Callback<List<User>> 
             return;
         }
 
-        userWebInterface.getUsers(AccessToken.access_token).enqueue(this);
+        userWebInterface.getUsers(AccessToken.getAccess_token()).enqueue(this);
     }
 
     private void deleteUserCall(String userId){

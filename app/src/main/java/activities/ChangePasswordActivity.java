@@ -70,7 +70,7 @@ public class ChangePasswordActivity extends BaseActivity implements Callback<Cha
     }
 
     private void changePassWord(){
-        if(AccessToken.access_token == null){
+        if(AccessToken.getAccess_token() == null){
             return;
         }
 
@@ -93,7 +93,7 @@ public class ChangePasswordActivity extends BaseActivity implements Callback<Cha
         showSpinner();
         ChangePasswordObject changePasswordObject = new ChangePasswordObject(oldPasswordText, newPasswordText, confirmNewPasswordText);
 
-        userWebInterface.changePassword(AccessToken.access_token, changePasswordObject).enqueue(this);
+        userWebInterface.changePassword(AccessToken.getAccess_token(), changePasswordObject).enqueue(this);
     }
 
     private void showSpinner(){
@@ -110,7 +110,7 @@ public class ChangePasswordActivity extends BaseActivity implements Callback<Cha
         hideSpinner();
 
         if(response.isSuccessful() && response.body() == null){
-            AccessToken.access_token = null;
+            AccessToken.setAccess_token(null);
             Snackbar.make(findViewById(R.id.changePassword_linear_layout), getString(R.string.passwordChanged), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getString(R.string.loginCaps), new View.OnClickListener() {
                         @Override
@@ -129,6 +129,7 @@ public class ChangePasswordActivity extends BaseActivity implements Callback<Cha
 
     @Override
     public void onFailure(Call<ChangePasswordResponse> call, Throwable t) {
-        t.printStackTrace();
+        Snackbar.make(findViewById(R.id.changePassword_linear_layout), getString(R.string.passwordNotChanged), Snackbar.LENGTH_LONG)
+                .show();
     }
 }

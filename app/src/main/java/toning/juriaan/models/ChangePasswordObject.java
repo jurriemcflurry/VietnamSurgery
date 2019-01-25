@@ -5,13 +5,13 @@ import com.google.gson.annotations.SerializedName;
 public class ChangePasswordObject {
 
     @SerializedName("OldPassword")
-    public String oldPassword;
+    private String oldPassword;
 
     @SerializedName("NewPassword")
-    public String newPassword;
+    private String newPassword;
 
     @SerializedName("ConfirmPassword")
-    public String confirmNewPassword;
+    private String confirmNewPassword;
 
     public ChangePasswordObject(String oldPassword, String newPassword, String confirmNewPassword){
         this.oldPassword = oldPassword;

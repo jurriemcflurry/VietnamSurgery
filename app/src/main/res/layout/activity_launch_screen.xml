@@ -13,7 +13,7 @@
     <item>
 
         <imageBitmap
-            android:src="@drawable/splashscreen_logos"
+            android:src="@drawable/screen"
             android:gravity="center" />
 
     </item>

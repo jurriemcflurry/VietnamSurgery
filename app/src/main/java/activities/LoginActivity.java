@@ -32,7 +32,6 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
     private EditText password;
     private Button loginButton;
     private UserWebInterface userWebInterface;
-    private Helper helper;
     private ProgressBar pBar;
 
     @Override
@@ -64,10 +63,10 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Helper.hideKeyboard(LoginActivity.this);
 
                 //check of er internetconnectie is
                 if(!isNetworkAvailable()){
-                    helper.hideKeyboard(LoginActivity.this);
                     Snackbar.make(findViewById(R.id.login_linear_layout), getString(R.string.loginNoInternet),Snackbar.LENGTH_LONG)
                             .show();
                     return;
@@ -75,7 +74,6 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
 
                 //check of velden zijn ingevuld
                 if(email.getText().toString().isEmpty() || password.getText().toString().isEmpty()){
-                    helper.hideKeyboard(LoginActivity.this);
                     Snackbar.make(findViewById(R.id.login_linear_layout), getString(R.string.loginEmptyFields),Snackbar.LENGTH_LONG)
                             .show();
                     return;
@@ -106,18 +104,14 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
 
     @Override
     public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-        helper.hideKeyboard(this);
         pBar.setVisibility(View.INVISIBLE);
 
         if(response.isSuccessful() && response.body() != null){
-            //sla token op
-            //set headertexts goed
-            //terug naar home
             Snackbar.make(findViewById(R.id.login_linear_layout),getString(R.string.loggedIn), Snackbar.LENGTH_INDEFINITE)
                     .show();
-            AccessToken.access_token = response.body().token_type + " " + response.body().accesstoken;
-            AccessToken.userName = response.body().userName;
-            AccessToken.userrole = response.body().role;
+            AccessToken.setAccess_token(response.body().token_type + " " + response.body().accesstoken);
+            AccessToken.setUserName(response.body().userName);
+            AccessToken.setUserrole(response.body().role);
 
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
@@ -143,7 +137,7 @@ public class LoginActivity extends BaseActivity implements Callback<LoginRespons
 
     @Override
     public void onFailure(Call<LoginResponse> call, Throwable t) {
-        helper.hideKeyboard(this);
+        Helper.hideKeyboard(this);
         pBar.setVisibility(View.INVISIBLE);
         Snackbar.make(findViewById(R.id.login_linear_layout),getString(R.string.notLoggedIn), Snackbar.LENGTH_INDEFINITE)
                 .show();

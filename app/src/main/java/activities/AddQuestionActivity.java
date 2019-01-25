@@ -51,6 +51,10 @@ public class AddQuestionActivity extends FormBaseActivity implements AdapterView
         getLayoutInflater().inflate(R.layout.activity_add_question, contentFrameLayout);
         getSupportActionBar().setTitle(getString(R.string.addQuestionTitle));
 
+        setupLayout();
+    }
+
+    private void setupLayout(){
         addQuestionRelativeLayout = findViewById(R.id.addQuestionRelativeLayout);
         optionsLayout = findViewById(R.id.optionsLayout);
         questionTypeSpinner = findViewById(R.id.questionTypeSpinner);
