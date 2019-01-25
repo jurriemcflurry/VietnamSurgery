@@ -3,42 +3,48 @@ package activities;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.util.LogPrinter;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import toning.juriaan.models.AccessToken;
+import toning.juriaan.models.FormContentUploadCallHandler;
 import toning.juriaan.models.FormContentUploadHandler;
+import toning.juriaan.models.FormContentUploadProgress;
+import toning.juriaan.models.ProgressListener;
 import webinterfaces.FormWebInterface;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import toning.juriaan.models.Form;
 import toning.juriaan.models.FormContent;
-import toning.juriaan.models.FormContentUploadModel;
 import toning.juriaan.models.FormListAdapter;
 import toning.juriaan.models.Helper;
 import toning.juriaan.models.R;
 import toning.juriaan.models.Storage;
 
-public class FormListActivity extends BaseActivity implements FormListAdapter.FormContentlistener {
+public class FormListActivity extends BaseActivity implements FormListAdapter.FormContentlistener, ProgressListener {
 
     private RecyclerView formListRecycler;
     private FormListAdapter formListAdapter;
-    private Integer toUpload = 0;
-    private Integer uploadCount = 0;
-    private TextView uploadCounter;
-    private ArrayList<String> formContentNames;
+    private FormContentUploadProgress uploadProgress;
+    private FormContentUploadHandler uploadHandler;
+
+    private ProgressBar uploadProgressBar;
+    private TextView uploadProgressInfo;
+
+    private final Handler handler = new Handler();
 
 
     @Override
@@ -49,48 +55,44 @@ public class FormListActivity extends BaseActivity implements FormListAdapter.Fo
         getLayoutInflater().inflate(R.layout.activity_form_list, contentFrameLayout);
         getSupportActionBar().setTitle(getString(R.string.formContentFormList));
 
-        uploadCounter = findViewById(R.id.upload_counter);
-        uploadCounter.setVisibility(View.INVISIBLE);
+        loadProgressView();
+        updateProgressView();
 
-        formContentNames = Storage.getFormContentNames(this);
+        ArrayList<String> formContentNames = Storage.getFormContentNames(this);
         formListAdapter = new FormListAdapter(formContentNames, this);
         formListRecycler = findViewById(R.id.form_list_recycler);
         formListRecycler.setAdapter(formListAdapter);
         formListRecycler.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    protected void postFormContentList() {
-        toUpload = formContentNames.size();
-        updateUploadProgress();
-        uploadCounter.setVisibility(View.VISIBLE);
+    private void loadProgressView() {
+        uploadProgressBar = findViewById(R.id.upload_progress_bar);
+        uploadProgressBar.setVisibility(View.INVISIBLE);
+        uploadProgress = new FormContentUploadProgress(0, this);
 
+        uploadProgressInfo = findViewById(R.id.upload_progress_info);
+        uploadProgressInfo.setVisibility(View.INVISIBLE);
+    }
+
+    protected void postFormContentList() {
 
         Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl(getString(R.string.baseURL))
                 .addConverterFactory(GsonConverterFactory.create());
 
         Retrofit retrofit = builder.build();
-        FormWebInterface client = retrofit.create(FormWebInterface.class);
+        final FormWebInterface client = retrofit.create(FormWebInterface.class);
 
-        ArrayList<FormContent> formContents = Storage.getFormContents(this);
-        FormContentUploadHandler handler = new FormContentUploadHandler(formContents, this, client);
-        new Thread(handler).start();
-    }
+        final ArrayList<FormContent> formContents = Storage.getFormContents(this);
+        uploadProgressBar.setMax(formContents.size());
+        uploadProgressBar.setProgress(0);
+        uploadProgress.setTotalFormContents(formContents.size());
 
-    private synchronized void incrementUploadCount() {
-        uploadCount++;
-        updateUploadProgress();
-        if (uploadCount >= toUpload) {
-            deleteAllFormContents();
-        }
-    }
+        uploadHandler = new FormContentUploadHandler(formContents, this, client, this);
 
-    private String getUploadProgressString() {
-        return String.format(getString(R.string.uploadCountText), uploadCount.toString(), toUpload.toString());
-    }
-
-    private void updateUploadProgress() {
-        uploadCounter.setText(getUploadProgressString());
+        handler.post(uploadHandler);
+        dump();
+        updateProgressView();
     }
 
     @Override
@@ -191,5 +193,31 @@ public class FormListActivity extends BaseActivity implements FormListAdapter.Fo
                 })
                 .setNegativeButton(getString(R.string.cancel), null)
                 .create();
+    }
+
+    @Override
+    public void updateProgressView() {
+        if (uploadHandler == null) return;
+        uploadProgressInfo.setVisibility(View.VISIBLE);
+        uploadProgressBar.setVisibility(View.VISIBLE);
+        uploadProgressBar.setProgress(uploadProgress.getUploadedFormContents());
+        uploadProgressInfo.setText(String.format(
+                getString(R.string.uploadProgressInfo),
+                "" + uploadProgress.getUploadedFormContents(),
+                "" + uploadProgress.getTotalFormContents()));
+    }
+
+    @Override
+    public void setMax(int max) {
+        uploadProgressBar.setMax(max);
+    }
+
+    @Override
+    public FormContentUploadProgress getProgress() {
+        return uploadProgress;
+    }
+
+    private void dump() {
+        handler.dump(new LogPrinter(Log.DEBUG, "Handler"), "FormList");
     }
 }

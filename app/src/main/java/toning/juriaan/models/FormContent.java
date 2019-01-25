@@ -2,7 +2,6 @@ package toning.juriaan.models;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -22,7 +21,7 @@ public class FormContent {
 
     @Expose
     @SerializedName("FormContent")
-    private Map<String, String> formContent;
+    private Map<String, String> formContentAnswers;
 
     @Expose
     @SerializedName("ImageNames")
@@ -38,13 +37,14 @@ public class FormContent {
 
     @Expose
     @SerializedName("formContentId")
-    private UUID formContentId;
+    private String formContentId;
+
 
     public FormContent(int formId) {
         this.formId = formId;
-        formContent = new HashMap<>();
+        formContentAnswers = new HashMap<>();
         imageNames = new ArrayList<>();
-        formContentId = UUID.randomUUID();
+        formContentId = UUID.randomUUID().toString();
         Helper.log(formContentId.toString());
         updateDate();
     }
@@ -83,7 +83,11 @@ public class FormContent {
     }
 
     public String getFormContentId() {
-        return formContentId.toString();
+        return formContentId;
+    }
+
+    private void setFormContentId(String formContentId) {
+        this.formContentId = formContentId;
     }
 
     public boolean isValidInfo(Context context) {
@@ -108,18 +112,19 @@ public class FormContent {
         this.formId = formId;
     }
 
-    public Map<String, String> getFormContent() {
-        return formContent;
+    public Map<String, String> getFormContentAnswers() {
+        return formContentAnswers;
     }
 
-    public void setFormContent(Map<String, String> formContent) {
-        this.formContent = formContent;
+    public void setFormContentAnswers(Map<String, String> formContentAnswers) {
+        this.formContentAnswers = formContentAnswers;
     }
 
     public void addAnswer(String fieldName, String value) {
         boolean add = true;
+        value = value.trim();
 
-        for (Map.Entry<String, String> entry : formContent.entrySet()) {
+        for (Map.Entry<String, String> entry : formContentAnswers.entrySet()) {
             if (entry.getKey().equals(fieldName)) {
                 entry.setValue(value);
                 add = false;
@@ -128,12 +133,12 @@ public class FormContent {
         }
 
         if (add) {
-            formContent.put(fieldName, value);
+            formContentAnswers.put(fieldName, value);
         }
     }
 
     public String getAnswer(String fieldName) {
-        for (Map.Entry<String, String> entry : formContent.entrySet()) {
+        for (Map.Entry<String, String> entry : formContentAnswers.entrySet()) {
             if (entry.getKey().toLowerCase().replaceAll(" ", "").equals(
                     fieldName.toLowerCase().replaceAll(" ", ""))) {
                 return entry.getValue();
@@ -159,7 +164,6 @@ public class FormContent {
         int nextImageNumber = 0;
 
         for (String imageName : imageNames) {
-            Helper.log("imageNames " + imageName);
             String[] splitImageName = imageName.replaceAll(Helper.IMAGE_EXTENSION, "").split("_");
             int imageNumber = Integer.valueOf(splitImageName[splitImageName.length - 1]);
             if (imageNumber >= nextImageNumber) {
@@ -176,5 +180,24 @@ public class FormContent {
 
     public static FormContent fromJson(String json) {
         return Helper.getGson().fromJson(json, FormContent.class);
+    }
+
+    public static FormContent createTemp(FormContent formContent) {
+        FormContent tempFormContent = new FormContent(formContent.getFormId());
+
+        tempFormContent.setFormContentId(formContent.getFormContentId() + Helper.TEMP);
+        tempFormContent.setImageNames(formContent.getImageNames());
+        tempFormContent.setFormContentAnswers(formContent.getFormContentAnswers());
+
+        return tempFormContent;
+    }
+
+    public void confirm() {
+        if (formContentId.contains(Helper.TEMP)) {
+            formContentId = formContentId.replaceAll(Helper.TEMP, "");
+            for (int i = 0; i < imageNames.size(); i++) {
+                imageNames.set(i, imageNames.get(i).replaceAll(Helper.TEMP, ""));
+            }
+        }
     }
 }

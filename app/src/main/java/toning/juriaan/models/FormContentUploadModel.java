@@ -27,7 +27,7 @@ public class FormContentUploadModel {
         this.formId = formContent.getFormId();
         Gson gson = Helper.getGson();
         this.formContent = new ArrayList<>();
-        for (Map.Entry<String, String> entry : formContent.getFormContent().entrySet()) {
+        for (Map.Entry<String, String> entry : formContent.getFormContentAnswers().entrySet()) {
             this.formContent.add(new FormContentField(entry.getKey(), entry.getValue()));
         }
         ArrayList<Image> imgs = Storage.getImagesForFormContent(formContent, context);

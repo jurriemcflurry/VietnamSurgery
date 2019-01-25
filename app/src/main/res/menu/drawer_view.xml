@@ -8,6 +8,6 @@
         <item
             android:id="@+id/nav_2"
             android:icon="@drawable/data_overview_menu_icon_black"
-            android:title="@string/formContent" />
+            android:title="@string/formContentAnswers" />
     </group>
 </menu>

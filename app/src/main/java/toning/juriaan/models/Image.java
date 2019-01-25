@@ -77,8 +77,4 @@ public class Image {
         getImageBitmap(context).compress(Bitmap.CompressFormat.JPEG, 100, stream);
         return stream.toByteArray();
     }
-
-    public static String getNextImageName(FormContent formContent, Context context) {
-        return formContent.getFormContentId() + "_image_" + Storage.getNextImageNumber(formContent, context);
-    }
 }

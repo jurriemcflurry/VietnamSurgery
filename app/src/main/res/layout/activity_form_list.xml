@@ -11,9 +11,17 @@
         >
 
         <TextView
-            android:id="@+id/upload_counter"
+            android:id="@+id/upload_progress_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+
+        <ProgressBar
+            android:id="@+id/upload_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+            android:indeterminate="false"
+            android:progress="1"/>
 
         <RelativeLayout
             android:layout_width="wrap_content"

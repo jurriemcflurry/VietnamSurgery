@@ -8,9 +8,6 @@ import android.view.inputmethod.InputMethodManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class Helper {
 
     public final static String FORM = "Form";
@@ -43,6 +40,9 @@ public class Helper {
     public final static String OPTIONS = "Options";
     public final static String QUESTION_TYPE_STRING = "Type";
     public final static String QUESTION_SECTION = "Section";
+
+    public final static String FILE_EXTENSION = ".json";
+    public final static String TEMP = "_temp";
 
     public final static int THUMBNAIL_SIZE = 400;
 
