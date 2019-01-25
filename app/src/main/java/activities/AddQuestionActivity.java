@@ -88,8 +88,7 @@ public class AddQuestionActivity extends FormBaseActivity implements AdapterView
 
         if(questionTypeSpinner.getSelectedItem().toString().equals(FieldType.Choice.toString())){
             if(optionsEditTexts.size() < 2){
-                Snackbar.make(addQuestionRelativeLayout, getString(R.string.notEnoughOptions), Snackbar.LENGTH_LONG)
-                        .show();
+                makeOptionsSnackbar();
                 return;
             }
 
@@ -97,8 +96,7 @@ public class AddQuestionActivity extends FormBaseActivity implements AdapterView
             int i = 0;
             for(EditText e : optionsEditTexts){
                 if(e.getText().toString().isEmpty()){
-                    Snackbar.make(addQuestionRelativeLayout, getString(R.string.notEnoughOptions), Snackbar.LENGTH_LONG)
-                            .show();
+                    makeOptionsSnackbar();
                     return;
                 }
                 options[i] = e.getText().toString();
@@ -118,6 +116,11 @@ public class AddQuestionActivity extends FormBaseActivity implements AdapterView
         setResult(Helper.ADD_QUESTION_RESULT_CODE, getIntent());
         Helper.hideKeyboard(this);
         finish();
+    }
+
+    private void makeOptionsSnackbar(){
+        Snackbar.make(addQuestionRelativeLayout, getString(R.string.notEnoughOptions), Snackbar.LENGTH_LONG)
+                .show();
     }
 
     private void makeOption(){

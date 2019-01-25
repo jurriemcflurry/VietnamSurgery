@@ -97,7 +97,7 @@ public class BaseActivity extends AppCompatActivity {
                                 startActivity(homeIntent);
                                 break;
                             case R.id.nav_2:
-                                if(getActiveActivity().equals("activities.FormListActivity")){
+                                if(getActiveActivity().equals(getString(R.string.activityForm))){
                                     Intent toFormContentIntent = new Intent(
                                             getApplicationContext(), FormListActivity.class);
                                     startActivity(toFormContentIntent);
@@ -138,7 +138,7 @@ public class BaseActivity extends AppCompatActivity {
         menu.add(getString(R.string.users)).setIcon(R.drawable.user_list_menu_icon_black).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                if(getActiveActivity().equals("activities.UsersActivity")){
+                if(getActiveActivity().equals(getString(R.string.activityUsers))){
                     Intent naarUsers = new Intent(getApplicationContext(), UsersActivity.class);
                     startActivity(naarUsers);
                     finish();
@@ -157,8 +157,15 @@ public class BaseActivity extends AppCompatActivity {
         menu.add(getString(R.string.login)).setIcon(R.drawable.login).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
-                startActivity(loginIntent);
+                if(getActiveActivity().equals(getString(R.string.activityLogin))){
+                    Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                    startActivity(loginIntent);
+                    finish();
+                }else{
+                    Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                    startActivity(loginIntent);
+                }
+
                 return false;
             }
         });

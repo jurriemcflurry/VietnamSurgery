@@ -3,7 +3,6 @@ package activities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -16,15 +15,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -35,7 +30,6 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import toning.juriaan.models.Field;
 import toning.juriaan.models.FieldType;
-import toning.juriaan.models.Form;
 import toning.juriaan.models.FormTemplate;
 import toning.juriaan.models.FormTemplateObject;
 import toning.juriaan.models.Helper;
@@ -273,10 +267,11 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
         fieldType.setTextSize(20);
 
         linearLayout.addView(fieldType);
-        linearLayout.setOnClickListener(new View.OnClickListener() {
+        linearLayout.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View v) {
+            public boolean onLongClick(View v) {
                 deleteField(field);
+                return true;
             }
         });
         relativeLayout.addView(fieldName);
@@ -442,7 +437,7 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
 
     private void postForm(final String formName, final FormTemplate formTemplate) {
         if(formNameEditText.getText().toString().isEmpty()){
-            new AlertDialog.Builder(this)
+            new AlertDialog.Builder(CreateFormActivity.this)
                     .setTitle(getString(R.string.formNameEmpty))
                     .setMessage(getString(R.string.formNameEmptyMessage))
                     .setNegativeButton(getString(R.string.back), null)
@@ -489,7 +484,7 @@ public class CreateFormActivity extends FormBaseActivity implements AdapterView.
 
     @Override
     public void onBackPressed() {
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(CreateFormActivity.this)
                 .setTitle(getString(R.string.exitCreateForm))
                 .setMessage(getString(R.string.exitCreateFormMessage))
                 .setNegativeButton(getString(R.string.cancelExitCreateForm), null)

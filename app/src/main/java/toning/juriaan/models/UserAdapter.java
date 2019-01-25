@@ -29,13 +29,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView title;
         public TextView role;
-        public ImageView delete;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.listitem_title);
             role = itemView.findViewById(R.id.listitem_role);
-            delete = itemView.findViewById(R.id.deleteUser);
         }
     }
 
@@ -49,12 +47,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
     public void onBindViewHolder(@NonNull final MyViewHolder vh, int i) {
         User node = getItem(i);
         vh.title.setText(node.username);
-        vh.role.setText("(" + node.roles.get(0).getRole() + ")");
+        vh.role.setText(node.roles.get(0).getRole());
 
-        vh.delete.setOnClickListener(new View.OnClickListener() {
+        vh.title.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View v) {
+            public boolean onLongClick(View v) {
                 detailClickListener.onItemClick(vh.getAdapterPosition());
+                return false;
             }
         });
     }

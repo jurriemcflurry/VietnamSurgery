@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/listitemUsername"
-        android:textSize="20dp"
+        android:textSize="25sp"
         android:layout_centerVertical="true"
         android:layout_marginTop="10dp"
     />
@@ -20,20 +20,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/listitemRole"
-        android:textSize="20dp"
+        android:textSize="25sp"
         android:layout_centerVertical="true"
         android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_toLeftOf="@id/deleteUser"
-        />
-    
-    <ImageView
-        android:id="@+id/deleteUser"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:src="@drawable/ic_delete"
         android:layout_alignParentRight="true"
-        android:layout_alignBottom="@id/listitem_title" />
+        />
 
     <View
         android:layout_width="match_parent"

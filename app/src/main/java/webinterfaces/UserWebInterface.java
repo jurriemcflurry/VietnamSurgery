@@ -2,8 +2,6 @@ package webinterfaces;
 
 import java.util.List;
 
-import responsemodels.ChangePasswordResponse;
-import responsemodels.DeleteResponse;
 import responsemodels.LoginResponse;
 import responsemodels.RegisterResponse;
 import retrofit2.Call;
@@ -33,8 +31,8 @@ public interface UserWebInterface {
     Call<List<User>> getUsers(@Header("Authorization") String access_token);
 
     @POST("/api/Account/ChangePassword")
-    Call<ChangePasswordResponse> changePassword(@Header("Authorization") String access_token, @Body ChangePasswordObject changePasswordObject);
+    Call<Void> changePassword(@Header("Authorization") String access_token, @Body ChangePasswordObject changePasswordObject);
 
     @DELETE("/api/Account/{id}")
-    Call<DeleteResponse> deleteUser(@Path("id") String id);
+    Call<Void> deleteUser(@Path("id") String id);
 }
